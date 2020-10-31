@@ -9,7 +9,15 @@
   </p>
 </p>
 
-This work is designed for [Huawei Honor Cup 2020 competition](https://honorcup.ru/)
+<p align="center">
+This work is designed for <a href="https://honorcup.ru/">Huawei Honor Cup 2020 competition</a>
+</p>
+
+<p align="center">
+  <a href="https://appgallery.huawei.com/#/app/C103156905">
+    <img src="images/applink.png" width="288" heigth="100"/>
+  </a>
+</p>
 
 ### Built with
 - [Huawei ML Kit](https://developer.huawei.com/consumer/en/hms/huawei-mlkit/)
@@ -17,6 +25,7 @@ This work is designed for [Huawei Honor Cup 2020 competition](https://honorcup.r
 - Dagger2
 - [RxJava3](https://github.com/ReactiveX/RxJava)
 - [Mp4Composer-android](https://github.com/MasayukiSuda/Mp4Composer-android)
+
 
 Test [apk](app/release/app-release.apk) file
 
