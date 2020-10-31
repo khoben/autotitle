@@ -31,12 +31,9 @@ Test [apk](app/release/app-release.apk) file
 
 ## Screenshots
 
-<p float="left">
-  <img src="images/1-h.png" width="288" />
-  <img src="images/2-h.png" width="288" /> 
-  <img src="images/3-h.png" width="288" />
-   <img src="images/4-h.png" width="288" />
-</p>
+<pre>
+<img src="images/1-h.png" width="200" /> <img src="images/2-h.png" width="200" /> <img src="images/3-h.png" width="200" /> <img src="images/4-h.png" width="200" />
+</pre>
 
 
 ### Inspired by
