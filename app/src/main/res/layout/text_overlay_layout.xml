@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.khoben.autotitle.huawei.ui.overlay.OverlayText xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <FrameLayout
+        android:id="@+id/frmBorder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="8dp"
+        android:background="@drawable/rounded_border_unselect_tv">
+
+        <TextView
+            android:id="@+id/tvPhotoEditorText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:textColor="@color/white"
+            android:background="@android:color/transparent"
+            android:textSize="18sp"
+            tools:textColor="@android:color/white" />
+
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/imgPhotoEditorClose"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_gravity="top|end"
+        android:elevation="1dp"
+        android:visibility="gone"
+        app:tint="?colorPrimary"
+        android:src="@drawable/ic_close_icon" />
+
+</com.khoben.autotitle.huawei.ui.overlay.OverlayText>

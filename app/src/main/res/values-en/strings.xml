@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AutoTitle</string>
+    <string name="load_button_title">Select Video</string>
+    <string name="record_button_title">Record Video</string>
+    <string name="edit_caption">Captions</string>
+    <string name="stickers_caption">Stickers</string>
+    <string name="text_caption">Text</string>
+    <string name="saved_caption">Video has been saved</string>
+    <string name="error_while_saving">Error while saving video</string>
+    <string name="yes_caption">Yes</string>
+    <string name="no_caption">No</string>
+    <string name="cancel_video_saving_question">Are you sure you want to cancel video saving?</string>
+    <string name="exit_question">Are you sure to want to exit?</string>
+    <string name="share_caption">Share</string>
+    <string name="save_to_gallery_caption">Save to gallery</string>
+    <string name="share_video_title">Share to...</string>
+    <string name="saved_path_video">Saved video %1$s</string>
+    <string name="video_saving_cancelled_caption">Video saving has been cancelled</string>
+    <string name="some_error">Error</string>
+    <string name="or_caption">OR</string>
+    <string name="welcome_title">Welcome to AutoTitle!</string>
+    <string name="need_load_title">Load the video to add captions</string>
+    <string name="save_captions">Processing captions...</string>
+    <string name="save_button_caption">Save</string>
+    <string name="empty_overlay_recycler">Double tap to edit caption</string>
+    <string name="check_limit">Sorry, video can be up to 60 secs</string>
+    <string name="guide_add_case">Double tap on seekbar to add new captions at current time</string>
+    <string name="guide_recycler_item">Tap on list item to select as current. It will become highlighted</string>
+    <string name="guide_recycler_item_edit">Double tap on list item to edit text</string>
+    <string name="guide_resize">Use multitouch gestures for resizing and changing placement. Press on cross button to delete caption</string>
+    <string name="guide_save">Click here for save</string>
+    <string name="error_while_opening_file">Error while opening file.</string>
+    <string name="guide_doubletap">Double tap on caption item to edit text.</string>
+</resources>

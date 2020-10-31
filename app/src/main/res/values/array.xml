@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="loading_text">
+        <item>Processing video</item>
+        <item>Extracting captions</item>
+    </string-array>
+</resources>

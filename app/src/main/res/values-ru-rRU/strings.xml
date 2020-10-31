@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AutoTitle</string>
+    <string name="load_button_title">Выбрать Видео</string>
+    <string name="record_button_title">Записать Видео</string>
+    <string name="edit_caption">Субтитры</string>
+    <string name="stickers_caption">Стикеры</string>
+    <string name="text_caption">Текст</string>
+    <string name="saved_caption">Видео было сохранено</string>
+    <string name="error_while_saving">Ошибка при сохранении видео</string>
+    <string name="yes_caption">Да</string>
+    <string name="no_caption">Нет</string>
+    <string name="cancel_video_saving_question">Отменить обработку видео?</string>
+    <string name="exit_question">Точно хотите выйти?</string>
+    <string name="share_caption">Поделиться</string>
+    <string name="save_to_gallery_caption">Сохранить в галерею</string>
+    <string name="share_video_title">Поделиться</string>
+    <string name="saved_path_video">Видео сохранено %1$s</string>
+    <string name="video_saving_cancelled_caption">Сохранение видео было отменено</string>
+    <string name="some_error">Ошибка</string>
+    <string name="or_caption">ИЛИ</string>
+    <string name="welcome_title">AutoTitle</string>
+    <string name="need_load_title">Загрузите видео для добавления субтитров</string>
+    <string name="save_captions">Обработка</string>
+    <string name="save_button_caption">Сохранить</string>
+    <string name="empty_overlay_recycler">Нажмите два раза для редактирования</string>
+    <string name="check_limit">Извините, видео более 60 сек не поддерживается</string>
+    <string name="guide_add_case">Кликните два раза по полосе прокрутки для добавления нового субтитра к текущему времени</string>
+    <string name="guide_recycler_item">Кликните по элементу списка для его выделения</string>
+    <string name="guide_recycler_item_edit">Кликните два раза по элементу списка для редактирования</string>
+    <string name="guide_resize">Ипользуйте жесты для изменения размера и положения. Для удаления субтитра нажмите на крестик</string>
+    <string name="guide_save">Для сохранения результата нажмите здесь</string>
+    <string name="error_while_opening_file">Ошибка во время открытия файла</string>
+    <string name="guide_doubletap">Кликните два раза по субтитру для его редактирования</string>
+</resources>
