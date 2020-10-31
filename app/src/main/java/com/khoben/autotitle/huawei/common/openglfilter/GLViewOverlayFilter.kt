@@ -31,9 +31,8 @@ class GLViewOverlayFilter(
                 val isWide = false
                 scaleX = canvas.width.toFloat() / parentViewSize.first
                 scaleY = canvas.height.toFloat() / parentViewSize.second
-                Log.d("FFF", "$scaleX, $scaleY")
                 // TODO("Pre-render view's bitmap")
-                val b = overlay.textView!!.getBitmap(overlay, isWide) ?: continue
+                val b = overlay.textView!!.getBitmap(overlay, isWide, scaleX, scaleY) ?: continue
                 // we need put bitmap at center of overlay
                 val bitmapCenterX = b.width / 2
                 val bitmapCenterY = b.height / 2

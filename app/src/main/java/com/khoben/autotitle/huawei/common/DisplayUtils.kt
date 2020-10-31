@@ -66,7 +66,7 @@ object DisplayUtils {
         val newSizeX = displayedWidth * scaleX
         val newSizeY = displayedHeight * scaleY
 
-//        if (newSizeX < 1 || newSizeY < 1) return null
+        if (newSizeX < 1 || newSizeY < 1) return null
 
         val pivotX = newSizeX / 2
         val pivotY = newSizeY / 2
