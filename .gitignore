@@ -65,3 +65,4 @@ outTmp/
 .idea/
 app/src/agconnect-services.json
 app/release/*
+build/
