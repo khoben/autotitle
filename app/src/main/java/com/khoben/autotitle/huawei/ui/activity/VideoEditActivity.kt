@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.Color.RED
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -15,7 +17,9 @@ import android.widget.*
 import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.khoben.autotitle.huawei.R
 import com.khoben.autotitle.huawei.databinding.ActivityVideoBinding
 import com.khoben.autotitle.huawei.mvp.presenter.VideoEditActivityPresenter
@@ -28,6 +32,7 @@ import com.khoben.autotitle.huawei.ui.player.VideoSurfaceView
 import com.khoben.autotitle.huawei.ui.recyclerview.ListItemEventListener
 import com.khoben.autotitle.huawei.ui.recyclerview.OverlayViewAdapter
 import com.khoben.autotitle.huawei.ui.recyclerview.RecyclerViewClickListener
+import com.khoben.autotitle.huawei.ui.recyclerview.SwipeToDeleteCallback
 import kotlinx.android.synthetic.main.activity_video.*
 import me.toptas.fancyshowcase.FancyShowCaseQueue
 import me.toptas.fancyshowcase.FancyShowCaseView
@@ -181,6 +186,18 @@ class VideoEditActivity : MvpAppCompatActivity(),
                 })
         );
         adapter.listItemEventListener = this
+
+        val swipeHandler = object : SwipeToDeleteCallback(this) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val id = viewHolder.adapterPosition
+                Log.d(TAG, "Swiped $id")
+                // delete
+                presenter.deleteOverlay(id)
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(recyclerview)
+
     }
 
     override fun initVideoContainerLayoutParams() {

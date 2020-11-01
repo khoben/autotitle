@@ -362,6 +362,10 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         }
     }
 
+    fun deleteOverlay(item: Int) {
+        overlayHandler!!.removeOverlay(item)
+    }
+
     companion object {
         private val TAG = VideoEditActivityPresenter::class.java.simpleName
     }

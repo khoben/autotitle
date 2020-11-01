@@ -18,6 +18,8 @@ class OverlayViewAdapter() : ListAdapter<OverlayDataMapper, OverlayViewAdapter.O
     OverlayViewCallback()
 ), ListItemEventListener {
 
+    private var selectedItemId = 0
+
     var listItemEventListener: ListItemEventListener? = null
     override fun onClickedAddBelow(item: Int) {
         listItemEventListener?.onClickedAddBelow(item)
@@ -40,6 +42,7 @@ class OverlayViewAdapter() : ListAdapter<OverlayDataMapper, OverlayViewAdapter.O
 
         init {
             binding.addRecyclerItem.setOnClickListener {
+                if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
                 listItemEventListener?.onClickedAddBelow(adapterPosition)
             }
         }
