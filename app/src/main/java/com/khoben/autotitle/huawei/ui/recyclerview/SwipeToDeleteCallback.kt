@@ -62,7 +62,6 @@ abstract class SwipeToDeleteCallback internal constructor(private val context: C
             )
             return
         }
-        Log.d("TATAT", "$dX")
         mBackground.color = backgroundColor
         if (dX <= -itemView.right) {
             mBackground.setBounds(

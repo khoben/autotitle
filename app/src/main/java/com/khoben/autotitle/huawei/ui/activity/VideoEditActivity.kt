@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.khoben.autotitle.huawei.R
 import com.khoben.autotitle.huawei.databinding.ActivityVideoBinding
+import com.khoben.autotitle.huawei.model.MLCaption
 import com.khoben.autotitle.huawei.mvp.presenter.VideoEditActivityPresenter
 import com.khoben.autotitle.huawei.mvp.view.VideoEditActivityView
 import com.khoben.autotitle.huawei.ui.activity.MainActivity.Companion.VIDEO_SOURCE_URI_INTENT
@@ -34,6 +35,7 @@ import com.khoben.autotitle.huawei.ui.recyclerview.SwipeToDeleteCallback
 import kotlinx.android.synthetic.main.activity_video.*
 import me.toptas.fancyshowcase.FancyShowCaseQueue
 import me.toptas.fancyshowcase.FancyShowCaseView
+import me.toptas.fancyshowcase.listener.OnCompleteListener
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
 
@@ -93,12 +95,21 @@ class VideoEditActivity : MvpAppCompatActivity(),
 
     private fun initGuide() {
 
+        var dummy = false
+        if (adapter.itemCount == 0) {
+            dummy = true
+            // add dummy item, next delete them
+            adapter.submitList(mutableListOf(OverlayDataMapper(0L, 1000L, 0L, "Test")))
+        }
+
         val addCase = FancyShowCaseView.Builder(this)
             .backgroundColor(R.color.exo_white_opacity_70)
             .focusOn(videoControlsView!!.videoSeekBarView!!.imageList as View)
             .enableAutoTextPosition()
             .title(getString(R.string.guide_add_case))
             .build()
+
+        // TODO("Empty recycler")
 
         val recyclerItemCase = FancyShowCaseView.Builder(this)
             .backgroundColor(R.color.exo_white_opacity_70)
@@ -142,7 +153,17 @@ class VideoEditActivity : MvpAppCompatActivity(),
             .title(getString(R.string.guide_save))
             .build()
 
-        FancyShowCaseQueue()
+        FancyShowCaseQueue().apply {
+                completeListener = object: OnCompleteListener {
+                    override fun onComplete() {
+                        if (dummy) {
+                            dummy = false
+                            adapter.submitList(mutableListOf())
+                        }
+                    }
+
+                }
+            }
             .add(addCase)
             .add(recyclerItemCase)
             .add(recyclerItemEditCase)
