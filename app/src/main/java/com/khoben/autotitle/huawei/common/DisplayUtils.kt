@@ -9,6 +9,7 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import kotlin.math.max
 
 
 object DisplayUtils {
@@ -63,19 +64,23 @@ object DisplayUtils {
         val scaleX = parentView.scaleX * _scaleX
         val scaleY = parentView.scaleY * _scaleY
 
-        val newSizeX = displayedWidth * scaleX
-        val newSizeY = displayedHeight * scaleY
+        var newSizeX = displayedWidth * scaleX
+        var newSizeY = displayedHeight * scaleY
 
         if (newSizeX < 1 || newSizeY < 1) return null
 
-        val pivotX = newSizeX / 2
-        val pivotY = newSizeY / 2
+        val maxSize = max(newSizeX, newSizeY)
+        newSizeX = maxSize
+        newSizeY = maxSize
+
+        val pivotX = maxSize / 2
+        val pivotY = maxSize / 2
         val rotation = parentView.rotation
 
         val returnedBitmap =
             Bitmap.createBitmap(
-                (newSizeX).toInt(),
-                (newSizeY).toInt(),
+                (maxSize).toInt(),
+                (maxSize).toInt(),
                 Bitmap.Config.ARGB_8888
             )
         val canvas = Canvas(returnedBitmap)
