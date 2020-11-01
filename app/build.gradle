@@ -30,6 +30,10 @@ android {
         }
     }
 
+    lintOptions {
+        abortOnError false
+    }
+
     buildTypes {
         release {
             signingConfig signingConfigs.release
