@@ -33,4 +33,6 @@
     <string name="error_while_opening_file">Ошибка во время открытия файла</string>
     <string name="guide_doubletap">Кликните два раза по субтитру для его редактирования</string>
     <string name="guide_recycler_delete">Свайпните влево для удаления субтитра</string>
+    <string name="error_no_internet">Отсутствует подключение к сервису распознавания.</string>
+    <string name="error_no_captions">Субтитры не распознаны</string>
 </resources>

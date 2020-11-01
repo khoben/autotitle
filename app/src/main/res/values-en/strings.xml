@@ -33,4 +33,6 @@
     <string name="error_while_opening_file">Error while opening file.</string>
     <string name="guide_doubletap">Double tap on caption item to edit text.</string>
     <string name="guide_recycler_delete">Swipe from right to left on item for delete</string>
+    <string name="error_no_internet">No captions was detected due service unavailable</string>
+    <string name="error_no_captions">No captions was detected</string>
 </resources>

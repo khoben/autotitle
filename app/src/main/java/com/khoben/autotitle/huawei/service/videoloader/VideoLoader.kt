@@ -69,7 +69,7 @@ class VideoLoader {
                 Log.e(TAG, "Audio Transcription error: $error")
                 emptyList()
             },
-            { f, a -> Pair(f, a) }
+            { f, a -> Pair<List<Bitmap>, List<MLCaption>>(f, a) }
         ).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ result ->

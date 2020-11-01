@@ -28,6 +28,7 @@ import com.khoben.autotitle.huawei.ui.overlay.OverlayDataMapper
 import com.khoben.autotitle.huawei.ui.overlay.OverlayText
 import com.khoben.autotitle.huawei.ui.player.VideoControlsView
 import com.khoben.autotitle.huawei.ui.player.VideoSurfaceView
+import com.khoben.autotitle.huawei.ui.popup.PopUpClass
 import com.khoben.autotitle.huawei.ui.recyclerview.ListItemEventListener
 import com.khoben.autotitle.huawei.ui.recyclerview.OverlayViewAdapter
 import com.khoben.autotitle.huawei.ui.recyclerview.RecyclerViewClickListener
@@ -348,6 +349,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
     override fun showPopupWindow(title: String, content: String) {
         // TODO("Make popup")
         Log.d(TAG, "Popup: $title -> $content")
+        PopUpClass().showPopupWindow(this, content)
     }
 
     override fun onVideoProcessed(

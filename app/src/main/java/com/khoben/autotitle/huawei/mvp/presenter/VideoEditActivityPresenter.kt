@@ -9,6 +9,7 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.RelativeLayout
 import com.khoben.autotitle.huawei.App
+import com.khoben.autotitle.huawei.R
 import com.khoben.autotitle.huawei.common.FileUtils
 import com.khoben.autotitle.huawei.model.MLCaption
 import com.khoben.autotitle.huawei.model.VideoInfo
@@ -313,12 +314,15 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
             .load {
                 val audioR = it.second
                 val framesR = it.first
-                if (audioR.isNotEmpty()) {
-                    Log.d(TAG, "Text = $audioR")
-                    processTranscribe(audioR)
-                } else {
-                    Log.d(TAG, "No captions")
-                    viewState.showPopupWindow("No captions", "No captions was detected")
+                when {
+                    audioR.isNotEmpty() -> {
+                        Log.d(TAG, "Text = $audioR")
+                        processTranscribe(audioR)
+                    }
+                    else -> {
+                        Log.d(TAG, "No captions")
+                        viewState.showPopupWindow("", context.getString(R.string.error_no_captions))
+                    }
                 }
                 successProcessedVideo(framesR, frameTime)
             }
