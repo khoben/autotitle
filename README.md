@@ -27,7 +27,7 @@ This work is designed for <a href="https://honorcup.ru/">Huawei Honor Cup 2020 c
 - [Mp4Composer-android](https://github.com/MasayukiSuda/Mp4Composer-android)
 
 
-Test [apk](app/release/app-release.apk) file
+Pre-built apk files are [here](https://github.com/khoben/autotitle/releases)
 
 ## Screenshots
 
