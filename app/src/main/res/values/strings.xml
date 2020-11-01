@@ -35,4 +35,5 @@
     <string name="guide_resize">Use multitouch gestures for resizing and changing placement</string>
     <string name="guide_save">Click here for save</string>
     <string name="error_while_opening_file">Error while opening file</string>
+    <string name="guide_recycler_delete">Swipe from right to left on item for delete</string>
 </resources>

@@ -12,10 +12,12 @@ interface VideoEditActivityView : MvpView {
     fun stopLoadingView()
 
     @StateStrategyType(value = AddToEndStrategy::class)
-    fun onThumbnailsProcessed(thumbnails: List<Bitmap>, frameTime: Long)
+    fun onVideoProcessed(thumbnails: List<Bitmap>, frameTime: Long)
 
     @StateStrategyType(value = SingleStateStrategy::class)
-    fun onErrorThumbnailsProcessing(e: Throwable)
+    fun onErrorVideoProcessing(e: Throwable)
+
+    fun showPopupWindow(title: String, content: String)
 
     @StateStrategyType(value = OneExecutionStateStrategy::class)
     fun setControlsToTime(time: Long)

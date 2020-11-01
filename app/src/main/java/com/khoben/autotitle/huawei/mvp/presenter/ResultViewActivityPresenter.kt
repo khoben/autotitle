@@ -9,14 +9,14 @@ import androidx.core.content.FileProvider
 import com.khoben.autotitle.huawei.App
 import com.khoben.autotitle.huawei.BuildConfig
 import com.khoben.autotitle.huawei.R
-import com.khoben.autotitle.huawei.mvp.view.ResultView
+import com.khoben.autotitle.huawei.mvp.view.ResultActivityView
 import com.khoben.autotitle.huawei.service.mediaplayer.MediaExoPlayerUIWrapper
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import java.io.File
 
 @InjectViewState
-class ResultViewActivityPresenter : MvpPresenter<ResultView>() {
+class ResultViewActivityPresenter : MvpPresenter<ResultActivityView>() {
 
     private val mediaPlayer = MediaExoPlayerUIWrapper()
     private var videoPath: String? = null

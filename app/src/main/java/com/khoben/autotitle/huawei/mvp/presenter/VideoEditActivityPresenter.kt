@@ -316,6 +316,9 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
                 if (audioR.isNotEmpty()) {
                     Log.d(TAG, "Text = $audioR")
                     processTranscribe(audioR)
+                } else {
+                    Log.d(TAG, "No captions")
+                    viewState.showPopupWindow("No captions", "No captions was detected")
                 }
                 successProcessedVideo(framesR, frameTime)
             }
@@ -325,11 +328,11 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         Log.d(TAG, "Success processed")
         // TODO("Moxy tells that no views were attached then calling from Rx")
 //        VideoEditActivity.temporaryFixViewStateAccess!!.onThumbnailsProcessed(frames, frameTime)
-        viewState.onThumbnailsProcessed(frames, frameTime)
+        viewState.onVideoProcessed(frames, frameTime)
     }
 
     private fun errorProcessVideo(e: Throwable) {
-        viewState.onErrorThumbnailsProcessing(e)
+        viewState.onErrorVideoProcessing(e)
         // TODO("Moxy tells that no views were attached then calling from Rx")
 //        VideoEditActivity.temporaryFixViewStateAccess!!.onErrorThumbnailsProcessing(e)
     }

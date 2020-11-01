@@ -32,4 +32,5 @@
     <string name="guide_save">Для сохранения результата нажмите здесь</string>
     <string name="error_while_opening_file">Ошибка во время открытия файла</string>
     <string name="guide_doubletap">Кликните два раза по субтитру для его редактирования</string>
+    <string name="guide_recycler_delete">Свайпните влево для удаления субтитра</string>
 </resources>

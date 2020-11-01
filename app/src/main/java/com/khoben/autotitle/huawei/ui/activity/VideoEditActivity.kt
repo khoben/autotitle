@@ -80,7 +80,6 @@ class VideoEditActivity : MvpAppCompatActivity(),
         } else {
             presenter.setLayoutToEditor(this, overlayView, videoControlsView!!)
         }
-
         overlayView.setOnClickListener { onViewClicked(it) }
         binding.ivBack.setOnClickListener { onViewClicked(it) }
         binding.idEmptyView.addCaptionRecycler.setOnClickListener { onViewClicked(it) }
@@ -89,7 +88,6 @@ class VideoEditActivity : MvpAppCompatActivity(),
         saveBtn.setOnClickListener { onViewClicked(it) }
 
         initRecycler(binding.idEmptyView.root)
-
         // video init in presenter@onFirstViewAttach
     }
 
@@ -114,6 +112,13 @@ class VideoEditActivity : MvpAppCompatActivity(),
             .focusOn(recyclerview)
             .enableAutoTextPosition()
             .title(getString(R.string.guide_recycler_item_edit))
+            .build()
+
+        val recyclerItemDeleteCase = FancyShowCaseView.Builder(this)
+            .backgroundColor(R.color.exo_white_opacity_70)
+            .focusOn(recyclerview)
+            .enableAutoTextPosition()
+            .title(getString(R.string.guide_recycler_delete))
             .build()
 
         val doubleTapCase = FancyShowCaseView.Builder(this)
@@ -141,6 +146,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
             .add(addCase)
             .add(recyclerItemCase)
             .add(recyclerItemEditCase)
+            .add(recyclerItemDeleteCase)
             .add(doubleTapCase)
             .add(resizeCase)
             .add(saveCase)
@@ -313,16 +319,24 @@ class VideoEditActivity : MvpAppCompatActivity(),
         loadingView.visibility = View.GONE
     }
 
-    override fun onErrorThumbnailsProcessing(e: Throwable) {
+    override fun onErrorVideoProcessing(e: Throwable) {
         Log.e(TAG, e.toString())
-        // TODO("HIDE ANIMATION")
         stopLoadingView()
     }
 
-    override fun onThumbnailsProcessed(thumbnails: List<Bitmap>, frameTime: Long) {
+    override fun showPopupWindow(title: String, content: String) {
+        // TODO("Make popup")
+        Log.d(TAG, "Popup: $title -> $content")
+    }
+
+    override fun onVideoProcessed(
+        thumbnails: List<Bitmap>,
+        frameTime: Long
+    ) {
         runOnUiThread {
             Log.d(TAG, "Video processed")
             videoControlsView?.addFramesToSeekBar(thumbnails, frameTime)
+
             val sharedPref: SharedPreferences =
                 getSharedPreferences(PREF_NAME_GUIDE_SHOWN, PRIVATE_MODE)
             if (!sharedPref.getBoolean(PREF_NAME_GUIDE_SHOWN, false)) {
@@ -334,15 +348,13 @@ class VideoEditActivity : MvpAppCompatActivity(),
                 editor.putBoolean(PREF_NAME_GUIDE_SHOWN, true)
                 editor.apply()
             } else {
-                Log.d(TAG, "Was shown")
+                Log.d(TAG, "Guide was shown")
             }
-            // TODO("HIDE ANIMATION")
             stopLoadingView()
         }
     }
 
     override fun finishOnError() {
-        // TODO("HIDE ANIMATION")
         stopLoadingView()
         Toast.makeText(this, getString(R.string.some_error), LENGTH_SHORT).show()
         finish()
@@ -413,7 +425,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
     }
 
     private fun runFinishVideoView(filepath: String) {
-        val intent = Intent(this, ResultViewActivity::class.java).apply {
+        val intent = Intent(this, ResultActivity::class.java).apply {
             putExtra(VIDEO_OUTPUT_URI_INTENT, filepath)
         }
         startActivity(intent)
@@ -451,6 +463,5 @@ class VideoEditActivity : MvpAppCompatActivity(),
         const val VIDEO_OUTPUT_URI_INTENT = "VIDEO_OUTPUT_URI"
         private var PRIVATE_MODE = 0
         private const val PREF_NAME_GUIDE_SHOWN = "GUIDED_TOUR_897er9XX"
-        var temporaryFixViewStateAccess: VideoEditActivity? = null
     }
 }

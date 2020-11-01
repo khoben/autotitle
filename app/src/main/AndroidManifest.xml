@@ -37,7 +37,7 @@
         </activity>
         <activity android:name=".ui.activity.VideoEditActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ui.activity.ResultViewActivity"
+        <activity android:name=".ui.activity.ResultActivity"
             android:screenOrientation="portrait"
             />
     </application>

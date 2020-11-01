@@ -5,6 +5,7 @@ import com.khoben.autotitle.huawei.App
 import com.khoben.autotitle.huawei.service.audioextractor.AudioExtractor
 import com.khoben.autotitle.huawei.service.audioextractor.AudioExtractorImpl
 import com.khoben.autotitle.huawei.service.audiotranscriber.AudioTranscriber
+import com.khoben.autotitle.huawei.service.audiotranscriber.AudioTranscriberImpl
 import com.khoben.autotitle.huawei.service.audiotranscriber.AudioTranscriberTest
 import com.khoben.autotitle.huawei.service.frameretriever.VideoFrameRetriever
 import com.khoben.autotitle.huawei.service.frameretriever.VideoFrameRetrieverImpl
@@ -56,6 +57,6 @@ class ApplicationModule(private var app: App) {
     @Provides
     @Singleton
     internal fun provideAudioTranscriber(): AudioTranscriber {
-        return AudioTranscriberTest(context = app.applicationContext)
+        return AudioTranscriberImpl(context = app.applicationContext)
     }
 }
