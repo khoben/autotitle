@@ -3,29 +3,57 @@ package com.khoben.autotitle.huawei.mvp.view
 import android.graphics.Bitmap
 import com.khoben.autotitle.huawei.ui.overlay.OverlayText
 import moxy.MvpView
-import moxy.viewstate.strategy.AddToEndSingleStrategy
-import moxy.viewstate.strategy.StateStrategyType
+import moxy.viewstate.strategy.*
+import moxy.viewstate.strategy.alias.SingleState
 
 @StateStrategyType(value = AddToEndSingleStrategy::class)
 interface VideoEditActivityView : MvpView {
-    fun stopLoading()
-    fun onErrorThumbnailsProcessing(e: Throwable)
+
+    @StateStrategyType(value = SkipStrategy::class)
+    fun stopLoadingView()
+
+    @StateStrategyType(value = AddToEndStrategy::class)
     fun onThumbnailsProcessed(thumbnails: List<Bitmap>, frameTime: Long)
+
+    @StateStrategyType(value = SingleStateStrategy::class)
+    fun onErrorThumbnailsProcessing(e: Throwable)
+
+    @StateStrategyType(value = OneExecutionStateStrategy::class)
+    fun setControlsToTime(time: Long)
+
+    @StateStrategyType(value = AddToEndStrategy::class)
     fun initVideoContainerLayoutParams()
+
+    fun onOverlaysChangedListViewNotifier(overlays: List<OverlayText>)
+
+    @StateStrategyType(value = SkipStrategy::class)
     fun finishOnError()
+
+    @StateStrategyType(value = AddToEndStrategy::class)
+    fun recoverView()
+
+    @StateStrategyType(value = SkipStrategy::class)
+    fun onVideoSavingStarted()
+
+    @StateStrategyType(value = SkipStrategy::class)
+    fun onVideoSavingCancelled()
+
+    @StateStrategyType(value = SkipStrategy::class)
+    fun onVideoSavingError(msg: String)
+
+    @StateStrategyType(value = SkipStrategy::class)
+    fun onVideoSavingProgress(progress: Double)
+
+    @StateStrategyType(value = SkipStrategy::class)
+    fun onVideoSavingComplete(filepath: String)
+
+    @StateStrategyType(value = AddToEndStrategy::class)
     fun videoPlay(baseImageViews: List<OverlayText>?, isVideoPlaying: Boolean)
+
+    @StateStrategyType(value = AddToEndStrategy::class)
     fun drawOverlayTimeRange(
         overlays: List<OverlayText>?,
         selectedOverlay: OverlayText?,
         isEdit: Boolean
     )
-
-    fun recoverView()
-    fun onOverlaysChangedListViewNotifier(overlays: List<OverlayText>)
-    fun onVideoSavingStarted()
-    fun onVideoSavingCancelled()
-    fun onVideoSavingError(msg: String)
-    fun onVideoSavingProgress(progress: Double)
-    fun onVideoSavingComplete(filepath: String)
-    fun setControlsToTime(time: Long)
 }

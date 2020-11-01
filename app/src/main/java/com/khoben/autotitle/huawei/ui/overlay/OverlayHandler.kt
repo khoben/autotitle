@@ -14,8 +14,8 @@ import com.khoben.autotitle.huawei.ui.popup.TextEditorDialogFragment
 import java.util.*
 
 class OverlayHandler private constructor(
-    private val context: Context,
-    private val parentView: RelativeLayout
+    private var context: Context,
+    private var parentView: RelativeLayout
 ) : VideoSeekBarView.SeekBarListener {
 
     private var TAG: String = OverlayHandler::class.java.simpleName
@@ -40,6 +40,12 @@ class OverlayHandler private constructor(
         fun onAdded(overlay: OverlayText)
         fun onAdded(overlay: OverlayText?, overlays: List<OverlayText>, isEdit: Boolean = true)
         fun onSelect(overlay: OverlayText?, overlays: List<OverlayText>)
+    }
+
+    fun setLayout(context: Context,
+                  parentView: RelativeLayout) {
+        this.context = context
+        this.parentView = parentView
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -99,6 +105,10 @@ class OverlayHandler private constructor(
         currentOverlayView!!.isInEdit = true
         overlayObjectEventListener?.onAdded(currentOverlayView!!)
         overlayObjectEventListener?.onAdded(currentOverlayView!!, overlayViews)
+    }
+
+    fun removeOverlay(item: Int) {
+        removeOverlay(overlayViews[item])
     }
 
     private fun removeOverlay(overlayObject: OverlayText) {

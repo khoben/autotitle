@@ -71,7 +71,12 @@ class VideoEditActivity : MvpAppCompatActivity(),
 
         sourceVideoUri = intent.getParcelableExtra(VIDEO_SOURCE_URI_INTENT)
 
-        presenter.initEditor(this, overlayView, videoControlsView!!)
+        if (savedInstanceState == null) {
+            presenter.initEditor(this, overlayView, videoControlsView!!)
+            presenter.setUri(sourceVideoUri!!)
+        } else {
+            presenter.setLayoutToEditor(this, overlayView, videoControlsView!!)
+        }
 
         overlayView.setOnClickListener { onViewClicked(it) }
         binding.ivBack.setOnClickListener { onViewClicked(it) }
@@ -83,7 +88,6 @@ class VideoEditActivity : MvpAppCompatActivity(),
         initRecycler(binding.idEmptyView.root)
 
         // video init in presenter@onFirstViewAttach
-        presenter.setUri(sourceVideoUri!!)
     }
 
     private fun initGuide() {

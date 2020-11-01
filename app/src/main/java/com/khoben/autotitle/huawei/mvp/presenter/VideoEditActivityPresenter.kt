@@ -63,6 +63,12 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         viewState.initVideoContainerLayoutParams()
     }
 
+    fun setLayoutToEditor(context: Context,
+                          parentView: RelativeLayout, videoView: VideoControlsView) {
+        overlayHandler?.setLayout(context, parentView)
+        videoView.seekBarListener = this
+    }
+
     /**
      * Init editor that handles add/edit/delete operations
      * on overlays
