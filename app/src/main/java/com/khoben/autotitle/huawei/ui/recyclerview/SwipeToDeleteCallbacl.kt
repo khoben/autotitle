@@ -28,9 +28,9 @@ abstract class SwipeToDeleteCallback internal constructor(private val context: C
     }
 
     override fun onMove(
-            recyclerView: RecyclerView,
-            viewHolder: RecyclerView.ViewHolder,
-            viewHolder1: RecyclerView.ViewHolder
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        viewHolder1: RecyclerView.ViewHolder
     ): Boolean {
         return false
     }
@@ -66,7 +66,7 @@ abstract class SwipeToDeleteCallback internal constructor(private val context: C
         mBackground.color = backgroundColor
         if (dX <= -itemView.right) {
             mBackground.setBounds(
-                0,0,0,0
+                0, 0, 0, 0
             )
         } else {
             mBackground.setBounds(

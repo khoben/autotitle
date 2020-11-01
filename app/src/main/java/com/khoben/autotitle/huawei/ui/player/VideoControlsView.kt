@@ -130,20 +130,20 @@ class VideoControlsView(context: Context, attrs: AttributeSet) :
             playPauseButton!!.setImageDrawable(playIcon)
             val drawable = playPauseButton!!.drawable
             if (drawable is AnimatedVectorDrawableCompat) {
-                avd = drawable as AnimatedVectorDrawableCompat
+                avd = drawable
                 avd!!.start()
             } else if (drawable is AnimatedVectorDrawable) {
-                avd2 = drawable as AnimatedVectorDrawable
+                avd2 = drawable
                 avd2!!.start()
             }
         } else {
             playPauseButton!!.setImageDrawable(pauseIcon)
             val drawable = playPauseButton!!.drawable
             if (drawable is AnimatedVectorDrawableCompat) {
-                avd = drawable as AnimatedVectorDrawableCompat
+                avd = drawable
                 avd!!.start()
             } else if (drawable is AnimatedVectorDrawable) {
-                avd2 = drawable as AnimatedVectorDrawable
+                avd2 = drawable
                 avd2!!.start()
             }
         }

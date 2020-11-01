@@ -49,7 +49,7 @@ class PopWindowEditTextView(private val context: Context) {
         popupWindow!!.isOutsideTouchable = true
         popupWindow!!.setBackgroundDrawable(BitmapDrawable())
         popupWindow!!.setOnDismissListener(PopupDismissListener())
-        popupWindowView.setOnTouchListener({ v, event -> false })
+        popupWindowView.setOnTouchListener { _, _ -> false }
     }
 
     fun backgroundAlpha(bgAlpha: Float) {

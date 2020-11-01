@@ -27,8 +27,8 @@ class AudioExtractorImpl : AudioExtractor {
                     outAudioPath,
                     -1,
                     -1,
-                    true,
-                    false
+                    useAudio = true,
+                    useVideo = false
                 )
             } catch (e: Exception) {
                 emitter.onError(e)
@@ -46,8 +46,8 @@ class AudioExtractorImpl : AudioExtractor {
                     outAudioPath,
                     -1,
                     -1,
-                    true,
-                    false
+                    useAudio = true,
+                    useVideo = false
                 )
             } catch (e: Exception) {
                 emitter.onError(e)

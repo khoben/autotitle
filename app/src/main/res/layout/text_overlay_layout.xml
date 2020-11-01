@@ -31,7 +31,7 @@
         android:layout_gravity="top|end"
         android:elevation="1dp"
         android:visibility="gone"
-        app:tint="?colorPrimary"
+        app:tint="@color/red_color_picker"
         android:src="@drawable/ic_close_icon" />
 
 </com.khoben.autotitle.huawei.ui.overlay.OverlayText>

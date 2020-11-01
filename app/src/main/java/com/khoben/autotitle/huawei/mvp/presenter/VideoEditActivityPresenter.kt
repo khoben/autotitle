@@ -63,8 +63,10 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         viewState.initVideoContainerLayoutParams()
     }
 
-    fun setLayoutToEditor(context: Context,
-                          parentView: RelativeLayout, videoView: VideoControlsView) {
+    fun setLayoutToEditor(
+        context: Context,
+        parentView: RelativeLayout, videoView: VideoControlsView
+    ) {
         overlayHandler?.setLayout(context, parentView)
         videoView.seekBarListener = this
     }

@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import com.khoben.autotitle.huawei.ui.overlay.OverlayText
 import moxy.MvpView
 import moxy.viewstate.strategy.*
-import moxy.viewstate.strategy.alias.SingleState
 
 @StateStrategyType(value = AddToEndSingleStrategy::class)
 interface VideoEditActivityView : MvpView {

@@ -4,8 +4,6 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.Color.RED
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -311,14 +309,14 @@ class VideoEditActivity : MvpAppCompatActivity(),
         super.onWindowFocusChanged(hasFocus)
     }
 
-    override fun stopLoading() {
+    override fun stopLoadingView() {
         loadingView.visibility = View.GONE
     }
 
     override fun onErrorThumbnailsProcessing(e: Throwable) {
         Log.e(TAG, e.toString())
         // TODO("HIDE ANIMATION")
-        stopLoading()
+        stopLoadingView()
     }
 
     override fun onThumbnailsProcessed(thumbnails: List<Bitmap>, frameTime: Long) {
@@ -339,13 +337,13 @@ class VideoEditActivity : MvpAppCompatActivity(),
                 Log.d(TAG, "Was shown")
             }
             // TODO("HIDE ANIMATION")
-            stopLoading()
+            stopLoadingView()
         }
     }
 
     override fun finishOnError() {
         // TODO("HIDE ANIMATION")
-        stopLoading()
+        stopLoadingView()
         Toast.makeText(this, getString(R.string.some_error), LENGTH_SHORT).show()
         finish()
     }

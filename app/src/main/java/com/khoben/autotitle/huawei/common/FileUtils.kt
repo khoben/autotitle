@@ -11,6 +11,13 @@ import java.io.File
 
 object FileUtils {
 
+    /**
+     * Get random filepath in external specified directory
+     * @param context Context
+     * @param extension String
+     * @param directory String
+     * @return Filepath
+     */
     fun getRandomFilepath(
         context: Context,
         extension: String,
@@ -19,6 +26,13 @@ object FileUtils {
         return "${context.getExternalFilesDir(directory)?.absolutePath}/${System.currentTimeMillis()}.$extension"
     }
 
+    /**
+     * Get random Uri in external specified directory
+     * @param context Context
+     * @param extension String
+     * @param directory String
+     * @return Uri
+     */
     fun getRandomUri(
         context: Context,
         extension: String,
@@ -27,6 +41,12 @@ object FileUtils {
         return getUriFromPath(context, getRandomFilepath(context, extension, directory))
     }
 
+    /**
+     * Get uri from provided filepath
+     * @param context Context
+     * @param path String
+     * @return Uri
+     */
     fun getUriFromPath(context: Context, path: String): Uri {
         return FileProvider.getUriForFile(
             context,
@@ -35,6 +55,11 @@ object FileUtils {
         )
     }
 
+    /**
+     * Deletes file from provided path
+     * @param context Context
+     * @param path String
+     */
     fun deleteFile(context: Context, path: String) {
         val file = File(path)
         val deleted = file.delete()
@@ -49,11 +74,19 @@ object FileUtils {
         }
     }
 
-
+    /**
+     * Get path of external movie directory
+     * @return File
+     */
     fun getAndroidMoviesFolder(): File {
         return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES)
     }
 
+    /**
+     * Same as getRandomFilepath
+     * @param extension String
+     * @return String
+     */
     fun getPublicFilepath(extension: String): String {
         return "${getAndroidMoviesFolder().absolutePath}/${System.currentTimeMillis()}.$extension"
     }

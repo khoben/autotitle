@@ -42,8 +42,10 @@ class OverlayHandler private constructor(
         fun onSelect(overlay: OverlayText?, overlays: List<OverlayText>)
     }
 
-    fun setLayout(context: Context,
-                  parentView: RelativeLayout) {
+    fun setLayout(
+        context: Context,
+        parentView: RelativeLayout
+    ) {
         this.context = context
         this.parentView = parentView
     }

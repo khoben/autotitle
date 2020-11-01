@@ -99,7 +99,7 @@ class TextEditorDialogFragment : DialogFragment() {
     }
 
     companion object {
-        val TAG = TextEditorDialogFragment::class.java.simpleName
+        var TAG: String = TextEditorDialogFragment::class.java.simpleName
         const val EXTRA_INPUT_TEXT = "extra_input_text"
         const val EXTRA_COLOR_CODE = "extra_color_code"
 
