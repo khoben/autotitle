@@ -5,6 +5,7 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
@@ -94,9 +95,9 @@ object DisplayUtils {
         canvas.scale(scaleX, scaleY, pivotX, pivotY)
         if (view is TextView) {
             // text metrics
-            view.measure(0, 0)
-            val txtWidth = view.measuredWidth
-            val txtHeight = view.measuredHeight
+//            view.measure(0, 0)
+            val txtWidth = view.width
+            val txtHeight = view.height
             // apply transformation
             canvas.translate((newSizeX - txtWidth) / 2F, (newSizeY - txtHeight) / 2F)
         }
