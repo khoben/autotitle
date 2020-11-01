@@ -1,6 +1,7 @@
 package com.khoben.autotitle.huawei.common.openglfilter
 
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.Rect
 import android.util.Log
 import com.daasuu.mp4compose.filter.GlOverlayFilter
@@ -21,6 +22,10 @@ class GLViewOverlayFilter(
 
     private var currentTimeMs = 0L
     private var boundingRect = Rect()
+    private var paint = Paint().apply {
+        isAntiAlias = true
+        isFilterBitmap = true
+    }
 
     override fun drawCanvas(canvas: Canvas) {
         if (currentTimeMs < 0L) return
@@ -41,7 +46,8 @@ class GLViewOverlayFilter(
                 val centerY = boundingRect.exactCenterY()
                 val x = centerX * scaleX - bitmapCenterX
                 val y = centerY * scaleY - bitmapCenterY
-                canvas.drawBitmap(b, x, y, null)
+                canvas.drawBitmap(b, x, y, paint)
+                b.recycle()
             }
         }
     }
