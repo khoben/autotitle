@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="60dp"
-    android:gravity="center_horizontal"
-    android:orientation="vertical">
+    android:layout_height="60dp">
 
     <TextView
-        android:id="@+id/tv_start_time"
+        android:id="@+id/edit_bar_time"
+        android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
         android:textSize="12sp"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:text="0:0:1.1"
+        tools:visibility="visible"
+        tools:ignore="SmallSp" />
 
     <ImageView
-        android:id="@+id/iv_edit_bar_left"
+        android:id="@+id/edit_bar_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="15dp"
-        android:src="@drawable/camera_select_normal" />
+        android:layout_margin="15dp"
+        android:src="@drawable/camera_select_normal"
+        tools:ignore="ContentDescription" />
 
-</LinearLayout>
+</RelativeLayout>

@@ -17,7 +17,7 @@ class EmptyRecyclerView : RecyclerView {
         }
 
         override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-            Log.i(TAG, "onItemRangeInserted$itemCount")
+            Log.i(TAG, "onItemRangeInserted. Inserted: $itemCount items")
             checkIfEmpty()
         }
 
@@ -56,6 +56,6 @@ class EmptyRecyclerView : RecyclerView {
     }
 
     companion object {
-        private const val TAG = "EmptyRecyclerView"
+        private val TAG = EmptyRecyclerView::class.java.simpleName
     }
 }

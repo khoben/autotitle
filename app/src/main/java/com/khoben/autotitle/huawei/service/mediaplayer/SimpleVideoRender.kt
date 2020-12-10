@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.SurfaceTexture
 import android.opengl.GLES20
 import android.opengl.Matrix
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.Surface
 import java.io.IOException
@@ -15,52 +17,39 @@ import javax.microedition.khronos.opengles.GL10
 
 class SimpleVideoRender(context: Context?) : VideoRender(),
     SurfaceTexture.OnFrameAvailableListener {
-    private val mTriangleVerticesData = floatArrayOf( // X, Y, Z, U, V
-        -1.0f, -1.0f, 0f, 0f, 0f,
-        1.0f, -1.0f, 0f, 1f, 0f,
-        -1.0f, 1.0f, 0f, 0f, 1f,
-        1.0f, 1.0f, 0f, 1f, 1f
-    )
+
     private val mTriangleVertices: FloatBuffer
-    private val mVertexShader = """uniform mat4 uMVPMatrix;
-                                        uniform mat4 uSTMatrix;
-                                        attribute vec4 aPosition;
-                                        attribute vec4 aTextureCoord;
-                                        varying vec2 vTextureCoord;
-                                        void main() {
-                                          gl_Position = uMVPMatrix * aPosition;
-                                          vTextureCoord = (uSTMatrix * aTextureCoord).xy;
-                                        }
-                                        """
-    private val mFragmentShader = """#extension GL_OES_EGL_image_external : require
-                                        precision mediump float;
-                                        varying vec2 vTextureCoord;
-                                        uniform samplerExternalOES sTexture;
-                                        void main() {
-                                          gl_FragColor = texture2D(sTexture, vTextureCoord);
-                                        }
-                                        """
     private val mMVPMatrix = FloatArray(16)
     private val mSTMatrix = FloatArray(16)
+
     private var mProgram = 0
     private var mTextureID = 0
     private var muMVPMatrixHandle = 0
     private var muSTMatrixHandle = 0
     private var maPositionHandle = 0
     private var maTextureHandle = 0
+
     private var updateSurface = false
-    private var surface: SurfaceTexture? = null
+
+    private var surfaceTexture: SurfaceTexture? = null
     private var mediaPlayer: MediaSurfacePlayer? = null
 
     override fun setMediaPlayer(player: MediaSurfacePlayer?) {
         mediaPlayer = player
     }
 
+    @Synchronized
+    override fun onFrameAvailable(surface: SurfaceTexture) {
+        Log.d(TAG, "New frame available!")
+        updateSurface = true
+    }
+
     override fun onDrawFrame(glUnused: GL10) {
         synchronized(this) {
             if (updateSurface) {
-                surface!!.updateTexImage()
-                surface!!.getTransformMatrix(mSTMatrix)
+                Log.d(TAG, "Update texture!")
+                surfaceTexture!!.updateTexImage()
+                surfaceTexture!!.getTransformMatrix(mSTMatrix)
                 updateSurface = false
             }
         }
@@ -138,23 +127,19 @@ class SimpleVideoRender(context: Context?) : VideoRender(),
          * Create the SurfaceTexture that will feed this textureID,
          * and pass it to the MediaPlayer
          */
-        surface = SurfaceTexture(mTextureID)
-        surface!!.setOnFrameAvailableListener(this)
-        val surface = Surface(surface)
-        mediaPlayer!!.setSurface(surface)
-//            surface.release()
-        try {
-            mediaPlayer!!.prepare()
-        } catch (t: IOException) {
-            Log.e(TAG, "media player prepare failed")
+        surfaceTexture = SurfaceTexture(mTextureID)
+        surfaceTexture!!.setOnFrameAvailableListener(this)
+
+        Handler(Looper.getMainLooper()).post {
+            mediaPlayer!!.setSurface(Surface(surfaceTexture))
+            try {
+                mediaPlayer!!.prepare()
+            } catch (t: IOException) {
+                Log.e(TAG, "Error while MediaPlayer preparing")
+            }
+            mediaPlayer!!.initSurface()
         }
         synchronized(this) { updateSurface = false }
-        mediaPlayer!!.initSurface()
-    }
-
-    @Synchronized
-    override fun onFrameAvailable(surface: SurfaceTexture) {
-        updateSurface = true
     }
 
     private fun loadShader(shaderType: Int, source: String): Int {
@@ -220,6 +205,33 @@ class SimpleVideoRender(context: Context?) : VideoRender(),
         private const val TRIANGLE_VERTICES_DATA_POS_OFFSET = 0
         private const val TRIANGLE_VERTICES_DATA_UV_OFFSET = 3
         private const val GL_TEXTURE_EXTERNAL_OES = 0x8D65
+
+        private val mTriangleVerticesData = floatArrayOf( // X, Y, Z, U, V
+            -1.0f, -1.0f, 0f, 0f, 0f,
+            1.0f, -1.0f, 0f, 1f, 0f,
+            -1.0f, 1.0f, 0f, 0f, 1f,
+            1.0f, 1.0f, 0f, 1f, 1f
+        )
+
+        private const val mVertexShader = """uniform mat4 uMVPMatrix;
+                                        uniform mat4 uSTMatrix;
+                                        attribute vec4 aPosition;
+                                        attribute vec4 aTextureCoord;
+                                        varying vec2 vTextureCoord;
+                                        void main() {
+                                          gl_Position = uMVPMatrix * aPosition;
+                                          vTextureCoord = (uSTMatrix * aTextureCoord).xy;
+                                        }
+                                        """
+        private const val mFragmentShader = """#extension GL_OES_EGL_image_external : require
+                                        precision mediump float;
+                                        varying vec2 vTextureCoord;
+                                        uniform samplerExternalOES sTexture;
+                                        void main() {
+                                          gl_FragColor = texture2D(sTexture, vTextureCoord);
+                                        }
+                                        """
+
     }
 
     init {

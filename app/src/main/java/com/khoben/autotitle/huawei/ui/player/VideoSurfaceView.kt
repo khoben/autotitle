@@ -49,9 +49,7 @@ class VideoSurfaceView : GLSurfaceView {
                 // the size is fixed
                 width = widthSpecSize
                 height = heightSpecSize
-
                 Log.d(TAG, "EXACTLY")
-
                 // for compatibility, we adjust size based on aspect ratio
                 when {
                     mVideoWidth * height < width * mVideoHeight -> {

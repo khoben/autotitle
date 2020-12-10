@@ -2,6 +2,7 @@ package com.khoben.autotitle.huawei.ui.overlay
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -44,6 +45,7 @@ abstract class OverlayObject(context: Context, attrs: AttributeSet) :
     }
 
     override fun compareTo(other: OverlayObject): Int {
+        Log.d("FAF", "compare")
         return (this.startTime - other.startTime).toInt()
     }
 }

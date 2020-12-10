@@ -11,7 +11,10 @@ import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.RelativeLayout
+import android.widget.TextView
+import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -20,7 +23,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.khoben.autotitle.huawei.R
 import com.khoben.autotitle.huawei.databinding.ActivityVideoBinding
-import com.khoben.autotitle.huawei.model.MLCaption
 import com.khoben.autotitle.huawei.mvp.presenter.VideoEditActivityPresenter
 import com.khoben.autotitle.huawei.mvp.view.VideoEditActivityView
 import com.khoben.autotitle.huawei.ui.activity.MainActivity.Companion.VIDEO_SOURCE_URI_INTENT
@@ -48,26 +50,24 @@ class VideoEditActivity : MvpAppCompatActivity(),
     @InjectPresenter
     lateinit var presenter: VideoEditActivityPresenter
 
-    private var sourceVideoUri: Uri? = null
-
-    private var videoSurfaceView: VideoSurfaceView? = null
-    private var videoControlsView: VideoControlsView? = null
-
-    private lateinit var saveBtn: Button
+    private lateinit var videoSurfaceView: VideoSurfaceView
     private lateinit var overlayView: RelativeLayout
-    private lateinit var popUpLoadingContainer: FrameLayout
-    private lateinit var popUpLoadingContainerText: TextView
+    private lateinit var videoControlsView: VideoControlsView
 
-    private lateinit var loadingView: View
+    private lateinit var popUpLoadingContainer: View
+    private lateinit var popUpLoadingContainerText: TextView
+    private lateinit var saveBtn: Button
+
+    private lateinit var popUpLoadingView: View
     private lateinit var binding: ActivityVideoBinding
-    private var adapter: OverlayViewAdapter = OverlayViewAdapter()
+    private val overlayViewAdapter: OverlayViewAdapter = OverlayViewAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityVideoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        loadingView = binding.loadingView.root
+        popUpLoadingView = binding.loadingView.root
 
         popUpLoadingContainer = binding.popuploader.root
         popUpLoadingContainerText = binding.popuploader.popVideoPercentTv
@@ -75,107 +75,25 @@ class VideoEditActivity : MvpAppCompatActivity(),
         videoSurfaceView = binding.videolayer.videoPreview
         overlayView = binding.videolayer.overlaysRoot
 
-        sourceVideoUri = intent.getParcelableExtra(VIDEO_SOURCE_URI_INTENT)
+        val sourceVideoUri = intent.getParcelableExtra<Uri>(VIDEO_SOURCE_URI_INTENT)
 
         if (savedInstanceState == null) {
-            presenter.initEditor(this, overlayView, videoControlsView!!)
+            presenter.initEditor(this, overlayView, videoControlsView)
             presenter.setUri(sourceVideoUri!!)
         } else {
-            presenter.setLayoutToEditor(this, overlayView, videoControlsView!!)
+            presenter.setLayoutToEditor(this, overlayView, videoControlsView)
         }
         overlayView.setOnClickListener { onViewClicked(it) }
         binding.ivBack.setOnClickListener { onViewClicked(it) }
         binding.idEmptyView.addCaptionRecycler.setOnClickListener { onViewClicked(it) }
-        videoControlsView!!.llPlayVideoView!!.setOnClickListener { onViewClicked(it) }
         saveBtn = binding.editVideoNextTv
         saveBtn.setOnClickListener { onViewClicked(it) }
 
-        initRecycler(binding.idEmptyView.root)
+        initRecyclerView(binding.idEmptyView.root)
         // video init in presenter@onFirstViewAttach
     }
 
-    private fun initGuide() {
-
-        var dummy = false
-        if (adapter.itemCount == 0) {
-            dummy = true
-            // add dummy item, next delete them
-            adapter.submitList(mutableListOf(OverlayDataMapper(0L, 1000L, 0L, "Test")))
-        }
-
-        val addCase = FancyShowCaseView.Builder(this)
-            .backgroundColor(R.color.exo_white_opacity_70)
-            .focusOn(videoControlsView!!.videoSeekBarView!!.imageList as View)
-            .enableAutoTextPosition()
-            .title(getString(R.string.guide_add_case))
-            .build()
-
-        // TODO("Empty recycler")
-
-        val recyclerItemCase = FancyShowCaseView.Builder(this)
-            .backgroundColor(R.color.exo_white_opacity_70)
-            .focusOn(recyclerview)
-            .enableAutoTextPosition()
-            .title(getString(R.string.guide_recycler_item))
-            .build()
-
-        val recyclerItemEditCase = FancyShowCaseView.Builder(this)
-            .backgroundColor(R.color.exo_white_opacity_70)
-            .focusOn(recyclerview)
-            .enableAutoTextPosition()
-            .title(getString(R.string.guide_recycler_item_edit))
-            .build()
-
-        val recyclerItemDeleteCase = FancyShowCaseView.Builder(this)
-            .backgroundColor(R.color.exo_white_opacity_70)
-            .focusOn(recyclerview)
-            .enableAutoTextPosition()
-            .title(getString(R.string.guide_recycler_delete))
-            .build()
-
-        val doubleTapCase = FancyShowCaseView.Builder(this)
-            .backgroundColor(R.color.exo_white_opacity_70)
-            .focusOn(overlayView)
-            .enableAutoTextPosition()
-            .title(getString(R.string.guide_doubletap))
-            .build()
-
-        val resizeCase = FancyShowCaseView.Builder(this)
-            .backgroundColor(R.color.exo_white_opacity_70)
-            .focusOn(overlayView)
-            .enableAutoTextPosition()
-            .title(getString(R.string.guide_resize))
-            .build()
-
-        val saveCase = FancyShowCaseView.Builder(this)
-            .backgroundColor(R.color.exo_white_opacity_70)
-            .focusOn(saveBtn)
-            .enableAutoTextPosition()
-            .title(getString(R.string.guide_save))
-            .build()
-
-        FancyShowCaseQueue().apply {
-                completeListener = object: OnCompleteListener {
-                    override fun onComplete() {
-                        if (dummy) {
-                            dummy = false
-                            adapter.submitList(mutableListOf())
-                        }
-                    }
-
-                }
-            }
-            .add(addCase)
-            .add(recyclerItemCase)
-            .add(recyclerItemEditCase)
-            .add(recyclerItemDeleteCase)
-            .add(doubleTapCase)
-            .add(resizeCase)
-            .add(saveCase)
-            .show()
-    }
-
-    private fun initRecycler(emptyView: View) {
+    private fun initRecyclerView(emptyView: View) {
         recyclerview.also {
             it.addItemDecoration(
                 DividerItemDecoration(
@@ -190,7 +108,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
                     )
                 })
             it.layoutManager = LinearLayoutManager(this)
-            it.adapter = adapter
+            it.adapter = overlayViewAdapter
             it.setEmptyView(emptyView)
         }
 
@@ -211,46 +129,41 @@ class VideoEditActivity : MvpAppCompatActivity(),
                     }
                 })
         );
-        adapter.listItemEventListener = this
+        overlayViewAdapter.listItemEventListener = this
 
         val swipeHandler = object : SwipeToDeleteCallback(this) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val id = viewHolder.adapterPosition
-                Log.d(TAG, "Swiped $id")
-                // delete
-                presenter.deleteOverlay(id)
+                // swipe to delete
+                presenter.deleteOverlay(viewHolder.adapterPosition)
             }
         }
-        val itemTouchHelper = ItemTouchHelper(swipeHandler)
-        itemTouchHelper.attachToRecyclerView(recyclerview)
-
+        ItemTouchHelper(swipeHandler).attachToRecyclerView(recyclerview)
     }
 
     override fun initVideoContainerLayoutParams() {
         val videoDetails = presenter.getVideoDetails()!!
         Log.d(TAG, "Video details = $videoDetails")
-        videoControlsView!!.setMediaDuration(videoDetails.duration)
+        videoControlsView.setMediaDuration(videoDetails.duration)
         if (videoDetails.rotation == 0
             && videoDetails.width > videoDetails.height
             || videoDetails.rotation == 180 && videoDetails.width > videoDetails.height
 
         ) {
-
-            videoSurfaceView!!.setVideoSize(videoDetails.width, videoDetails.height)
+            videoSurfaceView.setVideoSize(videoDetails.width, videoDetails.height)
             Log.d(TAG, "Horizontal video")
         } else {
             // rotated
             if (videoDetails.rotation == 0) {
-                videoSurfaceView!!.setVideoSize(videoDetails.width, videoDetails.height)
+                videoSurfaceView.setVideoSize(videoDetails.width, videoDetails.height)
             } else {
-                videoSurfaceView!!.setVideoSize(videoDetails.height, videoDetails.width)
+                videoSurfaceView.setVideoSize(videoDetails.height, videoDetails.width)
             }
             Log.d(TAG, "Vertical video")
         }
 
-        videoSurfaceView!!.post {
-            val width: Int = videoSurfaceView!!.measuredWidth
-            val height: Int = videoSurfaceView!!.measuredHeight
+        videoSurfaceView.post {
+            val width: Int = videoSurfaceView.measuredWidth
+            val height: Int = videoSurfaceView.measuredHeight
 
             val layoutParams: ViewGroup.LayoutParams = overlayView.layoutParams
             layoutParams.width = width
@@ -280,10 +193,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
                 presenter.addOverlayAtCurrentPosition()
             }
             R.id.edit_video_next_tv -> {
-                presenter.saveVideo(this, Pair(videoSurfaceView!!.width, videoSurfaceView!!.height))
-            }
-            R.id.ll_play_video -> {
-                presenter.togglePlayState()
+                presenter.saveVideo(this, Pair(videoSurfaceView.width, videoSurfaceView.height))
             }
         }
     }
@@ -295,8 +205,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
 
     override fun onDestroy() {
         super.onDestroy()
-        videoSurfaceView?.onDestroy()
-        System.gc()
+        videoSurfaceView.onDestroy()
     }
 
     override fun onBackPressed() {
@@ -309,12 +218,13 @@ class VideoEditActivity : MvpAppCompatActivity(),
             func = { onSuperBackPressed() }
             text = getString(R.string.exit_question)
         }
-        AlertDialog.Builder(this, AlertDialog.THEME_DEVICE_DEFAULT_DARK).setMessage(text)
+        AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog_Alert)
+            .setMessage(text)
             .setCancelable(false)
-            .setPositiveButton(getString(R.string.yes_caption)) { dialog, id ->
+            .setPositiveButton(getString(R.string.yes_caption)) { _, _ ->
                 func()
             }
-            .setNegativeButton(getString(R.string.no_caption)) { dialog, id ->
+            .setNegativeButton(getString(R.string.no_caption)) { dialog, _ ->
                 dialog.cancel()
             }
             .create()
@@ -338,7 +248,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
     }
 
     override fun stopLoadingView() {
-        loadingView.visibility = View.GONE
+        popUpLoadingView.visibility = View.GONE
     }
 
     override fun onErrorVideoProcessing(e: Throwable) {
@@ -347,7 +257,6 @@ class VideoEditActivity : MvpAppCompatActivity(),
     }
 
     override fun showPopupWindow(title: String, content: String) {
-        // TODO("Make popup")
         Log.d(TAG, "Popup: $title -> $content")
         PopUpClass().showPopupWindow(this, content)
     }
@@ -358,7 +267,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
     ) {
         runOnUiThread {
             Log.d(TAG, "Video processed")
-            videoControlsView?.addFramesToSeekBar(thumbnails, frameTime)
+            videoControlsView.addFramesToSeekBar(thumbnails, frameTime)
 
             val sharedPref: SharedPreferences =
                 getSharedPreferences(PREF_NAME_GUIDE_SHOWN, PRIVATE_MODE)
@@ -377,6 +286,84 @@ class VideoEditActivity : MvpAppCompatActivity(),
         }
     }
 
+    private fun initGuide() {
+        var dummy = false
+        if (overlayViewAdapter.itemCount == 0) {
+            dummy = true
+            // add dummy item, delete it later
+            overlayViewAdapter.submitList(mutableListOf(OverlayDataMapper(0L, 1000L, 0L, "Test")))
+        }
+
+        val addCase = FancyShowCaseView.Builder(this)
+            .backgroundColor(R.color.white75)
+            .focusOn(videoControlsView.videoSeekBarView as View)
+            .enableAutoTextPosition()
+            .title(getString(R.string.guide_add_case))
+            .build()
+
+        val recyclerItemCase = FancyShowCaseView.Builder(this)
+            .backgroundColor(R.color.white75)
+            .focusOn(recyclerview)
+            .enableAutoTextPosition()
+            .title(getString(R.string.guide_recycler_item))
+            .build()
+
+        val recyclerItemEditCase = FancyShowCaseView.Builder(this)
+            .backgroundColor(R.color.white75)
+            .focusOn(recyclerview)
+            .enableAutoTextPosition()
+            .title(getString(R.string.guide_recycler_item_edit))
+            .build()
+
+        val recyclerItemDeleteCase = FancyShowCaseView.Builder(this)
+            .backgroundColor(R.color.white75)
+            .focusOn(recyclerview)
+            .enableAutoTextPosition()
+            .title(getString(R.string.guide_recycler_delete))
+            .build()
+
+        val doubleTapCase = FancyShowCaseView.Builder(this)
+            .backgroundColor(R.color.white75)
+            .focusOn(overlayView)
+            .enableAutoTextPosition()
+            .title(getString(R.string.guide_doubletap))
+            .build()
+
+        val resizeCase = FancyShowCaseView.Builder(this)
+            .backgroundColor(R.color.white75)
+            .focusOn(overlayView)
+            .enableAutoTextPosition()
+            .title(getString(R.string.guide_resize))
+            .build()
+
+        val saveCase = FancyShowCaseView.Builder(this)
+            .backgroundColor(R.color.white75)
+            .focusOn(saveBtn)
+            .enableAutoTextPosition()
+            .title(getString(R.string.guide_save))
+            .build()
+
+        FancyShowCaseQueue().apply {
+            completeListener = object : OnCompleteListener {
+                override fun onComplete() {
+                    if (dummy) {
+                        dummy = false
+                        overlayViewAdapter.submitList(mutableListOf())
+                    }
+                }
+
+            }
+        }
+            .add(addCase)
+            .add(recyclerItemCase)
+            .add(recyclerItemEditCase)
+            .add(recyclerItemDeleteCase)
+            .add(doubleTapCase)
+            .add(resizeCase)
+            .add(saveCase)
+            .show()
+    }
+
     override fun finishOnError() {
         stopLoadingView()
         Toast.makeText(this, getString(R.string.some_error), LENGTH_SHORT).show()
@@ -384,7 +371,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
     }
 
     override fun videoPlay(baseImageViews: List<OverlayText>?, isVideoPlaying: Boolean) {
-        videoControlsView!!.videoPlay(baseImageViews, isVideoPlaying)
+        videoControlsView.videoPlay(baseImageViews, isVideoPlaying)
     }
 
     override fun drawOverlayTimeRange(
@@ -392,16 +379,16 @@ class VideoEditActivity : MvpAppCompatActivity(),
         selectedOverlay: OverlayText?,
         isEdit: Boolean
     ) {
-        videoControlsView!!.drawOverlayTimeRange(overlays, selectedOverlay, isEdit)
+        videoControlsView.drawOverlayTimeRange(overlays, selectedOverlay, isEdit)
     }
 
     override fun recoverView() {
-        videoControlsView!!.setToDefaultState()
+        videoControlsView.reset()
     }
 
     override fun onOverlaysChangedListViewNotifier(overlays: List<OverlayText>) {
         // update recycler view
-        adapter.submitList(overlays.map {
+        overlayViewAdapter.submitList(overlays.map {
             OverlayDataMapper(
                 it.startTime,
                 it.endTime,
@@ -471,13 +458,12 @@ class VideoEditActivity : MvpAppCompatActivity(),
     }
 
     override fun setControlsToTime(time: Long) {
-        videoControlsView!!.setToState(time)
+        videoControlsView.setToState(time)
     }
 
     override fun onClickedAddBelow(item: Int) {
         Log.d(TAG, "Clicked on $item")
         presenter.addOverlayAtSpecificPosition(item)
-
     }
 
     companion object {

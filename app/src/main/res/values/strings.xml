@@ -38,4 +38,7 @@
     <string name="guide_recycler_delete">Swipe from right to left on item for delete</string>
     <string name="error_no_internet">No captions was detected due service unavailable</string>
     <string name="error_no_captions">No captions was detected</string>
+    <string name="error_no_caption_net_error">due remote service unavailable. Check your network connection.</string>
+    <string name="empty_recycler_add_caption">Add caption</string>
+    <string name="here_are_no_captions_you_can_add_it">Here are no captions. You can add it.</string>
 </resources>

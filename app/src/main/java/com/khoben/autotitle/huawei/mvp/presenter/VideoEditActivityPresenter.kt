@@ -12,17 +12,17 @@ import com.khoben.autotitle.huawei.App
 import com.khoben.autotitle.huawei.R
 import com.khoben.autotitle.huawei.common.FileUtils
 import com.khoben.autotitle.huawei.model.MLCaption
-import com.khoben.autotitle.huawei.model.VideoInfo
+import com.khoben.autotitle.huawei.model.PlaybackEvent
+import com.khoben.autotitle.huawei.model.PlaybackState
 import com.khoben.autotitle.huawei.mvp.view.VideoEditActivityView
-import com.khoben.autotitle.huawei.service.mediaplayer.MediaPlayerSurfaceCallback
-import com.khoben.autotitle.huawei.service.mediaplayer.MediaSurfacePlayer
+import com.khoben.autotitle.huawei.service.mediaplayer.MediaController
 import com.khoben.autotitle.huawei.service.videoloader.VideoLoader
 import com.khoben.autotitle.huawei.service.videosaver.VideoProcessorBase
 import com.khoben.autotitle.huawei.service.videosaver.VideoProcessorListener
 import com.khoben.autotitle.huawei.ui.overlay.OverlayHandler
 import com.khoben.autotitle.huawei.ui.overlay.OverlayText
 import com.khoben.autotitle.huawei.ui.player.VideoControlsView
-import com.khoben.autotitle.huawei.ui.player.VideoSeekBarView
+import com.khoben.autotitle.huawei.ui.player.seekbar.SeekBarListener
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import javax.inject.Inject
@@ -30,27 +30,25 @@ import javax.inject.Inject
 @InjectViewState
 class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     OverlayHandler.OverlayObjectEventListener,
-    MediaPlayerSurfaceCallback,
-    VideoSeekBarView.SeekBarListener {
+    MediaController.Callback,
+    SeekBarListener {
 
     @Inject
     lateinit var videoProcessor: VideoProcessorBase
 
     @Inject
-    lateinit var mediaPlayer: MediaSurfacePlayer
-
+    lateinit var mediaController: MediaController
 
     @Inject
     lateinit var appContext: Context
 
+    private var videoLoader: VideoLoader = VideoLoader()
     private var overlayHandler: OverlayHandler? = null
     private var sourceUri: Uri? = null
-    private lateinit var videoLoader: VideoLoader
 
     init {
         App.applicationComponent.inject(this)
-        mediaPlayer.setMediaCallbackListener(this)
-        videoLoader = VideoLoader()
+        mediaController.addSubscription(this)
     }
 
     fun setUri(uri: Uri) {
@@ -59,7 +57,7 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        initVideoDetails(sourceUri!!)
+        mediaController.setVideoSource(sourceUri!!)
         processVideo(appContext)
         viewState.initVideoContainerLayoutParams()
     }
@@ -92,7 +90,7 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     fun addOverlayAtCurrentPosition() {
         // pause playback before adding new overlay
         setPlayState(false)
-        overlayHandler!!.addOverlay(getCurrentPosition())
+        overlayHandler!!.addOverlay(mediaController.currentPosition)
     }
 
     /**
@@ -117,17 +115,14 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
      */
     fun saveVideo(context: Context, parentViewSize: Pair<Int, Int>) {
         overlayHandler!!.showRootView()
-        // pause playing
         setPlayState(false)
-        viewState.videoPlay(overlayHandler!!.getOverlays(), false)
-
         val outputPath = FileUtils.getRandomFilepath(context, App.VIDEO_EXTENSION)
         videoProcessor.setup(
             overlayHandler!!.getOverlays(),
             sourceUri!!,
             outputPath,
             context,
-            getVideoDetails()!!,
+            mediaController.videoDetails!!,
             parentViewSize
         )
         viewState.onVideoSavingStarted()
@@ -159,57 +154,6 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
      */
     fun cancelSavingVideo() {
         videoProcessor.cancel()
-    }
-
-    /**
-     * Toggles playback state
-     */
-    fun togglePlayState() {
-        val isPlaying = !mediaPlayer.isPlaying()
-        mediaPlayer.toggle()
-        viewState.videoPlay(overlayHandler!!.getOverlays(), isPlaying)
-    }
-
-    /**
-     * Sets playback state
-     * @param playState True -- Play; False -- Pause
-     */
-    fun setPlayState(playState: Boolean) {
-        when (playState) {
-            true -> {
-                if (!mediaPlayer.isPlaying()) {
-                    mediaPlayer.play()
-                }
-            }
-            false -> {
-                viewState.videoPlay(overlayHandler!!.getOverlays(), false)
-                if (mediaPlayer.isPlaying()) {
-                    mediaPlayer.pause()
-                }
-            }
-        }
-    }
-
-    /**
-     * Fetch video details from video file with provided uri
-     * @param uri Uri
-     */
-    fun initVideoDetails(uri: Uri) {
-        sourceUri = uri
-        mediaPlayer.setDataSourceUri(uri)
-//        viewState.setTotalTime(getVideoDuration())
-    }
-
-    fun getVideoDuration(): Long {
-        return mediaPlayer.getVideoDuration()
-    }
-
-    fun getVideoDetails(): VideoInfo? {
-        return mediaPlayer.getVideoInfo()
-    }
-
-    fun getCurrentPosition(): Long {
-        return mediaPlayer.getCurrentPosition()
     }
 
     fun unEditable() {
@@ -254,23 +198,13 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         viewState.drawOverlayTimeRange(overlays, overlay, true)
     }
 
-
-    override fun onMediaPlayerStarted() {
-    }
-
-    override fun onMediaPlayerPaused() {
-    }
-
-    override fun onMediaPlayerPrepared() {
-    }
-
-    override fun onMediaPlayerCompletion() {
+    override fun reset() {
     }
 
     override fun updateVideoPositionWithSeekBar(time: Long) {
-        if (time >= getVideoDuration()) {
-            viewState.recoverView()
-            overlayHandler!!.updateVideoPositionWithSeekBar(0L)
+        if (time >= mediaController.videoDuration) {
+//            viewState.recoverView()
+//            overlayHandler!!.updateVideoPositionWithSeekBar(0L)
             return
         }
         overlayHandler!!.updateVideoPositionWithSeekBar(time)
@@ -281,16 +215,13 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     }
 
     override fun seekBarRewind(currentTime: Long) {
-        if (mediaPlayer.isPlaying()) {
-            setPlayState(false)
-        }
-        mediaPlayer.seekTo(currentTime)
+        setPlayState(false)
+        mediaController.seekTo(currentTime)
         overlayHandler!!.seekBarRewind(currentTime)
     }
 
     override fun seekBarOnTouch() {
         setPlayState(false)
-        viewState.videoPlay(overlayHandler!!.getOverlays(), false)
     }
 
     override fun seekBarOnDoubleTap() {
@@ -303,7 +234,7 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
 
     @SuppressLint("CheckResult")
     fun processVideo(context: Context) {
-        val videoDuration = mediaPlayer.getVideoDuration()
+        val videoDuration = mediaController.videoDuration
         val frame = videoDuration / App.FRAME_TIME_MS
         val frameTime = if (frame > 0) videoDuration / frame else App.FRAME_TIME_MS
         videoLoader.init(context, sourceUri!!, frameTime)
@@ -312,33 +243,40 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
                 errorProcessVideo(error)
             }
             .load {
-                val audioR = it.second
-                val framesR = it.first
+                val audioTranscribeResult = it.second
+                val framesResult = it.first
                 when {
-                    audioR.isNotEmpty() -> {
-                        Log.d(TAG, "Text = $audioR")
-                        processTranscribe(audioR)
+                    // Service transcription is not available
+                    audioTranscribeResult.throwable != null -> {
+                        Log.e(TAG, "No captions. Network service error")
+                        viewState.showPopupWindow(
+                            "",
+                            context.getString(R.string.error_no_captions)
+                                    + "\n"
+                                    + context.getString(R.string.error_no_caption_net_error)
+                        )
                     }
-                    else -> {
+                    audioTranscribeResult.caption!!.isEmpty() -> {
                         Log.d(TAG, "No captions")
                         viewState.showPopupWindow("", context.getString(R.string.error_no_captions))
                     }
+                    else -> {
+                        Log.d(TAG, "Text = $audioTranscribeResult")
+                        processTranscribe(audioTranscribeResult.caption)
+                    }
                 }
-                successProcessedVideo(framesR, frameTime)
+                successProcessedVideo(framesResult, frameTime)
             }
     }
 
     private fun successProcessedVideo(frames: List<Bitmap>, frameTime: Long) {
-        Log.d(TAG, "Success processed")
-        // TODO("Moxy tells that no views were attached then calling from Rx")
-//        VideoEditActivity.temporaryFixViewStateAccess!!.onThumbnailsProcessed(frames, frameTime)
+        Log.d(TAG, "Success video load")
         viewState.onVideoProcessed(frames, frameTime)
     }
 
     private fun errorProcessVideo(e: Throwable) {
+        Log.e(TAG, "Error video processing")
         viewState.onErrorVideoProcessing(e)
-        // TODO("Moxy tells that no views were attached then calling from Rx")
-//        VideoEditActivity.temporaryFixViewStateAccess!!.onErrorThumbnailsProcessing(e)
     }
 
     /**
@@ -375,8 +313,29 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         overlayHandler!!.removeOverlay(item)
     }
 
+    fun getVideoDetails() = mediaController.videoDetails
+    fun setPlayState(state: Boolean) {
+        mediaController.setPlayState(state)
+    }
+
+    override fun handlePlaybackState(state: PlaybackEvent) {
+        when (state.playState) {
+            PlaybackState.PLAY -> {
+                viewState.videoPlay(overlayHandler!!.getOverlays(), true)
+            }
+            PlaybackState.PAUSED -> {
+                viewState.videoPlay(overlayHandler!!.getOverlays(), false)
+            }
+            PlaybackState.STOP -> {
+
+            }
+            PlaybackState.REWIND -> {
+
+            }
+        }
+    }
+
     companion object {
         private val TAG = VideoEditActivityPresenter::class.java.simpleName
     }
-
 }

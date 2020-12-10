@@ -35,4 +35,7 @@
     <string name="guide_recycler_delete">Свайпните влево для удаления субтитра</string>
     <string name="error_no_internet">Отсутствует подключение к сервису распознавания.</string>
     <string name="error_no_captions">Субтитры не распознаны</string>
+    <string name="error_no_caption_net_error">Проверьте ваше интернет соединение.</string>
+    <string name="empty_recycler_add_caption">Добавить</string>
+    <string name="here_are_no_captions_you_can_add_it">Здесь пока пусто. Вы можете добавить субтитр нажав на кнопку ниже</string>
 </resources>

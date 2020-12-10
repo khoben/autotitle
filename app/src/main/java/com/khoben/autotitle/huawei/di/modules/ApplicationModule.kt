@@ -5,14 +5,10 @@ import com.khoben.autotitle.huawei.App
 import com.khoben.autotitle.huawei.service.audioextractor.AudioExtractor
 import com.khoben.autotitle.huawei.service.audioextractor.AudioExtractorImpl
 import com.khoben.autotitle.huawei.service.audiotranscriber.AudioTranscriber
-import com.khoben.autotitle.huawei.service.audiotranscriber.AudioTranscriberImpl
 import com.khoben.autotitle.huawei.service.audiotranscriber.AudioTranscriberTest
 import com.khoben.autotitle.huawei.service.frameretriever.VideoFrameRetriever
 import com.khoben.autotitle.huawei.service.frameretriever.VideoFrameRetrieverImpl
-import com.khoben.autotitle.huawei.service.mediaplayer.MediaExoPlayerSurfaceWrapper
-import com.khoben.autotitle.huawei.service.mediaplayer.MediaSurfacePlayer
-import com.khoben.autotitle.huawei.service.mediaplayer.SimpleVideoRender
-import com.khoben.autotitle.huawei.service.mediaplayer.VideoRender
+import com.khoben.autotitle.huawei.service.mediaplayer.*
 import com.khoben.autotitle.huawei.service.videosaver.Mp4ComposerVP
 import com.khoben.autotitle.huawei.service.videosaver.VideoProcessorBase
 import dagger.Module
@@ -57,6 +53,12 @@ class ApplicationModule(private var app: App) {
     @Provides
     @Singleton
     internal fun provideAudioTranscriber(): AudioTranscriber {
-        return AudioTranscriberImpl(context = app.applicationContext)
+        return AudioTranscriberTest(context = app.applicationContext)
+    }
+
+    @Provides
+    @Singleton
+    internal fun provideMediaController(): MediaController {
+        return MediaController()
     }
 }

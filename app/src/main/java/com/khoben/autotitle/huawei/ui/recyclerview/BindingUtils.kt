@@ -1,5 +1,6 @@
 package com.khoben.autotitle.huawei.ui.recyclerview
 
+import android.graphics.Typeface
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.khoben.autotitle.huawei.R
@@ -18,9 +19,11 @@ fun TextView.setOverlayToString(item: OverlayDataMapper) {
 
 @BindingAdapter("overlayContentString")
 fun TextView.setOverlayContentString(item: OverlayDataMapper) {
-    if (item.text.isEmpty()) {
-        text = context.getString(R.string.empty_overlay_recycler)
+    text = if (item.text.isEmpty()) {
+        setTypeface(typeface, Typeface.ITALIC)
+        context.getString(R.string.empty_overlay_recycler)
     } else {
-        text = item.text
+        setTypeface(typeface, Typeface.BOLD)
+        item.text
     }
 }

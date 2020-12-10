@@ -9,14 +9,14 @@ import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.khoben.autotitle.huawei.App.Companion.FRAME_TIME_MS
 import com.khoben.autotitle.huawei.ui.overlay.gesture.MultiTouchListener
-import com.khoben.autotitle.huawei.ui.player.VideoSeekBarView
+import com.khoben.autotitle.huawei.ui.player.seekbar.SeekBarListener
 import com.khoben.autotitle.huawei.ui.popup.TextEditorDialogFragment
 import java.util.*
 
 class OverlayHandler private constructor(
     private var context: Context,
     private var parentView: RelativeLayout
-) : VideoSeekBarView.SeekBarListener {
+) : SeekBarListener {
 
     private var TAG: String = OverlayHandler::class.java.simpleName
     private val overlayFactory = OverlayFactory(context)
@@ -95,7 +95,6 @@ class OverlayHandler private constructor(
             this.closeButton!!.setOnClickListener {
                 removeOverlay(this)
             }
-//            seekBarRewind(0L)
         }
         newOverlay.setOnTouchListener(getMultiTouchListener(newOverlay))
         newOverlay.timestamp = System.currentTimeMillis()
@@ -201,6 +200,9 @@ class OverlayHandler private constructor(
         overlayObjectEventListener?.onSelect(overlay, overlayViews)
     }
 
+    override fun reset() {
+    }
+
     override fun updateVideoPositionWithSeekBar(time: Long) {
         seekBarRewind(time)
     }
@@ -264,7 +266,7 @@ class OverlayHandler private constructor(
         newOverlay.timestamp = System.currentTimeMillis()
         addOverlayToParent(newOverlay)
         overlayViews.add(pos + 1, newOverlay)
-//        overlayViews.sort()
+        overlayViews.sort()
         currentOverlayView?.isInEdit = false
         currentOverlayView = newOverlay
         currentOverlayView!!.isInEdit = true

@@ -1,3 +1,4 @@
+include ':rangeview'
 include ':mp4compose'
 include ':app'
 rootProject.name = "My Application"
