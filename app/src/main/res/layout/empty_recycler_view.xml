@@ -17,10 +17,10 @@
 
         <TextView
             android:id="@+id/txtv_empty"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/add_caption_recycler"
-            android:layout_marginBottom="12dp"
+            android:layout_margin="12dp"
             android:gravity="center"
             android:text="@string/here_are_no_captions_you_can_add_it"
             app:layout_constraintBottom_toTopOf="@+id/add_caption_recycler"

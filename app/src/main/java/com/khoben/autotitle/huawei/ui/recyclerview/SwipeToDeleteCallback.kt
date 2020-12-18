@@ -15,7 +15,7 @@ abstract class SwipeToDeleteCallback internal constructor(context: Context) :
     private val mBackground = ColorDrawable().apply {
         color = ContextCompat.getColor(context, R.color.recycler_swipe_background)
     }
-    private val deleteDrawable = ContextCompat.getDrawable(context, R.drawable.ic_delete_white_24)!!
+    private val deleteDrawable = ContextCompat.getDrawable(context, R.drawable.delete_icon_24dp)!!
 
     override fun getMovementFlags(
         recyclerView: RecyclerView,

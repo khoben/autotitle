@@ -20,7 +20,8 @@
             android:textColor="@color/white"
             android:background="@android:color/transparent"
             android:textSize="18sp"
-            tools:textColor="@android:color/white" />
+            tools:text = "test"
+            tools:textColor="@color/black"/>
 
     </FrameLayout>
 
@@ -32,6 +33,7 @@
         android:elevation="1dp"
         android:visibility="gone"
         app:tint="@color/red_color_picker"
-        android:src="@drawable/ic_close_icon" />
+        android:src="@drawable/close_icon"
+        tools:ignore="ContentDescription" />
 
 </com.khoben.autotitle.huawei.ui.overlay.OverlayText>

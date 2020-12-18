@@ -2,15 +2,13 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/pop_video_loading_fl"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="center"
-    android:visibility="gone">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center">
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@drawable/popup_window_bg"
         android:orientation="vertical"
         android:padding="30dp"
         tools:ignore="UselessParent">
@@ -25,7 +23,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:textColor="@color/white"
                 android:textSize="12sp" />
 
             <com.google.android.material.progressindicator.CircularProgressIndicator
@@ -46,9 +43,9 @@
             android:layout_centerInParent="true"
             android:layout_marginTop="10dp"
             android:singleLine="true"
-            android:text="@string/save_captions"
-            android:textColor="@color/white"
-            android:textSize="14sp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:text="@string/save_captions"
             tools:ignore="ObsoleteLayoutParam" />
     </LinearLayout>
 

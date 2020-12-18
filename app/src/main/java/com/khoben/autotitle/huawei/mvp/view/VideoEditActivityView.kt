@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import com.khoben.autotitle.huawei.ui.overlay.OverlayText
 import moxy.MvpView
 import moxy.viewstate.strategy.*
+import java.util.ArrayList
 
 @StateStrategyType(value = AddToEndSingleStrategy::class)
 interface VideoEditActivityView : MvpView {
@@ -17,7 +18,8 @@ interface VideoEditActivityView : MvpView {
     @StateStrategyType(value = SingleStateStrategy::class)
     fun onErrorVideoProcessing(e: Throwable)
 
-    fun showPopupWindow(title: String, content: String)
+    @StateStrategyType(value = SkipStrategy::class)
+    fun showPopupWindow(content: String)
 
     @StateStrategyType(value = OneExecutionStateStrategy::class)
     fun setControlsToTime(time: Long)
@@ -48,13 +50,24 @@ interface VideoEditActivityView : MvpView {
     @StateStrategyType(value = SkipStrategy::class)
     fun onVideoSavingComplete(filepath: String)
 
-    @StateStrategyType(value = AddToEndStrategy::class)
-    fun videoPlay(baseImageViews: List<OverlayText>?, isVideoPlaying: Boolean)
+//    @StateStrategyType(value = AddToEndStrategy::class)
+//    fun videoPlay(baseImageViews: List<OverlayText>?, isVideoPlaying: Boolean)
 
     @StateStrategyType(value = AddToEndStrategy::class)
-    fun drawOverlayTimeRange(
+    fun updatePlayback(
         overlays: List<OverlayText>?,
         selectedOverlay: OverlayText?,
-        isEdit: Boolean
+        isEdit: Boolean,
+        isPlaying: Boolean
     )
+
+    @StateStrategyType(value = SkipStrategy::class)
+    fun onRemovedOverlay(
+        idxRemoved: Int,
+        removedOverlay: OverlayText,
+        overlays: ArrayList<OverlayText>
+    )
+
+    @StateStrategyType(value = AddToEndStrategy::class)
+    fun highlightListViewItem(index: Int)
 }

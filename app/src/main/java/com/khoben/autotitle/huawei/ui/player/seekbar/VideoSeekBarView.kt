@@ -4,7 +4,6 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.os.Build
 import android.util.AttributeSet
 import android.util.Log
@@ -13,6 +12,7 @@ import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import androidx.core.content.ContextCompat
 import com.iammert.rangeview.library.RangeView
 import com.khoben.autotitle.huawei.App
 import com.khoben.autotitle.huawei.App.Companion.FRAMES_PER_SCREEN
@@ -33,8 +33,6 @@ class VideoSeekBarView(
 
     private var rangeView: RangeView? = null
 
-    private var overlayTimeRangeLayout: RelativeLayout? = null
-    private var overlayTimeRangeLayoutParam: LayoutParams? = null
     private val overlayTimeRangeBackgrounds = mutableListOf<View?>()
 
     private var videoSeekBarViewWidth = 0
@@ -48,8 +46,8 @@ class VideoSeekBarView(
     private var progressPlaybackAnimator: ValueAnimator? = null
     private var playbackState = false
 
-    // gray color
-    private val timeRangeBackgroundColor = Color.parseColor("#7f000000")
+    private val timeRangeBackgroundColor =
+        ContextCompat.getColor(context, R.color.timelineBackgroundColor)
 
     private var imageList: LinearLayout? = null
 
@@ -67,7 +65,6 @@ class VideoSeekBarView(
     }
 
     private var startX = 0f
-    private var lastTimeClicked = 0L
 
     /**
      * Current playback position control
@@ -77,15 +74,9 @@ class VideoSeekBarView(
         super.onTouchEvent(event)
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                val clickTime = System.currentTimeMillis()
                 startX = event.x
                 playbackState = false
                 seekBarListener?.seekBarOnTouch()
-                // TODO("Constant")
-                if (clickTime - lastTimeClicked < 300L) {
-                    seekBarListener?.seekBarOnDoubleTap()
-                }
-                lastTimeClicked = clickTime
             }
             MotionEvent.ACTION_MOVE -> {
                 val endX = event.x
@@ -118,16 +109,16 @@ class VideoSeekBarView(
     }
 
     private fun addFramesToSeekBar(bitmaps: List<Bitmap?>) {
-        val imageWidth = screenWidth / FRAMES_PER_SCREEN
-        val layoutParams: ViewGroup.LayoutParams = LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
-        )
-        imageList!!.layoutParams = layoutParams
+        val oneFrameWidthPx = screenWidth / FRAMES_PER_SCREEN
+        imageList!!.layoutParams = LayoutParams(
+            LayoutParams.WRAP_CONTENT,
+            LayoutParams.WRAP_CONTENT
+        ).apply {
+            addRule(CENTER_VERTICAL, TRUE)
+        }
         for (bitmap in bitmaps) {
             val imageView = ImageView(context)
-            val params = LayoutParams(imageWidth, App.SEEKBAR_HEIGHT_DP_PIXELS)
-            imageView.layoutParams = params
+            imageView.layoutParams = LayoutParams(oneFrameWidthPx, App.SEEKBAR_HEIGHT_DP_PIXELS)
             imageView.scaleType = ImageView.ScaleType.CENTER_CROP
             imageView.setImageBitmap(bitmap)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -138,7 +129,7 @@ class VideoSeekBarView(
 
         if (rangeView == null) {
             // adds range view selectors to layout
-            addRangeView(imageWidth * bitmaps.size, App.SEEKBAR_HEIGHT_DP_PIXELS)
+            addRangeView(oneFrameWidthPx * bitmaps.size, App.SEEKBAR_HEIGHT_DP_PIXELS)
         }
 
     }
@@ -169,11 +160,13 @@ class VideoSeekBarView(
                 val r = if (currentRightValue > MAX_ROUND_RANGEVIEW_VAL) 1f
                 else currentRightValue
 
-                seekBarListener?.changeTimeRangeSelectedOverlay(
-                    (l * videoDuration).toLong(),
-                    (r * videoDuration).toLong()
-                )
+                val leftTime = (l * videoDuration).toLong()
+                val rightTime = (r * videoDuration).toLong()
 
+                seekBarListener?.changeTimeRangeSelectedOverlay(
+                    leftTime,
+                    rightTime
+                )
             }
         }
         rangeView!!.visibility = GONE
@@ -221,44 +214,6 @@ class VideoSeekBarView(
         progressPlaybackAnimator = null
     }
 
-    /**
-     * Draws background for each overlay time range
-     * @param playState Boolean
-     * @param overlays List<OverlayObject?>?
-     */
-    fun playingTimeRange(playState: Boolean, overlays: List<OverlayText?>?) {
-        this.playbackState = playState
-        if (playState) {
-            overlayTimeRangeLayout!!.visibility = GONE
-            rangeView?.visibility = GONE
-
-            overlayTimeRangeBackgrounds.forEach { removeView(it) }
-
-            if (overlays != null && overlays.isNotEmpty()) {
-                overlayTimeRangeBackgrounds.clear()
-                for (overlay in overlays) {
-                    val startX = overlay!!.startTime * videoSeekBarViewWidth / videoDuration
-                    val endX = overlay.endTime * videoSeekBarViewWidth / videoDuration
-                    val width = (endX - startX).toInt()
-
-                    val timeRangeBackground = LinearLayout(context).apply {
-                        x = startX.toFloat()
-                        setBackgroundColor(timeRangeBackgroundColor)
-                    }
-
-                    addView(
-                        timeRangeBackground,
-                        LayoutParams(width, App.SEEKBAR_HEIGHT_DP_PIXELS).apply {
-                            addRule(CENTER_VERTICAL, TRUE)
-                        }
-                    )
-                    overlayTimeRangeBackgrounds.add(timeRangeBackground)
-                }
-            }
-        }
-        startSeekBarAnimation(measuredWidth.toFloat(), videoDuration)
-    }
-
     fun setToState(pos: Long) {
         stopSeekBarAnimation()
         currentPlaybackTime = pos
@@ -269,7 +224,6 @@ class VideoSeekBarView(
     fun setToDefaultState(saveCurrentTime: Boolean) {
         Log.d(TAG, "setToDefaultState")
         rangeView?.visibility = GONE
-//        overlayTimeRangeBackgrounds!!.visibility = GONE
         stopSeekBarAnimation()
         x = maxScrollWidth.toFloat()
         seekBarListener?.seekBarRewind(0)
@@ -279,11 +233,48 @@ class VideoSeekBarView(
         this.videoDuration = totalTime
     }
 
-    fun drawOverlaysTimeRange(
+    /**
+     * Draws background for each overlay time range
+     * @param playState Boolean
+     * @param overlays List<OverlayObject?>?
+     */
+//    fun playingTimeRange(playState: Boolean, overlays: List<OverlayText?>?) {
+//        this.playbackState = playState
+//        if (playState) {
+//            rangeView?.visibility = GONE
+//            overlayTimeRangeBackgrounds.forEach { removeView(it) }
+//            if (overlays != null && overlays.isNotEmpty()) {
+//                overlayTimeRangeBackgrounds.clear()
+//                for (overlay in overlays) {
+//                    val startX = overlay!!.startTime * videoSeekBarViewWidth / videoDuration
+//                    val endX = overlay.endTime * videoSeekBarViewWidth / videoDuration
+//                    val width = (endX - startX).toInt()
+//
+//                    val timeRangeBackground = LinearLayout(context).apply {
+//                        x = startX.toFloat()
+//                        setBackgroundColor(timeRangeBackgroundColor)
+//                    }
+//
+//                    addView(
+//                        timeRangeBackground,
+//                        LayoutParams(width, App.SEEKBAR_HEIGHT_DP_PIXELS).apply {
+//                            addRule(CENTER_VERTICAL, TRUE)
+//                        }
+//                    )
+//                    overlayTimeRangeBackgrounds.add(timeRangeBackground)
+//                }
+//            }
+//        }
+//        startSeekBarAnimation(measuredWidth.toFloat(), videoDuration)
+//    }
+
+    fun updatePlayback(
         overlays: List<OverlayText?>?,
         selectedOverlay: OverlayText?,
-        isEdit: Boolean
+        isEdit: Boolean,
+        isPlaying: Boolean
     ) {
+        this.playbackState = isPlaying
         overlayTimeRangeBackgrounds.forEach { removeView(it) }
         if (overlays != null && overlays.isNotEmpty()) {
             overlayTimeRangeBackgrounds.clear()
@@ -292,8 +283,12 @@ class VideoSeekBarView(
                     selectedOverlay.startTime.toFloat() / videoDuration,
                     selectedOverlay.endTime.toFloat() / videoDuration
                 )
+                rangeView?.visibility = VISIBLE
+            } else if (selectedOverlay == null) {
+                rangeView?.visibility = GONE
             }
             for (overlay in overlays) {
+                if (overlay == selectedOverlay) continue
                 // show time ranges for all provided overlays
                 val timeRangeStartX = overlay!!.startTime *
                         videoSeekBarViewWidth / videoDuration
@@ -316,18 +311,13 @@ class VideoSeekBarView(
                 )
             }
         }
-        removeView(overlayTimeRangeLayout)
-        addView(overlayTimeRangeLayout, overlayTimeRangeLayoutParam)
         if (!isEdit) {
             minSelectTimeWidth =
                 (videoSeekBarViewWidth * frameTimeInMs / videoDuration + DisplayUtils.dipToPx(10)).toFloat()
         }
-        if (overlays!!.indexOf(selectedOverlay) == -1) {
-            overlayTimeRangeLayout!!.visibility = GONE
+        if (isPlaying) {
             rangeView?.visibility = GONE
-        } else {
-            overlayTimeRangeLayout!!.visibility = VISIBLE
-            rangeView?.visibility = VISIBLE
+            startSeekBarAnimation(measuredWidth.toFloat(), videoDuration)
         }
     }
 
@@ -349,20 +339,6 @@ class VideoSeekBarView(
         )
         /*********************************************/
 
-        /**********Colored overlay******************/
-        overlayTimeRangeLayoutParam =
-            LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                .apply {
-                    addRule(CENTER_VERTICAL, TRUE)
-                }
-        overlayTimeRangeLayout = RelativeLayout(context)
-            .apply {
-                setBackgroundColor(Color.parseColor("#3fff0000"))
-            }
-        addView(overlayTimeRangeLayout, overlayTimeRangeLayoutParam)
-        /********************************************/
-
-        overlayTimeRangeLayout!!.visibility = GONE
         rangeView?.visibility = GONE
     }
 

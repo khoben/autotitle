@@ -17,9 +17,9 @@ class AudioTranscriberTest(context: Context) : AudioTranscriber {
             emitter.onNext(
                 MLCaptionEnvelop(
                     arrayListOf(
-                        MLCaption("A", 0L, 1000L),
-                        MLCaption("AB", 1000L, 2000L),
-                        MLCaption("ABC", 4000L, 5000L),
+                        MLCaption("First sentence", 0L, 1000L),
+                        MLCaption("LOL", 1000L, 2000L),
+                        MLCaption("Sample text sample text sample text", 4000L, 5000L),
                     )
                 )
             )

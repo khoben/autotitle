@@ -25,6 +25,7 @@ import com.khoben.autotitle.huawei.ui.player.VideoControlsView
 import com.khoben.autotitle.huawei.ui.player.seekbar.SeekBarListener
 import moxy.InjectViewState
 import moxy.MvpPresenter
+import java.util.*
 import javax.inject.Inject
 
 @InjectViewState
@@ -57,17 +58,10 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+
         mediaController.setVideoSource(sourceUri!!)
         processVideo(appContext)
         viewState.initVideoContainerLayoutParams()
-    }
-
-    fun setLayoutToEditor(
-        context: Context,
-        parentView: RelativeLayout, videoView: VideoControlsView
-    ) {
-        overlayHandler?.setLayout(context, parentView)
-        videoView.seekBarListener = this
     }
 
     /**
@@ -75,12 +69,20 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
      * on overlays
      * @param parentView Parent view to attach to this overlays
      */
-    fun initEditor(context: Context, parentView: RelativeLayout, videoView: VideoControlsView) {
-        overlayHandler = OverlayHandler.Builder()
-            .ctx(context)
-            .parent(parentView)
-            .build()
-        overlayHandler?.overlayObjectEventListener = this
+    fun initEditor(
+        context: Context,
+        parentView: RelativeLayout,
+        videoView: VideoControlsView
+    ) {
+        if (overlayHandler == null) {
+            overlayHandler = OverlayHandler.Builder()
+                .ctx(context)
+                .parent(parentView)
+                .build()
+            overlayHandler?.overlayObjectEventListener = this
+        } else {
+            overlayHandler?.setLayout(context, parentView)
+        }
         videoView.seekBarListener = this
     }
 
@@ -90,23 +92,27 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     fun addOverlayAtCurrentPosition() {
         // pause playback before adding new overlay
         setPlayState(false)
-        overlayHandler!!.addOverlay(mediaController.currentPosition)
+        overlayHandler!!.addOverlay(mediaController.currentPosition, mediaController.videoDuration)
     }
 
     /**
      * Adds new overlay view
      */
-    fun addOverlayAtSpecificPosition(pos: Int) {
+    fun addOverlayAfterSpecificPosition(pos: Int) {
         // pause playback before adding new overlay
         setPlayState(false)
-        val toTime = overlayHandler!!.addOverlayAtSpecificPosition(pos)
+        val toTime = overlayHandler!!.addOverlayAfterSpecificPosition(pos)
         viewState.setControlsToTime(toTime)
+    }
+
+    fun addOverlayAtSpecificPosition(pos: Int, item: OverlayText) {
+        setPlayState(false)
+        overlayHandler!!.addOverlayAtSpecificPosition(pos, item)
     }
 
     fun recyclerSelectOverlay(pos: Int) {
         setPlayState(false)
         overlayHandler!!.selectedOverlayId(pos)
-        viewState.setControlsToTime(overlayHandler!!.getOverlays()[pos].startTime)
     }
 
 
@@ -160,58 +166,44 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         overlayHandler!!.unEditable()
     }
 
-    override fun onRemoved(overlay: OverlayText) {
-    }
-
-    override fun onRemoved(overlay: List<OverlayText>) {
-        viewState.onOverlaysChangedListViewNotifier(overlay)
-        viewState.drawOverlayTimeRange(overlay, null, false)
-    }
-
-    override fun onEdit() {
-    }
-
-    override fun onEdited(overlay: OverlayText) {
-    }
-
     override fun onEdited(overlay: List<OverlayText>) {
         viewState.onOverlaysChangedListViewNotifier(overlay)
     }
 
     override fun onUnEditable(overlay: OverlayText?, overlays: List<OverlayText>) {
-        viewState.drawOverlayTimeRange(overlays, overlay, false)
+        viewState.updatePlayback(overlays, overlay, isEdit = false, isPlaying = false)
     }
-
-    override fun onAdd() {
-    }
-
-    override fun onAdded(overlay: OverlayText) {
-    }
-
 
     override fun onAdded(overlay: OverlayText?, overlays: List<OverlayText>, isEdit: Boolean) {
-        viewState.drawOverlayTimeRange(overlays, overlay, isEdit)
+        viewState.updatePlayback(overlays, overlay, isEdit, false)
         viewState.onOverlaysChangedListViewNotifier(overlays)
     }
 
     override fun onSelect(overlay: OverlayText?, overlays: List<OverlayText>) {
-        viewState.drawOverlayTimeRange(overlays, overlay, true)
+        viewState.setControlsToTime(overlay!!.startTime)
+        viewState.updatePlayback(overlays, overlay, isEdit = true, isPlaying = false)
+        viewState.highlightListViewItem(overlays.indexOf(overlay))
     }
 
-    override fun reset() {
+    override fun onRemoved(
+        idxRemoved: Int,
+        removedOverlay: OverlayText,
+        overlays: ArrayList<OverlayText>
+    ) {
+        viewState.onRemovedOverlay(idxRemoved, removedOverlay, overlays)
+        viewState.onOverlaysChangedListViewNotifier(overlays)
+        viewState.updatePlayback(overlays, null, isEdit = false, isPlaying = false)
     }
 
-    override fun updateVideoPositionWithSeekBar(time: Long) {
-        if (time >= mediaController.videoDuration) {
-//            viewState.recoverView()
-//            overlayHandler!!.updateVideoPositionWithSeekBar(0L)
-            return
-        }
-        overlayHandler!!.updateVideoPositionWithSeekBar(time)
-    }
+    override fun reset() {}
 
     override fun changeTimeRangeSelectedOverlay(startTime: Long, endTime: Long) {
         overlayHandler!!.changeTimeRangeSelectedOverlay(startTime, endTime)
+    }
+
+    override fun updateVideoPositionWithSeekBar(time: Long) {
+        if (time >= mediaController.videoDuration) return
+        overlayHandler!!.updateVideoPositionWithSeekBar(time)
     }
 
     override fun seekBarRewind(currentTime: Long) {
@@ -225,7 +217,7 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     }
 
     override fun seekBarOnDoubleTap() {
-        addOverlayAtCurrentPosition()
+//        addOverlayAtCurrentPosition()
     }
 
     fun editItem(index: Int) {
@@ -250,7 +242,6 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
                     audioTranscribeResult.throwable != null -> {
                         Log.e(TAG, "No captions. Network service error")
                         viewState.showPopupWindow(
-                            "",
                             context.getString(R.string.error_no_captions)
                                     + "\n"
                                     + context.getString(R.string.error_no_caption_net_error)
@@ -258,7 +249,7 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
                     }
                     audioTranscribeResult.caption!!.isEmpty() -> {
                         Log.d(TAG, "No captions")
-                        viewState.showPopupWindow("", context.getString(R.string.error_no_captions))
+                        viewState.showPopupWindow(context.getString(R.string.error_no_captions))
                     }
                     else -> {
                         Log.d(TAG, "Text = $audioTranscribeResult")
@@ -314,17 +305,25 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     }
 
     fun getVideoDetails() = mediaController.videoDetails
-    fun setPlayState(state: Boolean) {
-        mediaController.setPlayState(state)
-    }
+    fun setPlayState(state: Boolean) = mediaController.setPlayState(state)
 
     override fun handlePlaybackState(state: PlaybackEvent) {
         when (state.playState) {
             PlaybackState.PLAY -> {
-                viewState.videoPlay(overlayHandler!!.getOverlays(), true)
+                val overlays = overlayHandler!!.getOverlaysWithSelected()
+                viewState.updatePlayback(
+                    overlays.second, overlays.first,
+                    isEdit = false,
+                    isPlaying = true
+                )
             }
             PlaybackState.PAUSED -> {
-                viewState.videoPlay(overlayHandler!!.getOverlays(), false)
+                val overlays = overlayHandler!!.getOverlaysWithSelected()
+                viewState.updatePlayback(
+                    overlays.second, overlays.first,
+                    isEdit = false,
+                    isPlaying = false
+                )
             }
             PlaybackState.STOP -> {
 

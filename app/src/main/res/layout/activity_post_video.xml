@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:auto_show="false"
+        android:layout_marginTop="10dp"
         app:layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent=".65"
         app:layout_constraintTop_toTopOf="parent" />

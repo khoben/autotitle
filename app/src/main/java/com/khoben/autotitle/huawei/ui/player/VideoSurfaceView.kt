@@ -53,11 +53,11 @@ class VideoSurfaceView : GLSurfaceView {
                 // for compatibility, we adjust size based on aspect ratio
                 when {
                     mVideoWidth * height < width * mVideoHeight -> {
-                        Log.i(TAG, "Image too wide, correcting");
+                        Log.i(TAG, "Image too wide, correcting")
                         width = height * mVideoWidth / mVideoHeight
                     }
                     mVideoWidth * height > width * mVideoHeight -> {
-                        Log.i(TAG, "Image too tall, correcting");
+                        Log.i(TAG, "Image too tall, correcting")
                         height = width * mVideoHeight / mVideoWidth
                     }
                     else -> {

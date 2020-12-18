@@ -2,9 +2,7 @@ package com.khoben.autotitle.huawei.ui.activity
 
 import android.Manifest
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.widget.Toast
-import com.google.android.exoplayer2.ui.PlayerView
 import com.khoben.autotitle.huawei.R
 import com.khoben.autotitle.huawei.databinding.ActivityPostVideoBinding
 import com.khoben.autotitle.huawei.extension.activityresult.permission.permissionsDSL
@@ -18,7 +16,6 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView {
 
     @InjectPresenter
     lateinit var presenter: ResultViewActivityPresenter
-    private lateinit var videoView: PlayerView
 
     private var videoPath: String? = null
 
@@ -36,9 +33,8 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityPostVideoBinding.inflate(LayoutInflater.from(this))
+        val binding = ActivityPostVideoBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        videoView = binding.epVideoView
         videoPath = intent.getStringExtra(VIDEO_OUTPUT_URI_INTENT)
         binding.shareBtn.setOnClickListener {
             shareVideo()
@@ -49,8 +45,8 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView {
         binding.finishOkBtn.setOnClickListener {
             finish()
         }
-        videoView.player = presenter.getPlayer().getPlayerImpl(this)
-        presenter.play(videoPath!!)
+        binding.epVideoView.player = presenter.getPlayer().getPlayerImpl(this)
+        presenter.init(videoPath!!)
     }
 
     private fun saveVideo() {
@@ -65,11 +61,6 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView {
         super.onDestroy()
         presenter.deactivate()
         presenter.setMediaSessionState(false)
-    }
-
-    override fun onStop() {
-//        presenter.releasePlayer()
-        super.onStop()
     }
 
     override fun onPause() {

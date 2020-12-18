@@ -13,8 +13,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipChildren="false"
-        android:clipToPadding="false"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -48,8 +46,6 @@
         </LinearLayout>
 
         <LinearLayout
-            android:clipChildren="false"
-            android:clipToPadding="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -65,8 +61,8 @@
                 app:overlayContentString="@{overlay}"
                 tools:text="content" />
 
-
             <com.google.android.material.button.MaterialButton
+                android:visibility="gone"
                 android:id="@+id/add_recycler_item"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
                 android:layout_gravity="center|end"
@@ -82,9 +78,8 @@
                 android:insetRight="0dp"
                 android:insetBottom="0dp"
                 app:strokeColor="?colorPrimary"
-                app:iconTint="@color/white75"
                 android:layout_marginBottom="-28dp"
-                android:backgroundTint="@color/black"
+                android:backgroundTint="?colorSurface"
                 app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Button.Circle" />
         </LinearLayout>
     </LinearLayout>

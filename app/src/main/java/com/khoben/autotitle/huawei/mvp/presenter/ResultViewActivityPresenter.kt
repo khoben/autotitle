@@ -1,4 +1,4 @@
-package com.khoben.autotitle.huawei.mvp.presenter;
+package com.khoben.autotitle.huawei.mvp.presenter
 
 import android.app.Activity
 import android.content.ContentValues
@@ -23,9 +23,9 @@ class ResultViewActivityPresenter : MvpPresenter<ResultActivityView>() {
 
     fun getPlayer() = mediaPlayer
 
-    fun play(path: String) {
-        mediaPlayer.init(path)
+    fun init(path: String) {
         videoPath = path
+        mediaPlayer.init(path)
     }
 
     fun save(context: Context) {
@@ -55,11 +55,7 @@ class ResultViewActivityPresenter : MvpPresenter<ResultActivityView>() {
     }
 
     fun releasePlayer() = mediaPlayer.releasePlayer()
-
-    fun setMediaSessionState(isActive: Boolean) {
-        mediaPlayer.setMediaSessionState(isActive)
-    }
-
+    fun setMediaSessionState(isActive: Boolean) = mediaPlayer.setMediaSessionState(isActive)
     fun deactivate() {}
     fun pause() = mediaPlayer.pause()
 }

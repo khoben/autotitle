@@ -9,7 +9,7 @@
         android:layout_height="25dp"
         android:layout_gravity="top|start"
         android:elevation="1dp"
-        android:src="@drawable/ic_remove" />
+        android:src="@drawable/close_icon" />
 
     <FrameLayout
         android:id="@+id/frmBorder"
@@ -26,8 +26,7 @@
             android:layout_margin="4dp"
             android:adjustViewBounds="true"
             android:contentDescription="@string/app_name"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_close_icon" />
+            android:scaleType="fitCenter" />
 
     </FrameLayout>
 

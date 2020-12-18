@@ -23,9 +23,9 @@ import javax.inject.Inject
 class VideoControlsView(context: Context, attrs: AttributeSet) :
     RelativeLayout(context, attrs),
     SeekBarListener,
-    MediaController.Callback{
+    MediaController.Callback {
 
-    lateinit var videoSeekBarView: VideoSeekBarView
+    private lateinit var videoSeekBarView: VideoSeekBarView
     private lateinit var playPauseButton: PlayPauseMaterialButton
     private lateinit var videoSeekBarCenterLine: ImageView
 
@@ -52,23 +52,8 @@ class VideoControlsView(context: Context, attrs: AttributeSet) :
     private fun initView(context: Context, attrs: AttributeSet) {
         screenWidth = context.resources.displayMetrics.widthPixels
 
-        /****Current and total video time****/
-        totalAndCurrentTimeLayout = LayoutInflater.from(context)
-            .inflate(R.layout.current_total_time_layout, null) as RelativeLayout
-
-        currentVideoTime = totalAndCurrentTimeLayout.findViewById(R.id.tv_currentTime)
-        currentVideoTime.text =
-            context.getString(R.string.time_second_string, 0L.toReadableTimeString())
-        totalVideoTime = totalAndCurrentTimeLayout.findViewById(R.id.tv_totalTime)
-
-        addView(
-            totalAndCurrentTimeLayout,
-            LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        )
-        /************************************/
-
         /*********SeekBar view*********/
-        videoSeekBarView = VideoSeekBarView(context, attrs).apply {
+        videoSeekBarView = VideoSeekBarView(context, null).apply {
             layoutParams = LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
@@ -86,9 +71,24 @@ class VideoControlsView(context: Context, attrs: AttributeSet) :
         )
         /*************************************/
 
+        /****Current and total video time****/
+        totalAndCurrentTimeLayout = LayoutInflater.from(context)
+            .inflate(R.layout.current_total_time_layout, null) as RelativeLayout
+
+        currentVideoTime = totalAndCurrentTimeLayout.findViewById(R.id.tv_currentTime)
+        currentVideoTime.text =
+            context.getString(R.string.time_second_string, 0L.toReadableTimeString())
+        totalVideoTime = totalAndCurrentTimeLayout.findViewById(R.id.tv_totalTime)
+
+        addView(
+            totalAndCurrentTimeLayout,
+            LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        )
+        /************************************/
+
         /*********Vertical center line********/
         videoSeekBarCenterLine = ImageView(context).apply {
-            setImageResource(R.drawable.ic_vertical_line_rounded)
+            setImageResource(R.drawable.vertical_line_rounded)
         }
 
         addView(
@@ -101,7 +101,7 @@ class VideoControlsView(context: Context, attrs: AttributeSet) :
         /**************************************/
 
         /**********Play/pause button**************/
-        playPauseButton = PlayPauseMaterialButton(context, attrs).apply {
+        playPauseButton = PlayPauseMaterialButton(context, null).apply {
             setOnClickListener {
                 mediaController.toggle()
             }
@@ -145,17 +145,17 @@ class VideoControlsView(context: Context, attrs: AttributeSet) :
         videoSeekBarView.setMediaDuration(totalTime)
     }
 
-    fun videoPlay(baseImageViews: List<OverlayText>?, isVideoPlaying: Boolean) {
-//        playPauseButton.toggle(isVideoPlaying)
-        videoSeekBarView.playingTimeRange(isVideoPlaying, baseImageViews)
-    }
+//    fun videoPlay(baseImageViews: List<OverlayText>?, isVideoPlaying: Boolean) {
+//        videoSeekBarView.playingTimeRange(isVideoPlaying, baseImageViews)
+//    }
 
-    fun drawOverlayTimeRange(
+    fun updatePlayback(
         overlays: List<OverlayText>?,
         selectedOverlay: OverlayText?,
-        isEdit: Boolean
+        isEdit: Boolean,
+        isPlaying: Boolean
     ) {
-        videoSeekBarView.drawOverlaysTimeRange(overlays, selectedOverlay, isEdit)
+        videoSeekBarView.updatePlayback(overlays, selectedOverlay, isEdit, isPlaying)
     }
 
     fun setToDefaultState(saveCurrentTime: Boolean = false) {
@@ -164,7 +164,7 @@ class VideoControlsView(context: Context, attrs: AttributeSet) :
         videoSeekBarView.setToDefaultState(saveCurrentTime)
     }
 
-    fun setToState(pos: Long) {
+    fun setControlsToTime(pos: Long) {
         currentVideoTime.text = pos.toReadableTimeString()
         playPauseButton.toggle(false)
         videoSeekBarView.setToState(pos)
@@ -200,10 +200,16 @@ class VideoControlsView(context: Context, attrs: AttributeSet) :
 
     override fun handlePlaybackState(state: PlaybackEvent) {
         when (state.playState) {
-            PlaybackState.PLAY -> { playPauseButton.toggle(true) }
-            PlaybackState.PAUSED -> { playPauseButton.toggle(false) }
-            PlaybackState.STOP -> {}
-            PlaybackState.REWIND -> {}
+            PlaybackState.PLAY -> {
+                playPauseButton.toggle(true)
+            }
+            PlaybackState.PAUSED -> {
+                playPauseButton.toggle(false)
+            }
+            PlaybackState.STOP -> {
+            }
+            PlaybackState.REWIND -> {
+            }
         }
     }
 }

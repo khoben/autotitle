@@ -36,5 +36,7 @@ class App : Application() {
         const val AUDIO_EXTENSION = "aac"
         const val VIDEO_MIME_TYPE = "video/mp4"
         val THUMB_SIZE = Pair(150, 150)
+        const val DOUBLE_TAP_TIME = 300L
+        const val GUIDE_SHOW_DELAY: Long = 2000L
     }
 }

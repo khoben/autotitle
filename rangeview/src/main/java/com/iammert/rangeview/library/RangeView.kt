@@ -11,10 +11,19 @@ import kotlin.math.max
 import kotlin.math.min
 
 
-class RangeView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : View(context, attrs, defStyleAttr) {
+class RangeView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : View(context, attrs, defStyleAttr) {
 
     interface OnRangeValueListener {
-        fun rangeChanged(maxValue: Float, minValue: Float, currentLeftValue: Float, currentRightValue: Float)
+        fun rangeChanged(
+            maxValue: Float,
+            minValue: Float,
+            currentLeftValue: Float,
+            currentRightValue: Float
+        )
     }
 
     interface OnRangePositionListener {
@@ -52,7 +61,7 @@ class RangeView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
 
     private var toggleRadius: Float = resources.getDimension(R.dimen.rangeView_ToggleRadius)
 
-//    private var horizontalMargin: Float = resources.getDimension(R.dimen.rangeView_HorizontalSpace)
+    //    private var horizontalMargin: Float = resources.getDimension(R.dimen.rangeView_HorizontalSpace)
     private var horizontalMargin: Float = 0F
 
     private var bitmap: Bitmap? = null
@@ -116,27 +125,36 @@ class RangeView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
-        totalValueRect.set(0f + horizontalMargin, 0f, measuredWidth.toFloat() - horizontalMargin, measuredHeight.toFloat())
+        totalValueRect.set(
+            0f + horizontalMargin,
+            0f,
+            measuredWidth.toFloat() - horizontalMargin,
+            measuredHeight.toFloat()
+        )
 
         if (currentLeftValue == null || currentRightValue == null) {
             rangeValueRectF.set(
-                    totalValueRect.left,
-                    totalValueRect.top,
-                    totalValueRect.right,
-                    totalValueRect.bottom)
+                totalValueRect.left,
+                totalValueRect.top,
+                totalValueRect.right,
+                totalValueRect.bottom
+            )
         } else {
             val leftRangePosition = ((totalValueRect.width()) * currentLeftValue!!) / maxValue
             val rightRangePosition = (totalValueRect.width() * currentRightValue!!) / maxValue
             rangeValueRectF.set(
-                    leftRangePosition + horizontalMargin,
-                    totalValueRect.top,
-                    rightRangePosition + horizontalMargin,
-                    totalValueRect.bottom)
+                leftRangePosition + horizontalMargin,
+                totalValueRect.top,
+                rightRangePosition + horizontalMargin,
+                totalValueRect.bottom
+            )
         }
-        rangeStrokeRectF.set(rangeValueRectF.left,
-                rangeValueRectF.top + strokeWidth / 2,
-                rangeValueRectF.right,
-                rangeValueRectF.bottom - strokeWidth / 2)
+        rangeStrokeRectF.set(
+            rangeValueRectF.left,
+            rangeValueRectF.top + strokeWidth / 2,
+            rangeValueRectF.right,
+            rangeValueRectF.bottom - strokeWidth / 2
+        )
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -144,9 +162,9 @@ class RangeView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
 
         initializeBitmap()
 
-        //Draw background color
+        //Draw full range background color
         this.backgroundCanvas?.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
-        this.backgroundCanvas?.drawRect(totalValueRect, backgroundPaint)
+        // this.backgroundCanvas?.drawRect(totalValueRect, backgroundPaint)
 
         //Draw mask
         this.canvas?.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
@@ -157,6 +175,9 @@ class RangeView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
 
         //Draw range rectangle stroke
         this.canvas?.drawRect(rangeStrokeRectF, rangeStrokePaint)
+
+        // Draw range rectangle background
+        this.canvas?.drawRect(rangeStrokeRectF, backgroundPaint)
 
         //Draw left toggle over range stroke
         val cxLeft = rangeValueRectF.left
@@ -185,10 +206,14 @@ class RangeView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             MotionEvent.ACTION_DOWN -> {
                 touchedControls = true
                 draggingStateData = when {
-                    isTouchOnLeftToggle(event) && isTouchOnRightToggle(event) -> DraggingStateData.createConflict(event)
+                    isTouchOnLeftToggle(event) && isTouchOnRightToggle(event) ->
+                        DraggingStateData.createConflict(event)
                     isTouchOnLeftToggle(event) -> DraggingStateData.left(event)
                     isTouchOnRightToggle(event) -> DraggingStateData.right(event)
-                    else -> {touchedControls = false;DraggingStateData.idle()}
+                    else -> {
+                        touchedControls = false
+                        DraggingStateData.idle()
+                    }
                 }
             }
             MotionEvent.ACTION_MOVE -> {
@@ -264,7 +289,10 @@ class RangeView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         return (((totalValueRect.width()) * value) / maxValue) + horizontalMargin
     }
 
-    private fun resolveMovingWay(motionEvent: MotionEvent, stateData: DraggingStateData): Direction {
+    private fun resolveMovingWay(
+        motionEvent: MotionEvent,
+        stateData: DraggingStateData
+    ): Direction {
         return if (motionEvent.x > stateData.motionX) Direction.RIGHT else Direction.LEFT
     }
 
@@ -285,17 +313,40 @@ class RangeView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     }
 
     private fun draggingLeftToggle(motionEvent: MotionEvent) {
-        rangeValueRectF.set(motionEvent.x, rangeValueRectF.top, rangeValueRectF.right, rangeValueRectF.bottom)
-        rangeStrokeRectF.set(rangeValueRectF.left, rangeValueRectF.top + strokeWidth / 2, rangeValueRectF.right, rangeValueRectF.bottom - strokeWidth / 2)
+        rangeValueRectF.set(
+            motionEvent.x,
+            rangeValueRectF.top,
+            rangeValueRectF.right,
+            rangeValueRectF.bottom
+        )
+        rangeStrokeRectF.set(
+            rangeValueRectF.left,
+            rangeValueRectF.top + strokeWidth / 2,
+            rangeValueRectF.right,
+            rangeValueRectF.bottom - strokeWidth / 2
+        )
         rangePositionChangeListener?.leftTogglePositionChanged(rangeValueRectF.left, getLeftValue())
         postInvalidate()
         notifyRangeChanged()
     }
 
     private fun draggingRightToggle(motionEvent: MotionEvent) {
-        rangeValueRectF.set(rangeValueRectF.left, rangeValueRectF.top, motionEvent.x, rangeValueRectF.bottom)
-        rangeStrokeRectF.set(rangeValueRectF.left, rangeValueRectF.top + strokeWidth / 2, rangeValueRectF.right, rangeValueRectF.bottom - strokeWidth / 2)
-        rangePositionChangeListener?.rightTogglePositionChanged(rangeValueRectF.right, getRightValue())
+        rangeValueRectF.set(
+            rangeValueRectF.left,
+            rangeValueRectF.top,
+            motionEvent.x,
+            rangeValueRectF.bottom
+        )
+        rangeStrokeRectF.set(
+            rangeValueRectF.left,
+            rangeValueRectF.top + strokeWidth / 2,
+            rangeValueRectF.right,
+            rangeValueRectF.bottom - strokeWidth / 2
+        )
+        rangePositionChangeListener?.rightTogglePositionChanged(
+            rangeValueRectF.right,
+            getRightValue()
+        )
         postInvalidate()
         notifyRangeChanged()
     }

@@ -12,15 +12,7 @@ abstract class OverlayObject(context: Context, attrs: AttributeSet) :
     FrameLayout(context, attrs), Comparable<OverlayObject> {
 
     var startTime: Long = 0
-        get() = field
-        set(value) {
-            field = value
-        }
     var endTime: Long = 0
-        get() = field
-        set(value) {
-            field = value
-        }
     var timestamp: Long = 0
     var isInEdit = false
         set(value) {

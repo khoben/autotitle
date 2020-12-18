@@ -1,4 +1,4 @@
-package com.khoben.autotitle.huawei.ui.loadingview
+package com.khoben.autotitle.huawei.ui.lottieloadingview
 
 import android.app.Activity
 import android.os.Handler

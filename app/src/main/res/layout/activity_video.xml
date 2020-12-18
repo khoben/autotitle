@@ -6,116 +6,146 @@
     android:layout_height="match_parent"
     tools:context=".ui.activity.VideoEditActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/rl_title"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/actionbar"
+        android:background="?colorSurface"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
-        <Button
-            android:id="@+id/iv_back"
-            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:padding="0dp"
-            app:icon="@drawable/baseline_arrow_back_ios_24"
-            app:iconGravity="textStart"
-            app:iconPadding="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/tv_test"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_test"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="@string/edit_caption"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/edit_video_next_tv"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/iv_back"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/edit_video_next_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="16dp"
-            android:minWidth="0dp"
-            android:minHeight="0dp"
-            android:text="@string/save_button_caption"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/tv_test"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <Button
+                android:id="@+id/back_btn"
+                style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:padding="0dp"
+                app:icon="@drawable/arrow_back_icon"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                android:layout_marginStart="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/edit_caption"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5" />
+
+            <Button
+                android:id="@+id/save_video_btn"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="10dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                app:icon="@drawable/save_icon_24dp"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <include
         android:id="@+id/videolayer"
         layout="@layout/video_preview_layer"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="10dp"
+        android:layout_above="@+id/video_seekbar_view"
+        android:layout_below="@+id/actionbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rl_title" />
+        app:layout_constraintTop_toBottomOf="@+id/actionbar" />
 
     <com.khoben.autotitle.huawei.ui.player.VideoControlsView
-        android:id="@+id/ll_edit_seekbar"
+        android:id="@+id/video_seekbar_view"
         android:layout_width="match_parent"
-        android:layout_height="110dp"
-        android:layout_marginTop="10dp"
+        android:layout_height="115dp"
+        android:layout_marginBottom="5dp"
+        android:background="?colorSurface"
+        android:elevation="@dimen/elevation_medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/videolayer" />
+        app:layout_constraintTop_toBottomOf="@+id/videolayer">
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/add_item"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+            app:icon="@drawable/add_icon_24dp"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            android:padding="0dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginBottom="2dp"
+            app:iconSize="18dp"
+            android:insetLeft="0dp"
+            android:insetTop="0dp"
+            android:insetRight="0dp"
+            android:insetBottom="0dp"
+            app:strokeColor="?colorPrimary"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:backgroundTint="?colorSurface"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Button.Circle" />
+    </com.khoben.autotitle.huawei.ui.player.VideoControlsView>
 
     <com.khoben.autotitle.huawei.ui.recyclerview.EmptyRecyclerView
         android:id="@+id/recyclerview"
-        android:clipChildren="false"
-        android:clipToPadding="false"
+        android:choiceMode="singleChoice"
+        android:listSelector="#666666"
+        android:background="?colorSurface"
+        android:elevation="@dimen/elevation_medium"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginLeft="3dp"
-        android:layout_marginRight="3dp"
+        android:paddingStart="3dp"
+        android:paddingEnd="3dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ll_edit_seekbar" />
+        app:layout_constraintTop_toBottomOf="@+id/video_seekbar_view" />
 
     <include
-        android:id="@+id/id_empty_view"
+        android:id="@+id/empty_view_recycler"
         layout="@layout/empty_recycler_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/video_seekbar_view"
         android:gravity="center"
-        android:layout_below="@id/ll_edit_seekbar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ll_edit_seekbar" />
+        app:layout_constraintTop_toBottomOf="@+id/video_seekbar_view" />
 
     <include
-        android:id="@+id/popuploader"
-        layout="@layout/popup_window_video_process_layout" />
-
-    <include
-        android:id="@+id/loading_view"
-        layout="@layout/loading_view"
+        android:id="@+id/lottie_loading_view"
+        layout="@layout/lottie_loading_view"
         tools:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

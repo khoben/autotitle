@@ -5,10 +5,7 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.util.Log
 import android.view.Surface
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.*
 import com.khoben.autotitle.huawei.model.VideoInfo
 
 
@@ -60,7 +57,8 @@ class MediaExoPlayerSurfaceWrapper(private var context: Context) :
     }
 
     override fun prepare() {
-        mediaPlayer = SimpleExoPlayer.Builder(context).build()
+        mediaPlayer = SimpleExoPlayer.Builder(context)
+            .build()
         mediaPlayer!!.addListener(this)
         mediaPlayer!!.setMediaItem(MediaItem.fromUri(dataSourceUri!!))
         isPreparing = true

@@ -10,17 +10,22 @@ import androidx.core.content.ContextCompat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.khoben.autotitle.huawei.R
 
-class PlayPauseMaterialButton(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
+class PlayPauseMaterialButton(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
 
-    private val playIcon = ContextCompat.getDrawable(context, R.drawable.play_to_pause_btn)!!
-    private val pauseIcon = ContextCompat.getDrawable(context, R.drawable.pause_to_play_btn)!!
+    private val playPauseIcon = ContextCompat.getDrawable(context, R.drawable.play_to_pause_btn)!!
+    private val pausePlayIcon = ContextCompat.getDrawable(context, R.drawable.pause_to_play_btn)!!
 
     private val animatedDrawableButton: ImageView
 
-    private var avd: AnimatedVectorDrawableCompat? = null
-    private var avd2: AnimatedVectorDrawable? = null
+    private var animatedDrawableCompat: AnimatedVectorDrawableCompat? = null
+    private var animatedDrawable: AnimatedVectorDrawable? = null
 
-    private var lastPlayPauseButtonState = false
+    /**
+     * False - Play icon
+     *
+     * True - Pause icon
+     */
+    private var currentState = false
 
     init {
         LayoutInflater.from(context).inflate(R.layout.play_pause_button_layout, this)
@@ -28,35 +33,25 @@ class PlayPauseMaterialButton(context: Context, attrs: AttributeSet) : FrameLayo
         isClickable = true
     }
 
-    fun getState() = lastPlayPauseButtonState
+    fun getState() = currentState
 
-    fun toggle() {
-        toggle(!lastPlayPauseButtonState)
-    }
+    fun toggle() = toggle(!currentState)
 
     fun toggle(state: Boolean) {
-        if (lastPlayPauseButtonState == state) return
-        lastPlayPauseButtonState = state
+        if (currentState == state) return
+        currentState = state
         if (state) {
-            animatedDrawableButton.setImageDrawable(playIcon)
-            val drawable = animatedDrawableButton.drawable
-            if (drawable is AnimatedVectorDrawableCompat) {
-                avd = drawable
-                avd!!.start()
-            } else if (drawable is AnimatedVectorDrawable) {
-                avd2 = drawable
-                avd2!!.start()
-            }
+            animatedDrawableButton.setImageDrawable(playPauseIcon)
         } else {
-            animatedDrawableButton.setImageDrawable(pauseIcon)
-            val drawable = animatedDrawableButton.drawable
-            if (drawable is AnimatedVectorDrawableCompat) {
-                avd = drawable
-                avd!!.start()
-            } else if (drawable is AnimatedVectorDrawable) {
-                avd2 = drawable
-                avd2!!.start()
-            }
+            animatedDrawableButton.setImageDrawable(pausePlayIcon)
+        }
+        val drawable = animatedDrawableButton.drawable
+        if (drawable is AnimatedVectorDrawableCompat) {
+            animatedDrawableCompat = drawable
+            animatedDrawableCompat!!.start()
+        } else if (drawable is AnimatedVectorDrawable) {
+            animatedDrawable = drawable
+            animatedDrawable!!.start()
         }
     }
 }

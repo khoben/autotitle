@@ -28,17 +28,19 @@
     <string name="empty_overlay_recycler">Double tap to edit caption</string>
     <string name="motto" translatable="false">Video caption made easy</string>
     <string name="check_limit">Sorry, video can be up to 60 secs</string>
-    <string name="guide_add_case">Double tap on seekbar to add new captions at current time</string>
-    <string name="guide_recycler_item">Tap on list item to select as current. It will become highlighted</string>
-    <string name="guide_recycler_item_edit">Double tap on list item to edit text</string>
+    <string name="guide_add_case">Click on button to add new caption at current time.</string>
+    <string name="guide_recycler_item">Tap on list item to select as current. It will become highlighted.</string>
+    <string name="guide_recycler_item_edit">Double tap on list item to edit text.</string>
     <string name="guide_doubletap">Double tap on caption item to edit text.</string>
-    <string name="guide_resize">Use multitouch gestures for resizing and changing placement</string>
-    <string name="guide_save">Click here for save</string>
+    <string name="guide_resize">Use multitouch gestures for resizing and changing placement.</string>
+    <string name="guide_save">Click here for save.</string>
     <string name="error_while_opening_file">Error while opening file</string>
-    <string name="guide_recycler_delete">Swipe from right to left on item for delete</string>
+    <string name="guide_recycler_delete">Swipe from right to left on item for delete.</string>
     <string name="error_no_internet">No captions was detected due service unavailable</string>
     <string name="error_no_captions">No captions was detected</string>
     <string name="error_no_caption_net_error">due remote service unavailable. Check your network connection.</string>
     <string name="empty_recycler_add_caption">Add caption</string>
-    <string name="here_are_no_captions_you_can_add_it">Here are no captions. You can add it.</string>
+    <string name="here_are_no_captions_you_can_add_it">Here are no captions.</string>
+    <string name="snack_bar_undo">Undo</string>
+    <string name="snack_bar_item_deleted">Item deleted.</string>
 </resources>

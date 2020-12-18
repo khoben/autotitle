@@ -10,7 +10,9 @@
 
     <color name="primary50">#80673AB7</color>
 
-    <color name="recycler_swipe_background">#b80f0a</color>
+    <color name="selectedTimelineBackgroundColor">#3fff0000</color>
+    <color name="timelineBackgroundColor">#7f000000</color>
+    <color name="recycler_swipe_background">#B71C1C</color>
 
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>

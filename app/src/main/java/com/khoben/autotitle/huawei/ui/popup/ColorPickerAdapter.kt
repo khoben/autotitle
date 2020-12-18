@@ -57,7 +57,7 @@ class ColorPickerAdapter internal constructor(
         smallerCircle.setPadding(10, 10, 10, 10)
         val drawables = arrayOf<Drawable>(smallerCircle, biggerCircle)
         val layerDrawable = LayerDrawable(drawables)
-        view.setBackgroundDrawable(layerDrawable)
+        view.background = layerDrawable
     }
 
     fun setOnColorPickerClickListener(onColorPickerClickListener: OnColorPickerClickListener?) {
