@@ -7,6 +7,8 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.RelativeLayout
 import com.khoben.autotitle.huawei.ui.overlay.OverlayType
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * Created on 18/01/2017.
@@ -42,6 +44,17 @@ internal class MultiTouchListener(
     private var mOnGestureControl: OnGestureControl? = null
     private val mOnPhotoEditorListener: OnPhotoEditorListener?
 
+    private var boundingRect = Rect()
+    private var parentCenterX = 0F
+    private var parentCenterY = 0F
+
+    internal enum class DIRECTION {
+        X,
+        Y,
+        BOTH,
+        NONE
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouch(view: View, event: MotionEvent): Boolean {
         mScaleGestureDetector.onTouchEvent(view, event)
@@ -59,9 +72,7 @@ internal class MultiTouchListener(
                 mPrevRawX = event.rawX
                 mPrevRawY = event.rawY
                 mActivePointerId = event.getPointerId(0)
-                if (deleteView != null) {
-                    deleteView.visibility = View.VISIBLE
-                }
+                deleteView?.visibility = View.VISIBLE
                 view.bringToFront()
                 firePhotoEditorSDKListener(view, true)
             }
@@ -80,15 +91,29 @@ internal class MultiTouchListener(
             MotionEvent.ACTION_UP -> {
                 mActivePointerId = INVALID_POINTER_ID
                 if (deleteView != null && isViewInBounds(deleteView, x, y)) {
-                    if (onMultiTouchListener != null) onMultiTouchListener!!.onRemoveViewListener(
-                        view
-                    )
-                } else if (!isViewInBounds(photoEditImageView, x, y)) {
-                    view.animate().translationY(0f).translationY(0f)
+                    onMultiTouchListener?.onRemoveViewListener(view)
                 }
-                if (deleteView != null) {
-                    deleteView.visibility = View.GONE
+//                if (!isViewInBounds(photoEditImageView, x, y)) {
+//                    view.animate().translationY(0f).translationX(0f)
+//                }
+                val isVisible = isViewVisible(view)
+                if (!isVisible.first) {
+                    when (isVisible.second) {
+                        DIRECTION.X -> {
+                            view.animate().translationX(0f)
+                        }
+                        DIRECTION.Y -> {
+                            view.animate().translationY(0f)
+                        }
+                        DIRECTION.BOTH -> {
+                            view.animate()
+                                .translationX(0F)
+                                .translationY(0F)
+                        }
+                        DIRECTION.NONE -> {}
+                    }
                 }
+                deleteView?.visibility = View.GONE
                 firePhotoEditorSDKListener(view, false)
             }
             MotionEvent.ACTION_POINTER_UP -> {
@@ -112,6 +137,22 @@ internal class MultiTouchListener(
             if (isStart) mOnPhotoEditorListener.onStartViewChangeListener(view.tag as OverlayType) else mOnPhotoEditorListener.onStopViewChangeListener(
                 view.tag as OverlayType
             )
+        }
+    }
+
+    private fun isViewVisible(view: View): Pair<Boolean, DIRECTION> {
+        view.getHitRect(boundingRect)
+        val centerX = boundingRect.exactCenterX()
+        val centerY = boundingRect.exactCenterY()
+
+        val limitX = centerX < 0 || centerX > photoEditImageView.width
+        val limitY = centerY < 0 || centerY > photoEditImageView.height
+
+        return when {
+            limitX && limitY -> Pair(false, DIRECTION.BOTH)
+            limitX -> Pair(false, DIRECTION.X)
+            limitY -> Pair(false, DIRECTION.Y)
+            else -> Pair(true, DIRECTION.NONE)
         }
     }
 
@@ -184,24 +225,18 @@ internal class MultiTouchListener(
 
     private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
         override fun onSingleTapUp(e: MotionEvent): Boolean {
-            if (mOnGestureControl != null) {
-                mOnGestureControl!!.onClick()
-            }
+            mOnGestureControl?.onClick()
             return true
         }
 
         override fun onDoubleTap(e: MotionEvent?): Boolean {
-            if (mOnGestureControl != null) {
-                mOnGestureControl!!.onDoubleTap()
-            }
+            mOnGestureControl?.onDoubleTap()
             return true
         }
 
         override fun onLongPress(e: MotionEvent) {
             super.onLongPress(e)
-            if (mOnGestureControl != null) {
-                mOnGestureControl!!.onLongClick()
-            }
+            mOnGestureControl?.onLongClick()
         }
     }
 
@@ -221,7 +256,7 @@ internal class MultiTouchListener(
             computeRenderOffset(view, info.pivotX, info.pivotY)
             adjustTranslation(view, info.deltaX, info.deltaY)
             var scale = view.scaleX * info.deltaScale
-            scale = Math.max(info.minimumScale, Math.min(info.maximumScale, scale))
+            scale = max(info.minimumScale, min(info.maximumScale, scale))
             view.scaleX = scale
             view.scaleY = scale
             val rotation = adjustAngle(view.rotation + info.deltaAngle)
@@ -258,6 +293,8 @@ internal class MultiTouchListener(
         this.deleteView = deleteView
         this.parentView = parentView
         this.photoEditImageView = photoEditImageView
+        parentCenterX = photoEditImageView.x + photoEditImageView.width / 2
+        parentCenterY = photoEditImageView.y + photoEditImageView.height / 2
         mOnPhotoEditorListener = onPhotoEditorListener
         outRect = if (deleteView != null) {
             Rect(

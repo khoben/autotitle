@@ -10,6 +10,8 @@ import kotlin.math.min
 class AndroidNativeMetadataProvider(private val context: Context, private val uri: Uri) :
     VideoMetaDataProvider {
 
+    private val FRAME_RETRIEVER_MODE = MediaMetadataRetriever.OPTION_CLOSEST_SYNC
+
     private val mediaMetadataRetriever = MediaMetadataRetriever()
         .apply {
             setDataSource(context, uri)
@@ -28,12 +30,12 @@ class AndroidNativeMetadataProvider(private val context: Context, private val ur
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             return mediaMetadataRetriever.getScaledFrameAtTime(
                 frameInMicroseconds,
-                MediaMetadataRetriever.OPTION_CLOSEST_SYNC, width, height
+                FRAME_RETRIEVER_MODE, width, height
             )
         } else {
             val frameBitmap = mediaMetadataRetriever.getFrameAtTime(
                 frameInMicroseconds,
-                MediaMetadataRetriever.OPTION_CLOSEST_SYNC
+                FRAME_RETRIEVER_MODE
             )
             val bitmapWidth = frameBitmap!!.width
             val bitmapHeight = frameBitmap.height

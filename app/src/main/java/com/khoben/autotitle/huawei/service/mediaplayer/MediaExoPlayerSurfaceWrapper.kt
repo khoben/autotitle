@@ -5,16 +5,13 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.util.Log
 import android.view.Surface
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.*
 import com.khoben.autotitle.huawei.model.VideoInfo
-import org.greenrobot.eventbus.EventBus
 
 
-class MediaExoPlayerSurfaceWrapper(private var context: Context) : Player.EventListener,
-    MediaSurfacePlayer {
+class MediaExoPlayerSurfaceWrapper(private var context: Context) :
+    MediaSurfacePlayer,
+    Player.EventListener {
 
     private var mediaPlayer: SimpleExoPlayer? = null
     private var dataSourceUri: Uri? = null
@@ -60,10 +57,10 @@ class MediaExoPlayerSurfaceWrapper(private var context: Context) : Player.EventL
     }
 
     override fun prepare() {
-        mediaPlayer = SimpleExoPlayer.Builder(context).build()
+        mediaPlayer = SimpleExoPlayer.Builder(context)
+            .build()
         mediaPlayer!!.addListener(this)
-        val mediaItem: MediaItem = MediaItem.fromUri(dataSourceUri!!)
-        mediaPlayer!!.setMediaItem(mediaItem)
+        mediaPlayer!!.setMediaItem(MediaItem.fromUri(dataSourceUri!!))
         isPreparing = true
         mediaPlayer!!.prepare()
     }
@@ -76,13 +73,11 @@ class MediaExoPlayerSurfaceWrapper(private var context: Context) : Player.EventL
     override fun play() {
         Log.d(TAG, "Playing")
         mediaPlayer!!.play()
-//        mediaPlayerCallback?.onMediaPlayerStarted()
     }
 
     override fun pause() {
         Log.d(TAG, "Paused")
         mediaPlayer?.pause()
-//        mediaPlayerCallback?.onMediaPlayerPaused()
     }
 
     override fun toggle() {
@@ -106,33 +101,8 @@ class MediaExoPlayerSurfaceWrapper(private var context: Context) : Player.EventL
     }
 
     override fun release() {
-        EventBus.getDefault().unregister(this)
         mediaPlayer!!.release()
     }
-
-//    @Subscribe
-//    fun playbackEvent(event: PlaybackUI) {
-//        when(event.playState) {
-//        when(event.playState) {
-//            PlaybackUIState.PLAY -> {
-//                start()
-//            }
-//            PlaybackUIState.PAUSED -> {
-//                pause()
-//            }
-//            PlaybackUIState.STOP -> {
-//                stop()
-//            }
-//            PlaybackUIState.REWIND -> {
-//                Log.d(TAG, "REWIND TO ${event.currentPosition}")
-//                pause()
-//                seekTo(event.currentPosition)
-//            }
-//            PlaybackUIState.TOGGLE -> {
-//                toggle()
-//            }
-//        }
-//    }
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
         when (playbackState) {
@@ -141,7 +111,6 @@ class MediaExoPlayerSurfaceWrapper(private var context: Context) : Player.EventL
             ExoPlayer.STATE_ENDED -> {
                 // onCompletion
                 mediaPlayerCallback?.onMediaPlayerCompletion()
-//                EventController.Player.sendCompletion()
             }
             ExoPlayer.STATE_IDLE -> {
             }
@@ -150,7 +119,6 @@ class MediaExoPlayerSurfaceWrapper(private var context: Context) : Player.EventL
                     // onPrepared
                     if (isPreparing) {
                         mediaPlayerCallback?.onMediaPlayerPrepared()
-//                        EventController.Player.sendPrepared()
                         isPreparing = false
                     }
                     // onStart
@@ -166,6 +134,7 @@ class MediaExoPlayerSurfaceWrapper(private var context: Context) : Player.EventL
     }
 
     override fun seekTo(timestamp: Long) {
+        Log.d(TAG, "Seek to $timestamp")
         mediaPlayer!!.seekTo(timestamp)
     }
 

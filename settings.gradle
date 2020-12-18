@@ -1,3 +1,4 @@
 include ':mp4compose'
+include ':rangeview'
 include ':app'
-rootProject.name = "My Application"
+rootProject.name = "AutoTitle"

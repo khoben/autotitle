@@ -6,7 +6,7 @@ import android.net.Uri
 import android.util.Log
 import com.khoben.autotitle.huawei.App
 import com.khoben.autotitle.huawei.common.FileUtils
-import com.khoben.autotitle.huawei.model.MLCaption
+import com.khoben.autotitle.huawei.model.MLCaptionEnvelop
 import com.khoben.autotitle.huawei.service.audioextractor.AudioExtractor
 import com.khoben.autotitle.huawei.service.audiotranscriber.AudioTranscriber
 import com.khoben.autotitle.huawei.service.frameretriever.VideoFrameRetriever
@@ -32,10 +32,10 @@ class VideoLoader {
     }
 
     private var disposable: Disposable? = null
-    private var callback: ((Pair<List<Bitmap>, List<MLCaption>>) -> Unit)? = null
+    private var callback: ((Pair<List<Bitmap>, MLCaptionEnvelop>) -> Unit)? = null
     private var errorListener: ((Throwable) -> Unit)? = null
 
-    private var audio: Observable<List<MLCaption>>? = null
+    private var audio: Observable<MLCaptionEnvelop>? = null
     private var frames: Observable<List<Bitmap>>? = null
 
     private var context: Context? = null
@@ -61,15 +61,15 @@ class VideoLoader {
         return this
     }
 
-    fun load(callback: (Pair<List<Bitmap>, List<MLCaption>>) -> Unit) {
+    fun load(callback: (Pair<List<Bitmap>, MLCaptionEnvelop>) -> Unit) {
         this.callback = callback
         Observable.zip(
             frames,
             audio!!.onErrorReturn { error ->
                 Log.e(TAG, "Audio Transcription error: $error")
-                emptyList()
+                MLCaptionEnvelop(null, error)
             },
-            { f, a -> Pair<List<Bitmap>, List<MLCaption>>(f, a) }
+            { f, a -> Pair<List<Bitmap>, MLCaptionEnvelop>(f, a) }
         ).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ result ->
@@ -82,7 +82,7 @@ class VideoLoader {
 
     }
 
-    private fun extractAudio(context: Context, outputPath: String): Observable<List<MLCaption>> {
+    private fun extractAudio(context: Context, outputPath: String): Observable<MLCaptionEnvelop> {
         return audioExtractor.extractAudio(context, uri!!, outputPath)
             .flatMap { path ->
                 Log.d(TAG, "Audio has been extracted with path = $path")

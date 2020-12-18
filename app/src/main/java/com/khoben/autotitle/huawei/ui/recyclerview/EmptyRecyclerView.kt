@@ -17,7 +17,7 @@ class EmptyRecyclerView : RecyclerView {
         }
 
         override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-            Log.i(TAG, "onItemRangeInserted$itemCount")
+            Log.i(TAG, "onItemRangeInserted. Inserted: $itemCount items")
             checkIfEmpty()
         }
 
@@ -26,13 +26,12 @@ class EmptyRecyclerView : RecyclerView {
         }
     }
 
-    constructor(context: Context) : super(context) {}
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {}
+    constructor(context: Context) : super(context)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
     constructor(
         context: Context, attrs: AttributeSet?,
         defStyle: Int
-    ) : super(context, attrs, defStyle) {
-    }
+    ) : super(context, attrs, defStyle)
 
     private fun checkIfEmpty() {
         if (adapter != null) {
@@ -56,6 +55,6 @@ class EmptyRecyclerView : RecyclerView {
     }
 
     companion object {
-        private const val TAG = "EmptyRecyclerView"
+        private val TAG = EmptyRecyclerView::class.java.simpleName
     }
 }

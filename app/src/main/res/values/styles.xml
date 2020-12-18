@@ -2,37 +2,31 @@
     <!-- Base application theme. -->
 
 <!--    static dark theme-->
-    <style name="MyTheme" parent="Theme.MaterialComponents.NoActionBar">
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowNoTitle">true</item>
+    <style name="MyTheme" parent="Theme.MaterialComponents.DayNight">
+
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+<!--        <item name="android:statusBarColor">?attr/colorSurface</item>-->
+
         <item name="android:forceDarkAllowed">false</item>
-        <item name="colorPrimaryVariant">#3700B3</item>
-        <item name="colorPrimary">#673AB7</item>
-        <item name="colorPrimaryDark">#512DA8</item>
-        <item name="colorAccent">#FF4081</item>
-        <item name="colorOnPrimary">#FFFFFF</item>
-        <item name="colorOnSecondary">#000000</item>
+
+<!--        <item name="colorPrimaryVariant">#3700B3</item>-->
+<!--        <item name="colorPrimary">#673AB7</item>-->
+<!--        <item name="colorPrimaryDark">#512DA8</item>-->
+<!--        <item name="colorAccent">#FF4081</item>-->
+<!--        <item name="colorOnPrimary">#FFFFFF</item>-->
+<!--        <item name="colorOnSecondary">#000000</item>-->
     </style>
 
-    <style name="MyTitleStyle" parent="@android:style/Widget.TextView">
-        <item name="android:textSize">20sp</item>
-        <item name="android:paddingTop">50dp</item>
-        <item name="android:layout_marginTop">50dp</item>
-        <item name="android:textColor">#00ff00</item>
-        <item name="android:fontFamily">sans-serif-condensed</item>
+    <style name="CustomAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:windowMinWidthMinor">0dp</item>
     </style>
 
     <style name="ShapeAppearanceOverlay.MyApp.Button.Circle" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
-    </style>
-
-    <style name="EditText">
-        <item name="android:singleLine">false</item>
-        <item name="colorControlNormal">#FFFFFF</item>
-        <item name="colorControlActivated">#FFFFFF</item>
-        <item name="android:textColorPrimary">#FFFFFF</item>
-        <item name="android:textSize">14sp</item>
     </style>
 
 </resources>

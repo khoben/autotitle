@@ -14,11 +14,9 @@ interface ListItemEventListener {
     fun onClickedAddBelow(item: Int)
 }
 
-class OverlayViewAdapter() : ListAdapter<OverlayDataMapper, OverlayViewAdapter.OverlayViewHolder>(
+class OverlayViewAdapter : ListAdapter<OverlayDataMapper, OverlayViewAdapter.OverlayViewHolder>(
     OverlayViewCallback()
 ), ListItemEventListener {
-
-    private var selectedItemId = 0
 
     var listItemEventListener: ListItemEventListener? = null
     override fun onClickedAddBelow(item: Int) {

@@ -5,7 +5,6 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
@@ -55,7 +54,6 @@ object DisplayUtils {
     fun getBitmapFromView(
         view: View,
         parentView: View,
-        isWide: Boolean,
         _scaleX: Float,
         _scaleY: Float
     ): Bitmap? {
@@ -85,17 +83,10 @@ object DisplayUtils {
                 Bitmap.Config.ARGB_8888
             )
         val canvas = Canvas(returnedBitmap)
-//        val bgDrawable: Drawable? = view.background
-//        if (bgDrawable == null) {
-//            canvas.drawColor(Color.WHITE)
-//        } else {
-//            bgDrawable.draw(canvas)
-//        }
         canvas.rotate(rotation, pivotX, pivotY)
         canvas.scale(scaleX, scaleY, pivotX, pivotY)
         if (view is TextView) {
             // text metrics
-//            view.measure(0, 0)
             val txtWidth = view.width
             val txtHeight = view.height
             // apply transformation
@@ -114,5 +105,11 @@ object DisplayUtils {
             currentParent = currentParent.parent as ViewGroup
         }
         return relativePosition
+    }
+
+    fun getRealLocationOnScreen(view: View): Pair<Int, Int> {
+        val point = IntArray(2)
+        view.getLocationOnScreen(point)
+        return Pair(point[0], point[1])
     }
 }

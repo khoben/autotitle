@@ -51,6 +51,7 @@ class Mp4ComposerVP : VideoProcessorBase() {
         val filter = GLViewOverlayFilter(overlays, videoInfo, parentViewSize)
         return instance.fillMode(FillMode.PRESERVE_ASPECT_FIT)
             .filter(filter)
+            .size(videoInfo.width, videoInfo.height)
             .listener(object : Mp4Composer.Listener {
                 override fun onProgress(progress: Double) {
                     listener?.onProgress(progress)
