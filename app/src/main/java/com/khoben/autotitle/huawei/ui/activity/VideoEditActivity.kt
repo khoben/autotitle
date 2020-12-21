@@ -18,6 +18,7 @@ import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import androidx.recyclerview.widget.*
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
 import com.google.android.material.snackbar.Snackbar
@@ -60,6 +61,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
     private lateinit var loadingDialog: LoadingDialog
     private lateinit var alertDialog: CustomAlertDialog
     private lateinit var saveBtn: Button
+    private lateinit var muteBtn: MaterialButton
     private lateinit var addItemBtn: Button
 
     private lateinit var lottieAnimationLoadingView: View
@@ -77,6 +79,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
         videoSurfaceView = binding.videolayer.videoPreview
         videoLayer = binding.videolayer.root
         overlayView = binding.videolayer.overlaysRoot
+        muteBtn = binding.videolayer.muteBtn
         saveBtn = binding.saveVideoBtn
         addItemBtn = binding.addItem
         recyclerView = binding.recyclerview
@@ -95,6 +98,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
         binding.emptyViewRecycler.addCaptionRecycler.setOnClickListener { onViewClicked(it) }
         saveBtn.setOnClickListener { onViewClicked(it) }
         addItemBtn.setOnClickListener { onViewClicked(it) }
+        muteBtn.setOnClickListener { toggleMute() }
 
         setupRecyclerView(binding.emptyViewRecycler.root)
     }
@@ -522,6 +526,23 @@ class VideoEditActivity : MvpAppCompatActivity(),
     override fun onClickedAddBelow(item: Int) {
         Log.d(TAG, "Clicked on $item")
         presenter.addOverlayAfterSpecificPosition(item)
+    }
+
+    private var lastMuteState = true
+    private fun toggleMute() {
+        lastMuteState = !lastMuteState
+        when(lastMuteState) {
+            true -> {
+                muteBtn.setIconResource(R.drawable.volume_off_icon_24dp)
+                presenter.toggleMute(true)
+                Toast.makeText(this, "Muted", LENGTH_SHORT).show()
+            }
+            else -> {
+                muteBtn.setIconResource(R.drawable.volume_up_icon_24dp)
+                presenter.toggleMute(false)
+                Toast.makeText(this, "Unmuted", LENGTH_SHORT).show()
+            }
+        }
     }
 
     companion object {

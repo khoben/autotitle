@@ -333,6 +333,10 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         }
     }
 
+    fun toggleMute(state: Boolean) {
+        mediaController.toggleMute(state)
+    }
+
     companion object {
         private val TAG = VideoEditActivityPresenter::class.java.simpleName
     }

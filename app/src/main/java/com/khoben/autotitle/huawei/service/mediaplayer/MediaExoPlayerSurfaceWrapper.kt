@@ -147,7 +147,7 @@ class MediaExoPlayerSurfaceWrapper(private var context: Context) :
     }
 
     override fun setVolumeLevel(volume: Float) {
-        mediaPlayer!!.volume = volume
+        mediaPlayer?.volume = volume
     }
 
     override fun setMediaCallbackListener(mediaPlayerCallback: MediaPlayerSurfaceCallback?) {

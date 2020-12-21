@@ -36,6 +36,17 @@ class MediaController {
         setPlayState(isPlaying)
     }
 
+    fun toggleMute(state: Boolean) {
+        when(state) {
+            true -> {
+                mediaPlayer.setVolumeLevel(0F)
+            }
+            else -> {
+                mediaPlayer.setVolumeLevel(1F)
+            }
+        }
+    }
+
     /**
      * Sets playback state
      * @param playState True -- Play; False -- Pause
