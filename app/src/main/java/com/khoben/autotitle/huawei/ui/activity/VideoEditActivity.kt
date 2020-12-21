@@ -17,10 +17,7 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.*
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
 import com.google.android.material.snackbar.Snackbar
@@ -119,6 +116,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
             it.layoutManager = LinearLayoutManager(this)
             it.adapter = overlayViewAdapter
             it.setEmptyView(emptyRecyclerView)
+            (recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 
         recyclerView.addOnItemTouchListener(

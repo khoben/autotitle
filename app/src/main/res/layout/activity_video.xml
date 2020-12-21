@@ -115,33 +115,36 @@
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Button.Circle" />
     </com.khoben.autotitle.huawei.ui.player.VideoControlsView>
 
-    <com.khoben.autotitle.huawei.ui.recyclerview.EmptyRecyclerView
-        android:id="@+id/recyclerview"
-        android:choiceMode="singleChoice"
-        android:listSelector="#666666"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
         android:background="?colorSurface"
         android:elevation="@dimen/elevation_medium"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:paddingStart="3dp"
-        android:paddingEnd="3dp"
-        android:layout_marginTop="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/video_seekbar_view" />
+        app:layout_constraintTop_toBottomOf="@+id/video_seekbar_view">
 
-    <include
-        android:id="@+id/empty_view_recycler"
-        layout="@layout/empty_recycler_view"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/video_seekbar_view"
-        android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/video_seekbar_view" />
+        <com.khoben.autotitle.huawei.ui.recyclerview.EmptyRecyclerView
+            android:id="@+id/recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <include
+            android:id="@+id/empty_view_recycler"
+            layout="@layout/empty_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <include
         android:id="@+id/lottie_loading_view"

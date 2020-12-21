@@ -12,6 +12,14 @@ class OverlayViewAdapter : ListAdapter<OverlayDataMapper, OverlayViewAdapter.Ove
     OverlayViewDiffCallback()
 ), RecyclerViewItemEventListener {
 
+    init {
+        setHasStableIds(true)
+    }
+
+    override fun getItemId(position: Int): Long {
+        return getItem(position).uuid.hashCode().toLong()
+    }
+
     var listItemEventListener: RecyclerViewItemEventListener? = null
     override fun onClickedAddBelow(item: Int) {
         listItemEventListener?.onClickedAddBelow(item)

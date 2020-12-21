@@ -64,9 +64,10 @@
 
             <TextView
                 android:id="@+id/item_content"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:gravity="center"
                 app:overlayContentString="@{overlay}"
                 tools:text="content" />
         </LinearLayout>
