@@ -49,7 +49,7 @@ public class GlHazeFilter extends GlFilter {
     }
 
     @Override
-    public void onDraw() {
+    public void onDraw(long currentTimeUs) {
         GLES20.glUniform1f(getHandle("distance"), distance);
         GLES20.glUniform1f(getHandle("slope"), slope);
     }

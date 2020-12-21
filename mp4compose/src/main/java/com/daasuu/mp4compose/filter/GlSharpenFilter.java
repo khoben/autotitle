@@ -89,7 +89,7 @@ public class GlSharpenFilter extends GlFilter {
     }
 
     @Override
-    public void onDraw() {
+    public void onDraw(long currentTimeUs) {
         GLES20.glUniform1f(getHandle("imageWidthFactor"), imageWidthFactor);
         GLES20.glUniform1f(getHandle("imageHeightFactor"), imageHeightFactor);
         GLES20.glUniform1f(getHandle("sharpness"), sharpness);

@@ -4,7 +4,7 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/imgPhotoEditorClose"
+        android:id="@+id/overlay_delete_btn"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_gravity="top|start"
@@ -12,7 +12,7 @@
         android:src="@drawable/close_icon" />
 
     <FrameLayout
-        android:id="@+id/frmBorder"
+        android:id="@+id/overlay_border"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="8dp"

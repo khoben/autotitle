@@ -48,7 +48,7 @@ public class GlZoomBlurFilter extends GlFilter {
     }
 
     @Override
-    public void onDraw() {
+    public void onDraw(long currentTimeUs) {
         GLES20.glUniform2f(getHandle("blurCenter"), blurCenter.x, blurCenter.y);
         GLES20.glUniform1f(getHandle("blurSize"), blurSize);
     }

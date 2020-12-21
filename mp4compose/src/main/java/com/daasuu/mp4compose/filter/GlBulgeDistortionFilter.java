@@ -76,7 +76,7 @@ public class GlBulgeDistortionFilter extends GlFilter {
     //////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void onDraw() {
+    public void onDraw(long currentTimeUs) {
         GLES20.glUniform2f(getHandle("center"), centerX, centerY);
         GLES20.glUniform1f(getHandle("radius"), radius);
         GLES20.glUniform1f(getHandle("scale"), scale);

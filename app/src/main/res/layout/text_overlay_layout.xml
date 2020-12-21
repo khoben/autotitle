@@ -1,39 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.khoben.autotitle.huawei.ui.overlay.OverlayText xmlns:android="http://schemas.android.com/apk/res/android"
+<com.khoben.autotitle.huawei.ui.overlay.OverlayText
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    tools:background="@color/black">
 
     <FrameLayout
-        android:id="@+id/frmBorder"
+        android:id="@+id/overlay_border"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="8dp"
         android:background="@drawable/rounded_border_unselect_tv">
 
         <TextView
-            android:id="@+id/tvPhotoEditorText"
+            android:id="@+id/overlay_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
-            android:textColor="@color/white"
             android:background="@android:color/transparent"
+            android:textColor="@color/white"
             android:textSize="18sp"
-            tools:text = "test"
-            tools:textColor="@color/black"/>
+            tools:text="test"
+            tools:textColor="@color/white" />
 
     </FrameLayout>
 
     <ImageView
-        android:id="@+id/imgPhotoEditorClose"
+        android:id="@+id/overlay_delete_btn"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_gravity="top|end"
         android:elevation="1dp"
+        android:src="@drawable/close_icon"
         android:visibility="gone"
         app:tint="@color/red_color_picker"
-        android:src="@drawable/close_icon"
         tools:ignore="ContentDescription" />
 
 </com.khoben.autotitle.huawei.ui.overlay.OverlayText>

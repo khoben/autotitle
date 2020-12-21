@@ -139,16 +139,25 @@ class VideoControlsView(context: Context, attrs: AttributeSet) :
         videoSeekBarView.addFramesToSeekBar(bitmaps, frameTime)
     }
 
+    /**
+     * Set video duration time
+     *
+     * @param totalTime Video duration time in milliseconds
+     */
     fun setMediaDuration(totalTime: Long) {
         totalVideoTime.text =
             context.getString(R.string.time_second_string, totalTime.toReadableTimeString())
         videoSeekBarView.setMediaDuration(totalTime)
     }
 
-//    fun videoPlay(baseImageViews: List<OverlayText>?, isVideoPlaying: Boolean) {
-//        videoSeekBarView.playingTimeRange(isVideoPlaying, baseImageViews)
-//    }
-
+    /**
+     * Update playback state
+     *
+     * @param overlays List of [OverlayText]
+     * @param selectedOverlay Currently selected [OverlayText]
+     * @param isEdit Is in edit mode
+     * @param isPlaying Is playing
+     */
     fun updatePlayback(
         overlays: List<OverlayText>?,
         selectedOverlay: OverlayText?,
@@ -158,12 +167,11 @@ class VideoControlsView(context: Context, attrs: AttributeSet) :
         videoSeekBarView.updatePlayback(overlays, selectedOverlay, isEdit, isPlaying)
     }
 
-    fun setToDefaultState(saveCurrentTime: Boolean = false) {
-        currentVideoTime.text = 0L.toReadableTimeString()
-        playPauseButton.toggle(false)
-        videoSeekBarView.setToDefaultState(saveCurrentTime)
-    }
-
+    /**
+     * Sets UI controls to desired timestamp
+     *
+     * @param pos Timestamp
+     */
     fun setControlsToTime(pos: Long) {
         currentVideoTime.text = pos.toReadableTimeString()
         playPauseButton.toggle(false)
@@ -187,9 +195,6 @@ class VideoControlsView(context: Context, attrs: AttributeSet) :
 
     override fun seekBarOnDoubleTap() {
         seekBarListener?.seekBarOnDoubleTap()
-    }
-
-    override fun reset() {
     }
 
     override fun updateVideoPositionWithSeekBar(time: Long) {

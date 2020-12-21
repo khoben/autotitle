@@ -202,8 +202,10 @@ class VideoSeekBarView(
             }
             invalidate()
         }
-        progressPlaybackAnimator!!.interpolator = LinearInterpolator()
-        progressPlaybackAnimator!!.duration = duration
+        progressPlaybackAnimator!!.apply {
+            this.interpolator = LinearInterpolator()
+            this.duration = duration
+        }
         post {
             progressPlaybackAnimator?.start()
         }
@@ -214,77 +216,55 @@ class VideoSeekBarView(
         progressPlaybackAnimator = null
     }
 
+    /**
+     * Sets UI controls to desired timestamp
+     *
+     * @param pos Timestamp
+     */
     fun setToState(pos: Long) {
-        stopSeekBarAnimation()
         currentPlaybackTime = pos
-        x = screenWidth / 2F - pos * measuredWidth.toFloat() / videoDuration
-        rewind(pos)
-    }
-
-    fun setToDefaultState(saveCurrentTime: Boolean) {
-        Log.d(TAG, "setToDefaultState")
-        rangeView?.visibility = GONE
         stopSeekBarAnimation()
-        x = maxScrollWidth.toFloat()
-        seekBarListener?.seekBarRewind(0)
+        // convert playback time to x coordinate
+        x = screenWidth / 2F - currentPlaybackTime * measuredWidth.toFloat() / videoDuration
+        rewind(currentPlaybackTime)
     }
 
+    /**
+     * Set video duration time
+     *
+     * @param totalTime Video duration time in milliseconds
+     */
     fun setMediaDuration(totalTime: Long) {
         this.videoDuration = totalTime
     }
 
     /**
-     * Draws background for each overlay time range
-     * @param playState Boolean
-     * @param overlays List<OverlayObject?>?
+     * Update playback state
+     *
+     * @param overlays List of [OverlayText]
+     * @param selectedOverlay Currently selected [OverlayText]
+     * @param isEdit Is in edit mode
+     * @param isPlaying Is playing
      */
-//    fun playingTimeRange(playState: Boolean, overlays: List<OverlayText?>?) {
-//        this.playbackState = playState
-//        if (playState) {
-//            rangeView?.visibility = GONE
-//            overlayTimeRangeBackgrounds.forEach { removeView(it) }
-//            if (overlays != null && overlays.isNotEmpty()) {
-//                overlayTimeRangeBackgrounds.clear()
-//                for (overlay in overlays) {
-//                    val startX = overlay!!.startTime * videoSeekBarViewWidth / videoDuration
-//                    val endX = overlay.endTime * videoSeekBarViewWidth / videoDuration
-//                    val width = (endX - startX).toInt()
-//
-//                    val timeRangeBackground = LinearLayout(context).apply {
-//                        x = startX.toFloat()
-//                        setBackgroundColor(timeRangeBackgroundColor)
-//                    }
-//
-//                    addView(
-//                        timeRangeBackground,
-//                        LayoutParams(width, App.SEEKBAR_HEIGHT_DP_PIXELS).apply {
-//                            addRule(CENTER_VERTICAL, TRUE)
-//                        }
-//                    )
-//                    overlayTimeRangeBackgrounds.add(timeRangeBackground)
-//                }
-//            }
-//        }
-//        startSeekBarAnimation(measuredWidth.toFloat(), videoDuration)
-//    }
-
     fun updatePlayback(
         overlays: List<OverlayText?>?,
         selectedOverlay: OverlayText?,
-        isEdit: Boolean,
+        isEdit: Boolean, //? check (selectedOverlay == null) instead of this
         isPlaying: Boolean
     ) {
-        this.playbackState = isPlaying
+        playbackState = isPlaying
+        rangeView?.toggleAccessibility(!isPlaying)
+
         overlayTimeRangeBackgrounds.forEach { removeView(it) }
         if (overlays != null && overlays.isNotEmpty()) {
             overlayTimeRangeBackgrounds.clear()
-            if (selectedOverlay != null && isEdit) {
+            if (selectedOverlay != null) {
                 rangeView?.setCurrentValues(
                     selectedOverlay.startTime.toFloat() / videoDuration,
                     selectedOverlay.endTime.toFloat() / videoDuration
                 )
                 rangeView?.visibility = VISIBLE
-            } else if (selectedOverlay == null) {
+            } else {
                 rangeView?.visibility = GONE
             }
             for (overlay in overlays) {
@@ -316,7 +296,7 @@ class VideoSeekBarView(
                 (videoSeekBarViewWidth * frameTimeInMs / videoDuration + DisplayUtils.dipToPx(10)).toFloat()
         }
         if (isPlaying) {
-            rangeView?.visibility = GONE
+            //  rangeView?.visibility = GONE
             startSeekBarAnimation(measuredWidth.toFloat(), videoDuration)
         }
     }

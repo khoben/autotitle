@@ -28,7 +28,7 @@ public class GlGammaFilter extends GlFilter {
     }
 
     @Override
-    public void onDraw() {
+    public void onDraw(long currentTimeUs) {
         GLES20.glUniform1f(getHandle("gamma"), gamma);
     }
 

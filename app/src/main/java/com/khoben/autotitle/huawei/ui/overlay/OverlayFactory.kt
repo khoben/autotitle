@@ -16,7 +16,7 @@ class OverlayFactory(context: Context) {
         when (overlayType) {
             OverlayType.TEXT -> {
                 layout = layoutInflater.inflate(R.layout.text_overlay_layout, null)
-                val txtText: TextView = layout.findViewById<TextView>(R.id.tvPhotoEditorText)
+                val txtText: TextView = layout.findViewById<TextView>(R.id.overlay_text)
                 txtText.gravity = Gravity.CENTER
             }
             OverlayType.IMAGE -> {

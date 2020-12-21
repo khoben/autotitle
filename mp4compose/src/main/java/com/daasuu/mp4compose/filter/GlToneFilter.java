@@ -80,7 +80,7 @@ public class GlToneFilter extends GlThreex3TextureSamplingFilter {
     //////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void onDraw() {
+    public void onDraw(long currentTimeUs) {
         GLES20.glUniform1f(getHandle("threshold"), threshold);
         GLES20.glUniform1f(getHandle("quantizationLevels"), quantizationLevels);
     }

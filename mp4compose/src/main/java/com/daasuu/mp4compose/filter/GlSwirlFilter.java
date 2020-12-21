@@ -55,7 +55,7 @@ public class GlSwirlFilter extends GlFilter {
     }
 
     @Override
-    public void onDraw() {
+    public void onDraw(long currentTimeUs) {
         GLES20.glUniform2f(getHandle("center"), center.x, center.y);
         GLES20.glUniform1f(getHandle("radius"), radius);
         GLES20.glUniform1f(getHandle("angle"), angle);

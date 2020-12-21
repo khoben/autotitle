@@ -203,8 +203,9 @@ class VideoComposer {
         decoder.releaseOutputBuffer(result, doRender);
         if (doRender) {
             decoderSurface.awaitNewImage();
-            decoderSurface.drawImage();
-            encoderSurface.setPresentationTime(bufferInfo.presentationTimeUs * 1000);
+            long currentTime = bufferInfo.presentationTimeUs;
+            decoderSurface.drawImage(currentTime);
+            encoderSurface.setPresentationTime(currentTime * 1000);
             encoderSurface.swapBuffers();
         } else if (bufferInfo.presentationTimeUs != 0) {
             writtenPresentationTimeUs = bufferInfo.presentationTimeUs;

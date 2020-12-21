@@ -77,7 +77,7 @@ public class GlThreex3TextureSamplingFilter extends GlFilter {
     }
 
     @Override
-    public void onDraw() {
+    public void onDraw(long currentTimeUs) {
         GLES20.glUniform1f(getHandle("texelWidth"), texelWidth);
         GLES20.glUniform1f(getHandle("texelHeight"), texelHeight);
     }

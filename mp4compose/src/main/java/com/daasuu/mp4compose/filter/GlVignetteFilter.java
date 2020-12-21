@@ -54,7 +54,7 @@ public class GlVignetteFilter extends GlFilter {
     //////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void onDraw() {
+    public void onDraw(long currentTimeUs) {
         GLES20.glUniform2f(getHandle("vignetteCenter"), vignetteCenterX, vignetteCenterY);
         GLES20.glUniform1f(getHandle("vignetteStart"), vignetteStart);
         GLES20.glUniform1f(getHandle("vignetteEnd"), vignetteEnd);

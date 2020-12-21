@@ -47,7 +47,7 @@ public class GlRGBFilter extends GlFilter {
     }
 
     @Override
-    public void onDraw() {
+    public void onDraw(long currentTimeUs) {
         GLES20.glUniform1f(getHandle("red"), red);
         GLES20.glUniform1f(getHandle("green"), green);
         GLES20.glUniform1f(getHandle("blue"), blue);

@@ -27,13 +27,10 @@ interface VideoEditActivityView : MvpView {
     @StateStrategyType(value = AddToEndStrategy::class)
     fun initVideoContainerLayoutParams()
 
-    fun onOverlaysChangedListViewNotifier(overlays: List<OverlayText>)
+    fun onOverlaysChangedList(overlays: List<OverlayText>)
 
     @StateStrategyType(value = SkipStrategy::class)
     fun finishOnError()
-
-    @StateStrategyType(value = AddToEndStrategy::class)
-    fun recoverView()
 
     @StateStrategyType(value = SkipStrategy::class)
     fun onVideoSavingStarted()

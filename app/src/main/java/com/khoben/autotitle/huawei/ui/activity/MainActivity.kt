@@ -10,7 +10,7 @@ import android.view.View
 import android.widget.Toast
 import com.khoben.autotitle.huawei.App.Companion.VIDEO_EXTENSION
 import com.khoben.autotitle.huawei.R
-import com.khoben.autotitle.huawei.common.FileState
+import com.khoben.autotitle.huawei.common.OpeningVideoFileState
 import com.khoben.autotitle.huawei.common.FileUtils
 import com.khoben.autotitle.huawei.databinding.ActivityMainBinding
 import com.khoben.autotitle.huawei.extension.activityresult.permission.permissionsDSL
@@ -75,17 +75,17 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView {
 
     override fun onVideoSelected(uri: Uri) {
         when (presenter.verifyMedia(this, uri)) {
-            FileState.FAILED -> {
+            OpeningVideoFileState.FAILED -> {
                 Toast.makeText(
                     this,
                     getString(R.string.error_while_opening_file),
                     Toast.LENGTH_SHORT
                 ).show()
             }
-            FileState.LIMIT -> {
+            OpeningVideoFileState.LIMIT -> {
                 Toast.makeText(this, getString(R.string.check_limit), Toast.LENGTH_SHORT).show()
             }
-            FileState.SUCCESS -> {
+            OpeningVideoFileState.SUCCESS -> {
                 val intent = Intent(this, VideoEditActivity::class.java).apply {
                     putExtra(VIDEO_SOURCE_URI_INTENT, uri)
                 }

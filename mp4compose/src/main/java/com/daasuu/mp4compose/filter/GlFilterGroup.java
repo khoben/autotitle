@@ -79,7 +79,7 @@ public class GlFilterGroup extends GlFilter {
     private int prevTexName;
 
     @Override
-    public void draw(final int texName, final GlFramebufferObject fbo) {
+    public void draw(final int texName, final GlFramebufferObject fbo, long currentTimeUs) {
         prevTexName = texName;
         for (final Pair<GlFilter, GlFramebufferObject> pair : list) {
             if (pair.second != null) {
@@ -87,7 +87,7 @@ public class GlFilterGroup extends GlFilter {
                     pair.second.enable();
                     GLES20.glClear(GL_COLOR_BUFFER_BIT);
 
-                    pair.first.draw(prevTexName, pair.second);
+                    pair.first.draw(prevTexName, pair.second, currentTimeUs);
                 }
                 prevTexName = pair.second.getTexName();
 
@@ -99,7 +99,7 @@ public class GlFilterGroup extends GlFilter {
                 }
 
                 if (pair.first != null) {
-                    pair.first.draw(prevTexName, fbo);
+                    pair.first.draw(prevTexName, fbo, currentTimeUs);
                 }
             }
         }

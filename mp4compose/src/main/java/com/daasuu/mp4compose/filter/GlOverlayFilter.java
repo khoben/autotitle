@@ -65,7 +65,7 @@ public abstract class GlOverlayFilter extends GlFilter {
     }
 
     @Override
-    public void onDraw() {
+    public void onDraw(long currentTimeUs) {
         if (bitmap == null) {
             createBitmap();
         }
@@ -75,8 +75,8 @@ public abstract class GlOverlayFilter extends GlFilter {
 
         bitmap.eraseColor(Color.argb(0, 0, 0, 0));
         Canvas bitmapCanvas = new Canvas(bitmap);
-        bitmapCanvas.scale(1, -1, bitmapCanvas.getWidth() / 2, bitmapCanvas.getHeight() / 2);
-        drawCanvas(bitmapCanvas);
+        bitmapCanvas.scale(1, -1, bitmapCanvas.getWidth() / 2F, bitmapCanvas.getHeight() / 2F);
+        drawCanvas(bitmapCanvas, currentTimeUs);
 
         int offsetDepthMapTextureUniform = getHandle("oTexture");// 3
 
@@ -90,7 +90,7 @@ public abstract class GlOverlayFilter extends GlFilter {
         GLES20.glUniform1i(offsetDepthMapTextureUniform, 3);
     }
 
-    protected abstract void drawCanvas(Canvas canvas);
+    protected abstract void drawCanvas(Canvas canvas, long currentTime);
 
     public static void releaseBitmap(Bitmap bitmap) {
         if (bitmap != null && !bitmap.isRecycled()) {

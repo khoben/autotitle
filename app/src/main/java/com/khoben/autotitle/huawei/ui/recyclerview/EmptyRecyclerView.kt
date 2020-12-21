@@ -13,6 +13,7 @@ class EmptyRecyclerView : RecyclerView {
 
     private val observer: AdapterDataObserver = object : AdapterDataObserver() {
         override fun onChanged() {
+            Log.i(TAG, "onChanged.")
             checkIfEmpty()
         }
 

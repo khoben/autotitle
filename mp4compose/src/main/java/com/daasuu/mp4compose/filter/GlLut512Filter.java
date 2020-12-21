@@ -78,7 +78,7 @@ public class GlLut512Filter extends GlFilter {
     }
 
     @Override
-    public void onDraw() {
+    public void onDraw(long currentTimeUs) {
         int offsetDepthMapTextureUniform = getHandle("lutTexture");
         GLES20.glActiveTexture(GLES20.GL_TEXTURE3);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, hTex);

@@ -1,9 +1,11 @@
 package com.khoben.autotitle.huawei.ui.recyclerview
 
 import android.graphics.Typeface
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.khoben.autotitle.huawei.R
+import com.khoben.autotitle.huawei.common.RandomColor
 import com.khoben.autotitle.huawei.extension.toReadableTimeString
 import com.khoben.autotitle.huawei.ui.overlay.OverlayDataMapper
 
@@ -26,4 +28,9 @@ fun TextView.setOverlayContentString(item: OverlayDataMapper) {
         setTypeface(typeface, Typeface.BOLD)
         item.text
     }
+}
+
+@BindingAdapter("badgeColor")
+fun ImageView.setBadgeColor(item: OverlayDataMapper) {
+    background.setTint(item.badgeColor)
 }

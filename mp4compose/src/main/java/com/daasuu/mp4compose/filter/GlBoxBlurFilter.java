@@ -90,7 +90,7 @@ public class GlBoxBlurFilter extends GlFilter {
 
 
     @Override
-    public void onDraw() {
+    public void onDraw(long currentTimeUs) {
         GLES20.glUniform1f(getHandle("texelWidthOffset"), texelWidthOffset);
         GLES20.glUniform1f(getHandle("texelHeightOffset"), texelHeightOffset);
         GLES20.glUniform1f(getHandle("blurSize"), blurSize);

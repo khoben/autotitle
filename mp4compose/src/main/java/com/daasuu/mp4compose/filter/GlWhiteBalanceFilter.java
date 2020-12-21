@@ -49,7 +49,7 @@ public class GlWhiteBalanceFilter extends GlFilter {
     }
 
     @Override
-    public void onDraw() {
+    public void onDraw(long currentTimeUs) {
         GLES20.glUniform1f(getHandle("temperature"), temperature);
         GLES20.glUniform1f(getHandle("tint"), tint);
     }

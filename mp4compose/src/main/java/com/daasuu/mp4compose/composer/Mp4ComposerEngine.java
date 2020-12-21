@@ -209,8 +209,9 @@ class Mp4ComposerEngine {
             return mp4vesMediaFormat;
         }
         // fix for huawei devices
+        // HEVC
         // https://github.com/MasayukiSuda/Mp4Composer-android/issues/74#issuecomment-602737842
-        return createVideoFormat(VideoFormatMimeType.HEVC.getFormat(), bitrate, outputResolution);
+        return createVideoFormat(VideoFormatMimeType.AVC.getFormat(), bitrate, outputResolution);
     }
 
     @NonNull

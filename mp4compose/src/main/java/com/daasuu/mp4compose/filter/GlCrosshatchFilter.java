@@ -54,7 +54,7 @@ public class GlCrosshatchFilter extends GlFilter {
     private float lineWidth = 0.003f;
 
     @Override
-    public void onDraw() {
+    public void onDraw(long currentTimeUs) {
         GLES20.glUniform1f(getHandle("crossHatchSpacing"), crossHatchSpacing);
         GLES20.glUniform1f(getHandle("lineWidth"), lineWidth);
     }

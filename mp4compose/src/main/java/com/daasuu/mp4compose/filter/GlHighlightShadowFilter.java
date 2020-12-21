@@ -42,7 +42,7 @@ public class GlHighlightShadowFilter extends GlFilter {
     }
 
     @Override
-    public void onDraw() {
+    public void onDraw(long currentTimeUs) {
         GLES20.glUniform1f(getHandle("shadows"), shadows);
         GLES20.glUniform1f(getHandle("highlights"), highlights);
     }

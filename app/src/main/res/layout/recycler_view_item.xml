@@ -21,6 +21,16 @@
             android:layout_gravity="center"
             android:gravity="center">
 
+            <ImageView
+                android:layout_width="6dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="2dp"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/rounded_rectangle"
+                android:backgroundTint="@color/colorPrimary"
+                app:badgeColor="@{overlay}"
+                tools:ignore="ContentDescription" />
+
             <TextView
                 android:id="@+id/overlay_from"
                 android:layout_width="wrap_content"
@@ -57,30 +67,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:textStyle="bold"
                 app:overlayContentString="@{overlay}"
                 tools:text="content" />
-
-            <com.google.android.material.button.MaterialButton
-                android:visibility="gone"
-                android:id="@+id/add_recycler_item"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
-                android:layout_gravity="center|end"
-                app:icon="@drawable/arrow_downward_white_24dp"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                android:padding="0dp"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                app:iconSize="20dp"
-                android:insetLeft="0dp"
-                android:insetTop="0dp"
-                android:insetRight="0dp"
-                android:insetBottom="0dp"
-                app:strokeColor="?colorPrimary"
-                android:layout_marginBottom="-28dp"
-                android:backgroundTint="?colorSurface"
-                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Button.Circle" />
         </LinearLayout>
     </LinearLayout>
 </layout>

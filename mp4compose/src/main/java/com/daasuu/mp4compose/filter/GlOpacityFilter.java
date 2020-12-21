@@ -33,7 +33,7 @@ public class GlOpacityFilter extends GlFilter {
     }
 
     @Override
-    public void onDraw() {
+    public void onDraw(long currentTimeUs) {
         GLES20.glUniform1f(getHandle("opacity"), opacity);
     }
 

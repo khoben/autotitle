@@ -163,11 +163,12 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     }
 
     fun unEditable() {
+        mediaController.setPlayState(false)
         overlayHandler!!.unEditable()
     }
 
     override fun onEdited(overlay: List<OverlayText>) {
-        viewState.onOverlaysChangedListViewNotifier(overlay)
+        viewState.onOverlaysChangedList(overlay)
     }
 
     override fun onUnEditable(overlay: OverlayText?, overlays: List<OverlayText>) {
@@ -176,7 +177,7 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
 
     override fun onAdded(overlay: OverlayText?, overlays: List<OverlayText>, isEdit: Boolean) {
         viewState.updatePlayback(overlays, overlay, isEdit, false)
-        viewState.onOverlaysChangedListViewNotifier(overlays)
+        viewState.onOverlaysChangedList(overlays)
     }
 
     override fun onSelect(overlay: OverlayText?, overlays: List<OverlayText>) {
@@ -191,11 +192,9 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         overlays: ArrayList<OverlayText>
     ) {
         viewState.onRemovedOverlay(idxRemoved, removedOverlay, overlays)
-        viewState.onOverlaysChangedListViewNotifier(overlays)
+        viewState.onOverlaysChangedList(overlays)
         viewState.updatePlayback(overlays, null, isEdit = false, isPlaying = false)
     }
-
-    override fun reset() {}
 
     override fun changeTimeRangeSelectedOverlay(startTime: Long, endTime: Long) {
         overlayHandler!!.changeTimeRangeSelectedOverlay(startTime, endTime)
@@ -203,13 +202,13 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
 
     override fun updateVideoPositionWithSeekBar(time: Long) {
         if (time >= mediaController.videoDuration) return
-        overlayHandler!!.updateVideoPositionWithSeekBar(time)
+        overlayHandler!!.changeVisibilityOverlayByTime(time)
     }
 
     override fun seekBarRewind(currentTime: Long) {
         setPlayState(false)
         mediaController.seekTo(currentTime)
-        overlayHandler!!.seekBarRewind(currentTime)
+        overlayHandler!!.changeVisibilityOverlayByTime(currentTime)
     }
 
     override fun seekBarOnTouch() {

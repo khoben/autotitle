@@ -32,6 +32,7 @@ class App : Application() {
         val SEEKBAR_HEIGHT_DP_PIXELS = DisplayUtils.dipToPx(60)
         const val FRAME_TIME_MS = 1000L
         const val LIMIT_DURATION_MS = 60 * 1000L
+        const val TIME_FORMAT_MS = "m:ss.S"
         const val VIDEO_EXTENSION = "mp4"
         const val AUDIO_EXTENSION = "aac"
         const val VIDEO_MIME_TYPE = "video/mp4"

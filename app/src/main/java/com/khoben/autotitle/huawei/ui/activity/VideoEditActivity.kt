@@ -49,7 +49,7 @@ import java.util.*
 
 class VideoEditActivity : MvpAppCompatActivity(),
     VideoEditActivityView,
-    ListItemEventListener {
+    RecyclerViewItemEventListener {
 
     @InjectPresenter
     lateinit var presenter: VideoEditActivityPresenter
@@ -301,7 +301,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
             overlayViewAdapter.submitList(
                 mutableListOf(
                     OverlayDataMapper(
-                        0L, 1000L, 0L, "Test item for guide"
+                        0L, 1000L, UUID.randomUUID(), "Test item for guide"
                     )
                 )
             )
@@ -391,10 +391,6 @@ class VideoEditActivity : MvpAppCompatActivity(),
         finish()
     }
 
-//    override fun videoPlay(baseImageViews: List<OverlayText>?, isVideoPlaying: Boolean) {
-//        videoControlsView.videoPlay(baseImageViews, isVideoPlaying)
-//    }
-
     override fun updatePlayback(
         overlays: List<OverlayText>?,
         selectedOverlay: OverlayText?,
@@ -447,20 +443,19 @@ class VideoEditActivity : MvpAppCompatActivity(),
         showGuideHowDeselectItemOnce()
     }
 
-    override fun recoverView() {
-        videoControlsView.reset()
-    }
-
-    override fun onOverlaysChangedListViewNotifier(overlays: List<OverlayText>) {
+    override fun onOverlaysChangedList(overlays: List<OverlayText>) {
         // update recycler view
-        overlayViewAdapter.submitList(overlays.map {
-            OverlayDataMapper(
-                it.startTime,
-                it.endTime,
-                it.timestamp,
-                it.text!!
-            )
-        })
+        runOnUiThread {
+            overlayViewAdapter.submitList(overlays.map {
+                OverlayDataMapper(
+                    startTime = it.startTime,
+                    endTime = it.endTime,
+                    uuid = it.uuid!!,
+                    text = it.text!!,
+                    badgeColor = it.badgeColor
+                )
+            })
+        }
     }
 
     override fun onVideoSavingStarted() {

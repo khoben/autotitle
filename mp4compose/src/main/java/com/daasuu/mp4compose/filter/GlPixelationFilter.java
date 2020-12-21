@@ -40,7 +40,7 @@ public class GlPixelationFilter extends GlFilter {
     }
 
     @Override
-    public void onDraw() {
+    public void onDraw(long currentTimeUs) {
         GLES20.glUniform1f(getHandle("pixel"), pixel);
         GLES20.glUniform1f(getHandle("imageWidthFactor"), imageWidthFactor);
         GLES20.glUniform1f(getHandle("imageHeightFactor"), imageHeightFactor);

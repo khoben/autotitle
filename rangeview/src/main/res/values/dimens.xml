@@ -2,5 +2,5 @@
 <resources>
     <dimen name="rangeView_HorizontalSpace">24dp</dimen>
     <dimen name="rangeView_StrokeWidth">4dp</dimen>
-    <dimen name="rangeView_ToggleRadius">8dp</dimen>
+    <dimen name="rangeView_ToggleRadius">12dp</dimen>
 </resources>

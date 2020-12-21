@@ -54,7 +54,7 @@ class RangeView @JvmOverloads constructor(
 
     private var strokeColor: Int = ContextCompat.getColor(context, R.color.rangeView_colorStroke)
 
-//    private var maskColor: Int = ContextCompat.getColor(context, R.color.rangeView_colorMask)
+    //    private var maskColor: Int = ContextCompat.getColor(context, R.color.rangeView_colorMask)
     private var maskColor: Int = Color.TRANSPARENT
 
     private var strokeWidth: Float = resources.getDimension(R.dimen.rangeView_StrokeWidth)
@@ -200,8 +200,14 @@ class RangeView @JvmOverloads constructor(
         }
     }
 
+    private var accessible: Boolean = true
+    fun toggleAccessibility(state: Boolean) {
+        accessible = state
+    }
+
     private var touchedControls = false
     override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (!accessible) return false
         when (event!!.action) {
             MotionEvent.ACTION_DOWN -> {
                 touchedControls = true

@@ -142,7 +142,7 @@ public class GlBilateralFilter extends GlFilter {
     }
 
     @Override
-    public void onDraw() {
+    public void onDraw(long currentTimeUs) {
         glUniform1f(getHandle("texelWidthOffset"), texelWidthOffset);
         glUniform1f(getHandle("texelHeightOffset"), texelHeightOffset);
         glUniform1f(getHandle("blurSize"), blurSize);

@@ -28,7 +28,7 @@ public class GlBrightnessFilter extends GlFilter {
     }
 
     @Override
-    public void onDraw() {
+    public void onDraw(long currentTimeUs) {
         GLES20.glUniform1f(getHandle("brightness"), brightness);
     }
 }

@@ -87,7 +87,7 @@ public class GlToneCurveFilter extends GlFilter {
     }
 
     @Override
-    public void onDraw() {
+    public void onDraw(long currentTimeUs) {
 
         int offsetDepthMapTextureUniform = getHandle("toneCurveTexture");// 3
 
