@@ -8,7 +8,7 @@
     android:background="@color/black"
     android:elevation="@dimen/elevation_medium">
 
-    <com.khoben.autotitle.huawei.ui.player.VideoSurfaceView
+    <com.khoben.autotitle.ui.player.VideoSurfaceView
         android:id="@+id/video_preview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -27,8 +27,9 @@
             android:layout_alignParentBottom="true"
             android:layout_marginStart="25dp"
             android:layout_marginBottom="25dp"
-            android:alpha="0.4"
-            android:backgroundTint="?colorButtonNormal"
+            android:alpha="0.3"
+            android:backgroundTint="?colorSurface"
+            app:iconTint="?colorOnSurface"
             android:insetLeft="0dp"
             android:insetTop="0dp"
             android:insetRight="0dp"

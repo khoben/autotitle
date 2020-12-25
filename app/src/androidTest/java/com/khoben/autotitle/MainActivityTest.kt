@@ -18,11 +18,11 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import androidx.test.runner.AndroidJUnit4
-import com.khoben.autotitle.huawei.ui.activity.MainActivity
+import com.khoben.autotitle.ui.activity.MainActivity
 import org.hamcrest.CoreMatchers.*
 import org.junit.runner.RunWith
 import com.khoben.autotitle.huawei.R
-import com.khoben.autotitle.huawei.ui.activity.VideoEditActivity
+import com.khoben.autotitle.ui.activity.VideoEditActivity
 import org.junit.*
 
 

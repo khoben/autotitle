@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.khoben.autotitle.huawei.ui.overlay.OverlayText
+<com.khoben.autotitle.ui.overlay.OverlayText
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -29,13 +29,13 @@
 
     <ImageView
         android:id="@+id/overlay_delete_btn"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
-        android:layout_gravity="top|end"
-        android:elevation="1dp"
-        android:src="@drawable/close_icon"
         android:visibility="gone"
-        app:tint="@color/red_color_picker"
+        android:elevation="1dp"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_gravity="top|end"
+        android:src="@drawable/close_icon"
+        tools:visibility="visible"
         tools:ignore="ContentDescription" />
 
-</com.khoben.autotitle.huawei.ui.overlay.OverlayText>
+</com.khoben.autotitle.ui.overlay.OverlayText>

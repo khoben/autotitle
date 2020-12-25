@@ -1,0 +1,43 @@
+package com.khoben.autotitle.mvp.presenter
+
+import android.content.Context
+import android.media.MediaMetadataRetriever
+import android.net.Uri
+import com.khoben.autotitle.App.Companion.LIMIT_DURATION_MS
+import com.khoben.autotitle.common.OpeningVideoFileState
+import com.khoben.autotitle.mvp.view.MainActivityView
+import moxy.InjectViewState
+import moxy.MvpPresenter
+
+
+@InjectViewState
+class MainActivityPresenter : MvpPresenter<MainActivityView>() {
+
+    /**
+     *
+     * @param context Context
+     * @param uri Uri
+     * @return FileState
+     */
+    fun verifyMedia(context: Context, uri: Uri): OpeningVideoFileState {
+        val mediaPlayer = MediaMetadataRetriever()
+        try {
+            mediaPlayer.setDataSource(context, uri)
+        } catch (e: Exception) {
+            mediaPlayer.release()
+            return OpeningVideoFileState.FAILED
+        }
+        try {
+            val duration =
+                mediaPlayer.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)!!.toLong()
+            if (duration >= LIMIT_DURATION_MS) {
+                mediaPlayer.release()
+                return OpeningVideoFileState.LIMIT
+            }
+        } catch (e: Exception) {
+            mediaPlayer.release()
+            return OpeningVideoFileState.FAILED
+        }
+        return OpeningVideoFileState.SUCCESS
+    }
+}

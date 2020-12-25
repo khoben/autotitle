@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activity.ResultActivity">
+    tools:context="com.khoben.autotitle.ui.activity.ResultActivity">
 
     <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/ep_video_view"

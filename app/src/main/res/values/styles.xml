@@ -9,7 +9,7 @@
 
 <!--        <item name="android:statusBarColor">?attr/colorSurface</item>-->
 
-        <item name="android:forceDarkAllowed">false</item>
+    <item name="android:forceDarkAllowed">false</item>
 
 <!--        <item name="colorPrimaryVariant">#3700B3</item>-->
 <!--        <item name="colorPrimary">#673AB7</item>-->

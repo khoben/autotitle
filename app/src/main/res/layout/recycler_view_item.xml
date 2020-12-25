@@ -7,7 +7,7 @@
 
         <variable
             name="overlay"
-            type="com.khoben.autotitle.huawei.ui.overlay.OverlayDataMapper" />
+            type="com.khoben.autotitle.ui.overlay.OverlayDataMapper" />
     </data>
 
     <LinearLayout
@@ -24,7 +24,7 @@
             <ImageView
                 android:layout_width="6dp"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="2dp"
+                android:layout_marginEnd="4dp"
                 android:layout_marginStart="4dp"
                 android:background="@drawable/rounded_rectangle"
                 android:backgroundTint="@color/colorPrimary"

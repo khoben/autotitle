@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activity.VideoEditActivity">
+    tools:context="com.khoben.autotitle.ui.activity.VideoEditActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/actionbar"
@@ -76,57 +76,69 @@
         layout="@layout/video_preview_layer"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:layout_marginTop="10dp"
-        android:layout_above="@+id/video_seekbar_view"
+        android:layout_marginTop="5dp"
+        android:layout_above="@+id/video_seekbar_view_container"
         android:layout_below="@+id/actionbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/actionbar" />
 
-    <com.khoben.autotitle.huawei.ui.player.VideoControlsView
-        android:id="@+id/video_seekbar_view"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/video_seekbar_view_container"
         android:layout_width="match_parent"
-        android:layout_height="115dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:background="?colorSurface"
-        android:elevation="@dimen/elevation_medium"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardElevation="@dimen/elevation_medium"
+        app:cardUseCompatPadding="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/videolayer">
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/add_item"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
-            app:icon="@drawable/add_icon_24dp"
-            app:iconGravity="textStart"
-            app:iconPadding="0dp"
-            android:padding="0dp"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginBottom="2dp"
-            app:iconSize="18dp"
-            android:insetLeft="0dp"
-            android:insetTop="0dp"
-            android:insetRight="0dp"
-            android:insetBottom="0dp"
-            app:strokeColor="?colorPrimary"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:backgroundTint="?colorSurface"
-            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Button.Circle" />
-    </com.khoben.autotitle.huawei.ui.player.VideoControlsView>
+
+        <com.khoben.autotitle.ui.player.VideoControlsView
+            android:id="@+id/video_seekbar_view"
+            android:layout_width="match_parent"
+            android:layout_height="115dp"
+            android:paddingStart="4dp">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/add_item"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+                app:icon="@drawable/add_icon_24dp"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                android:padding="0dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginBottom="3dp"
+                app:iconSize="18dp"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
+                app:strokeColor="?colorPrimary"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:backgroundTint="?colorSurface"
+                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Button.Circle" />
+        </com.khoben.autotitle.ui.player.VideoControlsView>
+
+    </com.google.android.material.card.MaterialCardView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:background="?colorSurface"
         android:elevation="@dimen/elevation_medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/video_seekbar_view">
+        app:layout_constraintTop_toBottomOf="@+id/video_seekbar_view_container">
 
-        <com.khoben.autotitle.huawei.ui.recyclerview.EmptyRecyclerView
+        <com.khoben.autotitle.ui.recyclerview.EmptyRecyclerView
             android:id="@+id/recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

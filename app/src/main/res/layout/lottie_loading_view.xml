@@ -2,36 +2,37 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="?colorSurface"
-    android:elevation="@dimen/elevation_top"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?colorSurface"
+    android:elevation="@dimen/elevation_top">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_view"
         android:layout_width="wrap_content"
-        android:layout_height="300dp"
-        app:lottie_speed="1"
-        app:layout_constraintBottom_toTopOf="@+id/textView4"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/loading_fading_textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:lottie_autoPlay="true"
         app:lottie_fileName="loading.json"
-        app:lottie_loop="true" />
+        app:lottie_speed="0.35"
+        app:lottie_repeatMode="reverse"
+        app:lottie_loop="true"/>
 
     <com.tomer.fadingtextview.FadingTextView
-        android:id="@+id/textView4"
+        android:id="@+id/loading_fading_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/lottie_view"
-        app:timeout="999"
-        app:texts="@array/loading_text"
         android:textSize="36sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lottie_view" />
+        app:layout_constraintTop_toBottomOf="@+id/lottie_view"
+        app:texts="@array/loading_text"
+        app:timeout="999" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

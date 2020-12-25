@@ -31,7 +31,8 @@
         android:gravity="center"
         android:inputType="textMultiLine"
         android:textSize="40sp"
-        tools:text="test"/>
+        tools:text="test"
+        android:autofillHints="" />
 
     <RelativeLayout
         android:id="@+id/add_text_color_picker_relative_layout"

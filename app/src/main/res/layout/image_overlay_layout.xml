@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.khoben.autotitle.huawei.ui.overlay.OverlayText xmlns:android="http://schemas.android.com/apk/res/android"
+<com.khoben.autotitle.ui.overlay.OverlayText xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
@@ -30,4 +30,4 @@
 
     </FrameLayout>
 
-</com.khoben.autotitle.huawei.ui.overlay.OverlayText>
+</com.khoben.autotitle.ui.overlay.OverlayText>

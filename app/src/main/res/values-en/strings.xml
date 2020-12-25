@@ -14,14 +14,14 @@
     <string name="exit_question">Are you sure to want to exit?</string>
     <string name="share_caption">Share</string>
     <string name="save_to_gallery_caption">Save to gallery</string>
-    <string name="share_video_title">Share to...</string>
+    <string name="share_video_title">Share to…</string>
     <string name="saved_path_video">Saved video %1$s</string>
     <string name="video_saving_cancelled_caption">Video saving has been cancelled</string>
     <string name="some_error">Error</string>
     <string name="or_caption">OR</string>
     <string name="welcome_title">Welcome to AutoTitle!</string>
     <string name="need_load_title">Load the video to add captions</string>
-    <string name="save_captions">Processing captions...</string>
+    <string name="save_captions">Processing captions…</string>
     <string name="save_button_caption">Save</string>
     <string name="empty_overlay_recycler">Double tap to edit caption</string>
     <string name="check_limit">Sorry, video can be up to 60 secs</string>
