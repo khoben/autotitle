@@ -2,7 +2,7 @@ package com.iammert.rangeview.library
 
 import android.view.MotionEvent
 
-data class DraggingStateData(val draggingState: DraggingState, val motionX: Float, val motionY: Float) {
+data class DraggingStateData(val draggingState: DraggingState, var motionX: Float, var motionY: Float) {
 
     companion object {
 
