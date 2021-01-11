@@ -1,0 +1,71 @@
+- artifact: org.jetbrains.kotlin:kotlin-stdlib-jdk7:+
+  name: Kotlin
+  copyrightHolder: Jetbrains s.r.o
+  license: The Apache License, Version 2.0
+  licenseUrl: http://www.apache.org/licenses/LICENSE-2.0.txt
+  url: https://kotlinlang.org/
+- artifact: io.reactivex.rxjava3:rxjava:+
+  name: RxJava
+  copyrightHolder: RxJava Contributors
+  license: The Apache Software License, Version 2.0
+  licenseUrl: http://www.apache.org/licenses/LICENSE-2.0.txt
+  url: https://github.com/ReactiveX/RxJava
+- artifact: com.github.moxy-community:moxy:+
+  name: Moxy
+  copyrightHolder: Moxy Community
+  license: MIT
+  licenseUrl: https://opensource.org/licenses/MIT
+  url: https://github.com/moxy-community/Moxy
+- artifact: com.google.dagger:dagger:+
+  name: Dagger2
+  copyrightHolder: The Dagger Authors
+  license: Apache 2.0
+  licenseUrl: https://www.apache.org/licenses/LICENSE-2.0.txt
+  url: https://github.com/google/dagger
+- artifact: com.google.android.exoplayer:exoplayer-core:+
+  name: ExoPlayer
+  copyrightHolder: Google, Inc.
+  license: The Apache Software License, Version 2.0
+  licenseUrl: http://www.apache.org/licenses/LICENSE-2.0.txt
+  url: https://github.com/google/exoplayer
+- artifact: com.jakewharton.timber:timber:+
+  name: Timber
+  copyrightHolder: Jake Wharton
+  license: The Apache Software License, Version 2.0
+  licenseUrl: http://www.apache.org/licenses/LICENSE-2.0.txt
+  url: https://github.com/JakeWharton/timber
+- artifact: com.airbnb.android:lottie:+
+  name: Lottie
+  copyrightHolder: Airbnb, Inc.
+  license: The Apache Software License, Version 2.0
+  url: https://github.com/airbnb/lottie-android
+- artifact: com.tomer:fadingtextview:+
+  name: FadingTextView
+  copyrightHolder: Tomer Rosenfeld
+  license: The Apache Software License, Version 2.0
+  licenseUrl: http://www.apache.org/licenses/LICENSE-2.0.txt
+  url: https://github.com/rosenpin/FadingTextView
+- artifact: me.toptas.fancyshowcase:fancyshowcaseview:+
+  name: FancyShowCaseView
+  copyrightHolder: Faruk Toptaş
+  license: The Apache Software License, Version 2.0
+  licenseUrl: http://www.apache.org/licenses/LICENSE-2.0.txt
+  url: https://github.com/faruktoptas/FancyShowCaseView
+- artifact: com.github.iammert:rangeview:+
+  name: RangeView
+  copyrightHolder: Mert Şimşek
+  license: The Apache Software License, Version 2.0
+  licenseUrl: http://www.apache.org/licenses/LICENSE-2.0.txt
+  url: https://github.com/iammert/RangeView
+- artifact: com.github.MasayukiSuda:Mp4Composer-android:+
+  name: Mp4Composer-android
+  copyrightHolder: Masayuki Suda
+  license: MIT
+  licenseUrl: https://opensource.org/licenses/MIT
+  url: https://github.com/MasayukiSuda/Mp4Composer-android
+- artifact: com.github.myin142:MCodec:+
+  name: MCodec
+  copyrightHolder: Min Yin
+  license: MIT
+  licenseUrl: https://opensource.org/licenses/MIT
+  url: https://github.com/myin142/MCodec

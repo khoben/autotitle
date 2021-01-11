@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.khoben.autotitle.huawei">
+    package="com.khoben.autotitle">
+
     <uses-feature android:name="android.hardware.camera.any" />
     <uses-feature android:name="android.hardware.camera" />
+
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
     <application
-        android:name=".App"
-        android:requestLegacyExternalStorage="true"
+        android:name="com.khoben.autotitle.App"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:theme="@style/MyTheme">
+        android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
+        android:theme="@style/MyTheme"
+        android:allowBackup="true"
+        android:fullBackupContent="true">
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -25,9 +29,10 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />
         </provider>
-        <activity android:name=".ui.activity.MainActivity"
-            android:screenOrientation="portrait"
-            >
+
+        <activity
+            android:name="com.khoben.autotitle.ui.activity.MainActivity"
+            android:screenOrientation="portrait">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,11 +40,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.VideoEditActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.activity.ResultActivity"
-            android:screenOrientation="portrait"
-            />
+        <activity
+            android:name="com.khoben.autotitle.ui.activity.VideoEditActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.khoben.autotitle.ui.activity.ResultActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

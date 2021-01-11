@@ -1,0 +1,99 @@
+<!--Custom replacement of default exo payer control view-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@id/exo_play"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:background="@drawable/filled_rounded_shape"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        app:backgroundTint="?colorSurface"
+        app:elevation="@dimen/elevation_medium"
+        app:icon="@drawable/exo_controls_play"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconTint="?colorPrimary" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/exo_play_fake"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:background="@drawable/filled_rounded_shape"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        app:backgroundTint="?colorSurface"
+        app:elevation="@dimen/elevation_medium"
+        app:icon="@drawable/exo_controls_play"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconTint="?colorPrimary" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@id/exo_pause"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:background="@drawable/filled_rounded_shape"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        app:backgroundTint="?colorSurface"
+        app:elevation="@dimen/elevation_medium"
+        app:icon="@drawable/exo_controls_pause"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconTint="?colorPrimary" />
+
+    <LinearLayout
+        android:id="@+id/exo_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:background="@drawable/filled_rounded_shape"
+        android:backgroundTint="#BF000000"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@id/exo_position"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="true"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:textColor="#FFF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <com.google.android.exoplayer2.ui.DefaultTimeBar
+            android:id="@id/exo_progress"
+            android:layout_width="0dp"
+            android:layout_height="26dp"
+            android:layout_weight="1"
+            app:buffered_color="#888888"
+            app:played_color="?colorPrimary"
+            app:scrubber_color="?colorPrimary"
+            app:unplayed_color="#888888" />
+
+        <TextView
+            android:id="@id/exo_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="true"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:textColor="#FFF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</FrameLayout>

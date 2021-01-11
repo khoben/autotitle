@@ -1,12 +1,12 @@
 {
-	"client":{
-		"cp_id":"260007000001840365",
-		"product_id":"736430079244677587",
-		"client_id":"481094536693548160",
-		"client_secret":"4E4B596550F5AD34E9253B848DEEE0B49AEA8EF31C96CAE45AF222C4DF4D5C84",
-		"app_id":"103156905",
-		"package_name":"com.khoben.autotitle.huawei",
-		"api_key":"CgB6e3x9/hsdbdBs4UtMv9w9yHOgLLpQWbfDNjtbW5685ZLdOW5HlpWzDmveL69IjxoeAg8TClmuNnbmvZ9xprrw"
-	},
-	"configuration_version":"1.0"
+  "client": {
+    "cp_id": "260007000001840365",
+    "product_id": "736430079244677587",
+    "client_id": "481094536693548160",
+    "client_secret": "4E4B596550F5AD34E9253B848DEEE0B49AEA8EF31C96CAE45AF222C4DF4D5C84",
+    "app_id": "103156905",
+    "package_name": "com.khoben.autotitle.huawei",
+    "api_key": "CgB6e3x9/hsdbdBs4UtMv9w9yHOgLLpQWbfDNjtbW5685ZLdOW5HlpWzDmveL69IjxoeAg8TClmuNnbmvZ9xprrw"
+  },
+  "configuration_version": "1.0"
 }

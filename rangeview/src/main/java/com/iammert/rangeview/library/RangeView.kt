@@ -1,11 +1,13 @@
 package com.iammert.rangeview.library
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.Log
+import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.View
-import androidx.core.content.ContextCompat
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -22,7 +24,8 @@ class RangeView @JvmOverloads constructor(
             maxValue: Float,
             minValue: Float,
             currentLeftValue: Float,
-            currentRightValue: Float
+            currentRightValue: Float,
+            draggingStateData: DraggingState
         )
     }
 
@@ -50,19 +53,17 @@ class RangeView @JvmOverloads constructor(
 
     private var currentRightValue: Float? = null
 
-    private var bgColor: Int = ContextCompat.getColor(context, R.color.rangeView_colorBackground)
+    private var bgColor: Int = context.resources.getColor(R.color.rangeView_colorBackground)
 
-    private var strokeColor: Int = ContextCompat.getColor(context, R.color.rangeView_colorStroke)
+    private var strokeColor: Int = context.resources.getColor(R.color.rangeView_colorStroke)
 
-    //    private var maskColor: Int = ContextCompat.getColor(context, R.color.rangeView_colorMask)
     private var maskColor: Int = Color.TRANSPARENT
 
     private var strokeWidth: Float = resources.getDimension(R.dimen.rangeView_StrokeWidth)
 
     private var toggleRadius: Float = resources.getDimension(R.dimen.rangeView_ToggleRadius)
 
-    //    private var horizontalMargin: Float = resources.getDimension(R.dimen.rangeView_HorizontalSpace)
-    private var horizontalMargin: Float = 0F
+    private var horizontalMargin: Float = resources.getDimension(R.dimen.rangeView_HorizontalSpace)
 
     private var bitmap: Bitmap? = null
 
@@ -120,6 +121,8 @@ class RangeView @JvmOverloads constructor(
         rangeStrokePaint.color = strokeColor
         rangeTogglePaint.color = strokeColor
         a.recycle()
+
+        isHapticFeedbackEnabled = true
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -200,12 +203,32 @@ class RangeView @JvmOverloads constructor(
         }
     }
 
+    fun setLongPressState(state: Boolean, event: MotionEvent) {
+        if (isTouchRange(event)) {
+            longpressed = state
+            if (longpressed && visibility == VISIBLE) {
+                performHapticFeedback(
+                    HapticFeedbackConstants.LONG_PRESS,
+                    HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+                )
+            }
+        } else {
+            longpressed = false
+        }
+    }
+
+    fun getLongPressState() = longpressed
+
+    private var longpressed = false
+
     private var accessible: Boolean = true
-    fun toggleAccessibility(state: Boolean) {
+    fun toggleTouchAccessibility(state: Boolean) {
         accessible = state
     }
 
     private var touchedControls = false
+
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (!accessible) return false
         when (event!!.action) {
@@ -216,8 +239,12 @@ class RangeView @JvmOverloads constructor(
                         DraggingStateData.createConflict(event)
                     isTouchOnLeftToggle(event) -> DraggingStateData.left(event)
                     isTouchOnRightToggle(event) -> DraggingStateData.right(event)
+                    isTouchRange(event) -> {
+                        touchedControls = longpressed
+                        DraggingStateData.range(event)
+                    }
                     else -> {
-                        touchedControls = false
+                        touchedControls = longpressed
                         DraggingStateData.idle()
                     }
                 }
@@ -242,18 +269,18 @@ class RangeView @JvmOverloads constructor(
                         }
                     }
                     DraggingState.DRAGGING_RIGHT_TOGGLE -> {
-                        if (isRightToggleExceed(event)) {
-                            return true
-                        } else {
-                            draggingRightToggle(event)
-                        }
+                        draggingRightToggle(event)
                     }
                     DraggingState.DRAGGING_LEFT_TOGGLE -> {
-                        if (isLeftToggleExceed(event)) {
-                            return true
-                        } else {
-                            draggingLeftToggle(event)
-                        }
+                        draggingLeftToggle(event)
+                    }
+                    DraggingState.DRAGGING_RANGE -> {
+                        if (!longpressed) return false
+                        val diff = event.rawX - draggingStateData.motionX
+                        Log.d(TAG, "DRAGGING_RANGE ${rangeValueRectF.left} $diff")
+                        draggingRange(diff)
+                        draggingStateData.motionX = event.rawX
+                        return true
                     }
                     else -> {
                         return false
@@ -263,12 +290,13 @@ class RangeView @JvmOverloads constructor(
             MotionEvent.ACTION_UP -> {
                 rangeDraggingChangeListener?.onDraggingStateChanged(DraggingState.DRAGGING_END)
                 draggingStateData = DraggingStateData.idle()
+                longpressed = false
             }
         }
 
         rangeDraggingChangeListener?.onDraggingStateChanged(draggingStateData.draggingState)
 
-        return touchedControls
+        return touchedControls || longpressed
     }
 
     fun setMaxValue(maxValue: Float) {
@@ -319,8 +347,12 @@ class RangeView @JvmOverloads constructor(
     }
 
     private fun draggingLeftToggle(motionEvent: MotionEvent) {
+        val xCoordinate = min(
+            totalValueRect.right,
+            max(totalValueRect.left, min(motionEvent.x, totalValueRect.right))
+        )
         rangeValueRectF.set(
-            motionEvent.x,
+            xCoordinate,
             rangeValueRectF.top,
             rangeValueRectF.right,
             rangeValueRectF.bottom
@@ -333,14 +365,18 @@ class RangeView @JvmOverloads constructor(
         )
         rangePositionChangeListener?.leftTogglePositionChanged(rangeValueRectF.left, getLeftValue())
         postInvalidate()
-        notifyRangeChanged()
+        notifyRangeChanged(DraggingState.DRAGGING_LEFT_TOGGLE)
     }
 
     private fun draggingRightToggle(motionEvent: MotionEvent) {
+        val xCoordinate = max(
+            totalValueRect.left,
+            max(totalValueRect.left, min(motionEvent.x, totalValueRect.right))
+        )
         rangeValueRectF.set(
             rangeValueRectF.left,
             rangeValueRectF.top,
-            motionEvent.x,
+            xCoordinate,
             rangeValueRectF.bottom
         )
         rangeStrokeRectF.set(
@@ -354,7 +390,43 @@ class RangeView @JvmOverloads constructor(
             getRightValue()
         )
         postInvalidate()
-        notifyRangeChanged()
+        notifyRangeChanged(DraggingState.DRAGGING_RIGHT_TOGGLE)
+    }
+
+    private fun draggingRange(xDiff: Float) {
+
+        val newLeft = rangeValueRectF.left + xDiff
+        val newRight = rangeValueRectF.right + xDiff
+
+        if (newLeft <= totalValueRect.left || newLeft >= totalValueRect.right
+            || newRight <= totalValueRect.left || newRight >= totalValueRect.right
+        )
+            return
+        rangeValueRectF.set(
+            newLeft,
+            rangeValueRectF.top,
+            newRight,
+            rangeValueRectF.bottom
+        )
+        rangeStrokeRectF.set(
+            rangeValueRectF.left,
+            rangeValueRectF.top + strokeWidth / 2,
+            rangeValueRectF.right,
+            rangeValueRectF.bottom - strokeWidth / 2
+        )
+        rangePositionChangeListener?.rightTogglePositionChanged(
+            rangeValueRectF.right,
+            getRightValue()
+        )
+        rangePositionChangeListener?.leftTogglePositionChanged(
+            rangeValueRectF.left,
+            getLeftValue()
+        )
+        postInvalidate()
+        if (xDiff < 0)
+            notifyRangeChanged(DraggingState.DRAGGING_LEFT_TOGGLE)
+        else
+            notifyRangeChanged(DraggingState.DRAGGING_RIGHT_TOGGLE)
     }
 
     private fun isLeftToggleExceed(motionEvent: MotionEvent): Boolean {
@@ -373,6 +445,10 @@ class RangeView @JvmOverloads constructor(
         return motionEvent.x > rangeValueRectF.right - toggleRadius && motionEvent.x < rangeValueRectF.right + toggleRadius
     }
 
+    private fun isTouchRange(motionEvent: MotionEvent): Boolean {
+        return motionEvent.x > rangeValueRectF.left + toggleRadius && motionEvent.x < rangeValueRectF.right - toggleRadius
+    }
+
     private fun getLeftValue(): Float {
         val totalDiffInPx = totalValueRect.right - totalValueRect.left
         val firstValueInPx = rangeValueRectF.left - totalValueRect.left
@@ -385,7 +461,7 @@ class RangeView @JvmOverloads constructor(
         return maxValue * secondValueInPx / totalDiffInPx
     }
 
-    private fun notifyRangeChanged() {
+    private fun notifyRangeChanged(state: DraggingState) {
         val firstValue = getLeftValue()
         val secondValue = getRightValue()
 
@@ -395,7 +471,7 @@ class RangeView @JvmOverloads constructor(
         currentLeftValue = leftValue
         currentRightValue = rightValue
 
-        rangeValueChangeListener?.rangeChanged(maxValue, minValue, leftValue, rightValue)
+        rangeValueChangeListener?.rangeChanged(maxValue, minValue, leftValue, rightValue, state)
     }
 
     companion object {

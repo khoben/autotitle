@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="white">#FFFFFF</color>
     <color name="white75">#BFFFFFFF</color>
+
+    <color name="black">#000000</color>
     <color name="black50">#7F000000</color>
     <color name="black75">#BF000000</color>
+
+    <color name="patternTintColor">#337C4DFF</color>
 
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
@@ -12,10 +17,8 @@
 
     <color name="selectedTimelineBackgroundColor">#3fff0000</color>
     <color name="timelineBackgroundColor">#7f000000</color>
-    <color name="recycler_swipe_background">#B71C1C</color>
+    <color name="recyclerSwipeBackground">#FF5252</color>
 
-    <color name="black">#000000</color>
-    <color name="white">#FFFFFF</color>
     <color name="blue_color_picker">#0066FF</color>
     <color name="brown_color_picker">#AF593E</color>
     <color name="green_color_picker">#01A368</color>
@@ -26,6 +29,4 @@
     <color name="violet_color_picker">#8359A3</color>
     <color name="yellow_color_picker">#FBE870</color>
     <color name="yellow_green_color_picker">#C5E17A</color>
-    <color name="tool_bg">#151414</color>
-    <color name="semi_black_transparent">#99000000</color>
 </resources>

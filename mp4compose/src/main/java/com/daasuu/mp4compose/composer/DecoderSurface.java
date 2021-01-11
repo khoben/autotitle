@@ -22,13 +22,17 @@ import com.daasuu.mp4compose.gl.GlSurfaceTexture;
 import com.daasuu.mp4compose.logger.Logger;
 import com.daasuu.mp4compose.utils.EglUtil;
 
+import static android.opengl.GLES20.GL_BLEND;
 import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
 import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
 import static android.opengl.GLES20.GL_FRAMEBUFFER;
 import static android.opengl.GLES20.GL_LINEAR;
 import static android.opengl.GLES20.GL_MAX_TEXTURE_SIZE;
 import static android.opengl.GLES20.GL_NEAREST;
+import static android.opengl.GLES20.GL_ONE;
+import static android.opengl.GLES20.GL_ONE_MINUS_SRC_ALPHA;
 import static android.opengl.GLES20.GL_TEXTURE_2D;
+import static java.lang.Boolean.TRUE;
 
 // Refer : https://android.googlesource.com/platform/cts/+/lollipop-release/tests/tests/media/src/android/media/cts/OutputSurface.java
 
@@ -105,7 +109,7 @@ class DecoderSurface implements SurfaceTexture.OnFrameAvailableListener {
         // at the Java level, so if we don't either then the object can get GCed, which
         // causes the native finalizer to run.
 
-        // if (VERBOSE) Log.d(TAG, "textureID=" + filter.getTextureId());
+        // if (VERBOSE) Timber.d( "textureID=" + filter.getTextureId());
         // surfaceTexture = new SurfaceTexture(filter.getTextureId());
 
         // This doesn't work if DecoderSurface is created on the thread that CTS started for
@@ -232,9 +236,9 @@ class DecoderSurface implements SurfaceTexture.OnFrameAvailableListener {
 
 
         if (filter != null) {
-            filterFramebufferObject.enable();
-            GLES20.glViewport(0, 0, filterFramebufferObject.getWidth(), filterFramebufferObject.getHeight());
-            GLES20.glClearColor(filter.getClearColor()[0], filter.getClearColor()[1], filter.getClearColor()[2], filter.getClearColor()[3]);
+//            filterFramebufferObject.enable();
+//            GLES20.glViewport(0, 0, filterFramebufferObject.getWidth(), filterFramebufferObject.getHeight());
+//            GLES20.glClearColor(filter.getClearColor()[0], filter.getClearColor()[1], filter.getClearColor()[2], filter.getClearColor()[3]);
         }
 
         GLES20.glClear(GL_COLOR_BUFFER_BIT);
@@ -250,7 +254,7 @@ class DecoderSurface implements SurfaceTexture.OnFrameAvailableListener {
             case PRESERVE_ASPECT_FIT:
                 scale = FillMode.getScaleAspectFit(rotation.getRotation(), inputResolution.getWidth(), inputResolution.getHeight(), outputResolution.getWidth(), outputResolution.getHeight());
 
-                // Log.d(TAG, "scale[0] = " + scale[0] + " scale[1] = " + scale[1]);
+                // Timber.d( "scale[0] = " + scale[0] + " scale[1] = " + scale[1]);
 
                 Matrix.scaleM(MVPMatrix, 0, scale[0] * scaleDirectionX, scale[1] * scaleDirectionY, 1);
                 if (rotation != Rotation.NORMAL) {
@@ -285,10 +289,10 @@ class DecoderSurface implements SurfaceTexture.OnFrameAvailableListener {
 
                     Matrix.rotateM(MVPMatrix, 0, -(rotation.getRotation() + fillModeCustomItem.getRotate()), 0.f, 0.f, 1.f);
 
-//                    Log.d(TAG, "inputResolution = " + inputResolution.getWidth() + " height = " + inputResolution.getHeight());
-//                    Log.d(TAG, "out = " + outputResolution.getWidth() + " height = " + outputResolution.getHeight());
-//                    Log.d(TAG, "rotation = " + rotation.getRotation());
-//                    Log.d(TAG, "scale[0] = " + scale[0] + " scale[1] = " + scale[1]);
+//                    Timber.d( "inputResolution = " + inputResolution.getWidth() + " height = " + inputResolution.getHeight());
+//                    Timber.d( "out = " + outputResolution.getWidth() + " height = " + outputResolution.getHeight());
+//                    Timber.d( "rotation = " + rotation.getRotation());
+//                    Timber.d( "scale[0] = " + scale[0] + " scale[1] = " + scale[1]);
 
 
                 }
@@ -296,14 +300,17 @@ class DecoderSurface implements SurfaceTexture.OnFrameAvailableListener {
                 break;
         }
 
-
+        // video frame
         previewShader.draw(texName, MVPMatrix, STMatrix, 1f);
 
         if (filter != null) {
             // 一度shaderに描画したものを、fboを利用して、drawする。drawには必要なさげだけど。
             framebufferObject.enable();
-            GLES20.glClear(GL_COLOR_BUFFER_BIT);
+//            GLES20.glClear(GL_COLOR_BUFFER_BIT);
+            GLES20.glEnable(GL_BLEND);
+            GLES20.glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
             filter.draw(filterFramebufferObject.getTexName(), framebufferObject, currentTimeUs);
+            GLES20.glDisable(GL_BLEND);
         }
 
 

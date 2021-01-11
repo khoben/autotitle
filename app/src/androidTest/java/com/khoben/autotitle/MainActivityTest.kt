@@ -18,12 +18,12 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
 import androidx.test.runner.AndroidJUnit4
-import com.khoben.autotitle.huawei.ui.activity.MainActivity
+import com.khoben.autotitle.ui.activity.MainActivity
+import com.khoben.autotitle.ui.activity.VideoEditActivity
 import org.hamcrest.CoreMatchers.*
+import org.junit.Rule
+import org.junit.Test
 import org.junit.runner.RunWith
-import com.khoben.autotitle.huawei.R
-import com.khoben.autotitle.huawei.ui.activity.VideoEditActivity
-import org.junit.*
 
 
 @RunWith(AndroidJUnit4::class)
@@ -87,7 +87,8 @@ class MainActivityTest {
     fun checkIfGoodUriVideoLoad() {
         Intents.init()
         testRule.launchActivity(Intent())
-        val testUri = Uri.parse("android.resource://" + testRule.activity.packageName + "/" + R.raw.test_video)
+        val testUri =
+            Uri.parse("android.resource://" + testRule.activity.packageName + "/" + R.raw.test_video)
         val successIntent = Intent().apply {
             data = testUri
         }

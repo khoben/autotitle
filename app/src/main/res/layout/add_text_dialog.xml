@@ -1,53 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/darker_gray"
+    android:backgroundTint="#F2939292"
     android:orientation="vertical">
 
-    <TextView
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/add_text_done_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin="20dp"
-        android:background="@drawable/rounded_border_text_view"
-        android:padding="10dp"
-        android:text="@string/OK"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="15sp" />
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:text="OK"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/add_text_edit_text"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/add_text_color_picker_relative_layout"
-        android:layout_below="@+id/add_text_done_tv"
+        android:layout_height="0dp"
+        android:autofillHints=""
         android:background="@null"
         android:gravity="center"
         android:inputType="textMultiLine"
-        android:textSize="40sp"
-        tools:text="test"/>
+        android:textAppearance="?textAppearanceHeadline5"
+        app:layout_constraintBottom_toTopOf="@+id/add_text_color_picker_recycler_view"
+        app:layout_constraintTop_toBottomOf="@+id/add_text_done_tv"
+        tools:ignore="LabelFor"
+        tools:text="test" />
 
-    <RelativeLayout
-        android:id="@+id/add_text_color_picker_relative_layout"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/add_text_color_picker_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:background="?colorSurface"
+        tools:listitem="@layout/color_picker_item_list" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/add_text_color_picker_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:background="?colorSurface"
-            tools:listitem="@layout/color_picker_item_list" />
-
-    </RelativeLayout>
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

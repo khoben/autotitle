@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LottieAnimationViewEx">
+        <attr format="integer" name="lottie_minFrame"/>
+        <attr format="integer" name="lottie_maxFrame"/>
+    </declare-styleable>
+</resources>
