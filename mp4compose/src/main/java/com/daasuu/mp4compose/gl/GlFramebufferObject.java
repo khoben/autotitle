@@ -4,6 +4,8 @@ import android.opengl.GLES20;
 
 import com.daasuu.mp4compose.utils.EglUtil;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import static android.opengl.GLES20.GL_COLOR_ATTACHMENT0;
 import static android.opengl.GLES20.GL_DEPTH_ATTACHMENT;
 import static android.opengl.GLES20.GL_DEPTH_COMPONENT16;
@@ -20,6 +22,7 @@ import static android.opengl.GLES20.GL_RGBA;
 import static android.opengl.GLES20.GL_TEXTURE_2D;
 import static android.opengl.GLES20.GL_TEXTURE_BINDING_2D;
 import static android.opengl.GLES20.GL_UNSIGNED_BYTE;
+import static android.opengl.GLES20.GL_UNSIGNED_SHORT_5_5_5_1;
 
 public class GlFramebufferObject {
     private int width;
@@ -82,7 +85,7 @@ public class GlFramebufferObject {
 
             EglUtil.setupSampler(GL_TEXTURE_2D, GL_LINEAR, GL_NEAREST);
 
-            GLES20.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, null);
+            GLES20.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, null);
             GLES20.glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texName, 0);
 
             final int status = GLES20.glCheckFramebufferStatus(GL_FRAMEBUFFER);

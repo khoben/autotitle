@@ -9,6 +9,10 @@ import com.daasuu.mp4compose.utils.EglUtil;
 import java.util.HashMap;
 
 import static android.opengl.GLES20.GL_FLOAT;
+import static javax.microedition.khronos.opengles.GL10.GL_CLAMP_TO_EDGE;
+import static javax.microedition.khronos.opengles.GL10.GL_TEXTURE_2D;
+import static javax.microedition.khronos.opengles.GL10.GL_TEXTURE_WRAP_S;
+import static javax.microedition.khronos.opengles.GL10.GL_TEXTURE_WRAP_T;
 
 /**
  * Created by sudamasayuki on 2017/11/14.
@@ -161,7 +165,7 @@ public class GlFilter {
         return location;
     }
 
-    private float[] clearColor = new float[]{0f, 0f, 0f, 1f};
+    private float[] clearColor = new float[]{1f, 1f, 1f, 0f};
 
     public float[] getClearColor() {
         return clearColor;

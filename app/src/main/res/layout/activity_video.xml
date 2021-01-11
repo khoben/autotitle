@@ -8,12 +8,13 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/actionbar"
-        android:background="?colorSurface"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?colorSurface"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -27,24 +28,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
                 android:padding="0dp"
                 app:icon="@drawable/arrow_back_icon"
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
-                android:layout_marginStart="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tv_title"
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="@string/edit_caption"
-                android:textSize="20sp"
-                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -75,10 +75,11 @@
         android:id="@+id/videolayer"
         layout="@layout/video_preview_layer"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_marginTop="5dp"
+        android:layout_height="0dp"
         android:layout_above="@+id/video_seekbar_view_container"
         android:layout_below="@+id/actionbar"
+        android:layout_marginTop="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/actionbar" />
@@ -87,47 +88,24 @@
         android:id="@+id/video_seekbar_view_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
         android:layout_marginLeft="0dp"
+        android:layout_marginTop="5dp"
         android:layout_marginRight="0dp"
-        app:cardPreventCornerOverlap="false"
+        android:layout_marginBottom="5dp"
         app:cardElevation="@dimen/elevation_medium"
+        app:cardPreventCornerOverlap="false"
         app:cardUseCompatPadding="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/videolayer">
 
-        <com.khoben.autotitle.ui.player.VideoControlsView
-            android:id="@+id/video_seekbar_view"
-            android:layout_width="match_parent"
-            android:layout_height="115dp"
-            android:paddingStart="4dp">
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/add_item"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
-                app:icon="@drawable/add_icon_24dp"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                android:padding="0dp"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginBottom="3dp"
-                app:iconSize="18dp"
-                android:insetLeft="0dp"
-                android:insetTop="0dp"
-                android:insetRight="0dp"
-                android:insetBottom="0dp"
-                app:strokeColor="?colorPrimary"
-                android:layout_centerHorizontal="true"
-                android:layout_alignParentBottom="true"
-                android:backgroundTint="?colorSurface"
-                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Button.Circle" />
-        </com.khoben.autotitle.ui.player.VideoControlsView>
+        <include
+            android:id="@+id/video_seekbar_layout"
+            layout="@layout/video_seekbar_layout" />
 
     </com.google.android.material.card.MaterialCardView>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="5dp"
@@ -141,26 +119,36 @@
         <com.khoben.autotitle.ui.recyclerview.EmptyRecyclerView
             android:id="@+id/recyclerview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:layout_height="match_parent" />
 
         <include
-            android:id="@+id/empty_view_recycler"
+            android:id="@+id/empty_recycler_view"
             layout="@layout/empty_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+            android:layout_height="match_parent" />
+    </FrameLayout>
 
     <include
         android:id="@+id/lottie_loading_view"
         layout="@layout/lottie_loading_view"
-        tools:visibility="gone" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        tools:visibility="gone"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.45" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.70" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

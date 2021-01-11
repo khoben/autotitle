@@ -1,11 +1,9 @@
 package com.khoben.autotitle.di.modules
 
-import android.app.Application
 import com.khoben.autotitle.App
 import com.khoben.autotitle.service.audioextractor.AudioExtractor
 import com.khoben.autotitle.service.audioextractor.AudioExtractorImpl
 import com.khoben.autotitle.service.audiotranscriber.AudioTranscriber
-import com.khoben.autotitle.service.audiotranscriber.AudioTranscriberImpl
 import com.khoben.autotitle.service.audiotranscriber.AudioTranscriberTest
 import com.khoben.autotitle.service.frameretriever.VideoFrameRetriever
 import com.khoben.autotitle.service.frameretriever.VideoFrameRetrieverImpl
@@ -17,27 +15,28 @@ import dagger.Provides
 import javax.inject.Singleton
 
 @Module
-class ApplicationModule(private var app: App) {
+class ApplicationModule(private val app: App) {
     @Provides
     @Singleton
-    internal fun provideApplication(): Application {
-        return app
-    }
-
-    @Provides
     internal fun provideVideoFrameRetriever(): VideoFrameRetriever {
         return VideoFrameRetrieverImpl(context = app.applicationContext)
     }
 
     @Provides
+    @Singleton
     internal fun provideVideoProcessorBase(): VideoProcessorBase {
         return Mp4ComposerVP()
     }
 
     @Provides
     @Singleton
-    internal fun provideMediaPlayer(): MediaSurfacePlayer {
+    internal fun provideSurfaceMediaPlayer(): MediaSurfacePlayer {
         return MediaExoPlayerSurfaceWrapper(context = app.applicationContext)
+    }
+
+    @Provides
+    internal fun provideUIMediaPlayer(): MediaPlayer {
+        return MediaExoPlayerUIWrapper()
     }
 
     @Provides
@@ -47,6 +46,7 @@ class ApplicationModule(private var app: App) {
     }
 
     @Provides
+    @Singleton
     internal fun provideAudioExtractor(): AudioExtractor {
         return AudioExtractorImpl()
     }

@@ -14,33 +14,26 @@ import androidx.recyclerview.widget.RecyclerView
 import com.khoben.autotitle.R
 
 
-class ColorPickerAdapter internal constructor(
-    context: Context,
-    colorPickerColors: List<Int>
+class ColorPickerAdapter(
+    private val context: Context,
+    private val colorPickerColors: List<Int>
 ) : RecyclerView.Adapter<ColorPickerAdapter.ViewHolder>() {
 
-    private var context: Context?
-    private var inflater: LayoutInflater
-    private val colorPickerColors: List<Int>
-    private var onColorPickerClickListener: OnColorPickerClickListener? = null
+    private val inflater = LayoutInflater.from(context)
 
-    constructor(context: Context) : this(context, getDefaultColors(context)) {
-        this.context = context
-        inflater = LayoutInflater.from(context)
-    }
+    var onColorPickerClickListener: OnColorPickerClickListener? = null
+
+    constructor(context: Context) : this(context, getDefaultColors(context))
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view: View = inflater.inflate(R.layout.color_picker_item_list, parent, false)
-        return ViewHolder(view)
+        return ViewHolder(inflater.inflate(R.layout.color_picker_item_list, parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         buildColorPickerView(holder.colorPickerView, colorPickerColors[position])
     }
 
-    override fun getItemCount(): Int {
-        return colorPickerColors.size
-    }
+    override fun getItemCount() = colorPickerColors.size
 
     private fun buildColorPickerView(view: View, colorCode: Int) {
         view.visibility = View.VISIBLE
@@ -53,15 +46,11 @@ class ColorPickerAdapter internal constructor(
         smallerCircle.intrinsicHeight = 5
         smallerCircle.intrinsicWidth = 5
         smallerCircle.bounds = Rect(0, 0, 5, 5)
-        smallerCircle.paint.color = ContextCompat.getColor(context!!, R.color.white)
+        smallerCircle.paint.color = ContextCompat.getColor(context, R.color.white)
         smallerCircle.setPadding(10, 10, 10, 10)
         val drawables = arrayOf<Drawable>(smallerCircle, biggerCircle)
         val layerDrawable = LayerDrawable(drawables)
         view.background = layerDrawable
-    }
-
-    fun setOnColorPickerClickListener(onColorPickerClickListener: OnColorPickerClickListener?) {
-        this.onColorPickerClickListener = onColorPickerClickListener
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -102,11 +91,5 @@ class ColorPickerAdapter internal constructor(
             )
             return colorPickerColors
         }
-    }
-
-    init {
-        this.context = context
-        inflater = LayoutInflater.from(context)
-        this.colorPickerColors = colorPickerColors
     }
 }

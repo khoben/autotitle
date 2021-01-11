@@ -1,9 +1,10 @@
 package com.khoben.autotitle.ui.overlay.gesture
 
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.khoben.autotitle.ui.overlay.gesture.ScaleGestureDetector.OnScaleGestureListener
+import timber.log.Timber
+import kotlin.math.sqrt
 
 /**
  * Detects transformation gestures involving more than one pointer ("multitouch")
@@ -96,7 +97,7 @@ internal class ScaleGestureDetector(private val mListener: OnScaleGestureListene
         private set
     private var mPrevEvent: MotionEvent? = null
     private var mCurrEvent: MotionEvent? = null
-    private val mCurrSpanVector: Vector2D
+    private val mCurrSpanVector: Vector2D = Vector2D()
     private var mFocusX = 0f
     private var mFocusY = 0f
     private var mPrevFingerDiffX = 0f
@@ -283,7 +284,7 @@ internal class ScaleGestureDetector(private val mListener: OnScaleGestureListene
         val currIndex1 = curr.findPointerIndex(mActiveId1)
         if (prevIndex0 < 0 || prevIndex1 < 0 || currIndex0 < 0 || currIndex1 < 0) {
             mInvalidGesture = true
-            Log.e(TAG, "Invalid MotionEvent stream detected.", Throwable())
+            Timber.e(Throwable(), "Invalid MotionEvent stream detected.")
             if (isInProgress) {
                 mListener.onScaleEnd(view, this)
             }
@@ -368,7 +369,7 @@ internal class ScaleGestureDetector(private val mListener: OnScaleGestureListene
         if (mCurrLen == -1f) {
             val cvx = mCurrFingerDiffX
             val cvy = mCurrFingerDiffY
-            mCurrLen = Math.sqrt(cvx * cvx + cvy * cvy.toDouble()).toFloat()
+            mCurrLen = sqrt(cvx * cvx + cvy * cvy.toDouble()).toFloat()
         }
         return mCurrLen
     }
@@ -407,7 +408,7 @@ internal class ScaleGestureDetector(private val mListener: OnScaleGestureListene
         if (mPrevLen == -1f) {
             val pvx = mPrevFingerDiffX
             val pvy = mPrevFingerDiffY
-            mPrevLen = Math.sqrt(pvx * pvx + pvy * pvy.toDouble()).toFloat()
+            mPrevLen = sqrt(pvx * pvx + pvy * pvy.toDouble()).toFloat()
         }
         return mPrevLen
     }
@@ -466,7 +467,6 @@ internal class ScaleGestureDetector(private val mListener: OnScaleGestureListene
     }
 
     companion object {
-        private const val TAG = "ScaleGestureDetector"
 
         /**
          * This value is the threshold ratio between our previous combined pressure
@@ -480,7 +480,4 @@ internal class ScaleGestureDetector(private val mListener: OnScaleGestureListene
         private const val PRESSURE_THRESHOLD = 0.67f
     }
 
-    init {
-        mCurrSpanVector = Vector2D()
-    }
 }

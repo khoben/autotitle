@@ -18,10 +18,6 @@ class AudioTranscriberImpl(var context: Context) : AudioTranscriber {
     private val engine = MLRemoteAftEngine.getInstance()
     private var setting: MLRemoteAftSetting? = null
 
-    companion object {
-        private var TAG = AudioTranscriberImpl::class.java.name
-    }
-
     init {
         engine.init(context)
     }

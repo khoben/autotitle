@@ -1,12 +1,4 @@
-<vector android:autoMirrored="true" android:height="72dp"
-    android:viewportHeight="172" android:viewportWidth="172"
-    android:width="72dp" xmlns:android="http://schemas.android.com/apk/res/android">
-    <path android:fillColor="#ecf0f1" android:fillType="nonZero"
-        android:pathData="M90.006,8.195c1.085,1.083 1.685,2.559 1.664,4.091l0,147.427c0.029,2.045 -1.045,3.947 -2.812,4.978c-1.766,1.031 -3.951,1.031 -5.717,0c-1.766,-1.031 -2.841,-2.933 -2.812,-4.978l0,-147.427c-0.043,-3.127 2.454,-5.699 5.582,-5.748c1.533,-0.024 3.01,0.574 4.095,1.656z"
-        android:strokeColor="#8c8c8c" android:strokeLineCap="butt"
-        android:strokeLineJoin="round" android:strokeWidth="2"/>
-    <path android:fillColor="#ecf0f1" android:fillType="nonZero"
-        android:pathData="M85.911,6.539c-3.127,0.049 -5.624,2.62 -5.582,5.748l0,147.427c-0.029,2.045 1.045,3.947 2.812,4.978c1.766,1.031 3.951,1.031 5.717,0c1.766,-1.031 2.841,-2.933 2.812,-4.978l0,-147.427c0.021,-1.533 -0.579,-3.009 -1.664,-4.091c-1.085,-1.083 -2.562,-1.68 -4.095,-1.656z"
-        android:strokeColor="#00000000" android:strokeLineCap="butt"
-        android:strokeLineJoin="miter" android:strokeWidth="1"/>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="72dp" android:height="72dp" android:autoMirrored="true" android:viewportWidth="172" android:viewportHeight="172">
+    <path android:fillColor="#ecf0f1" android:pathData="M90.006 8.195c1.085 1.083 1.685 2.559 1.664 4.091v147.427c0.029 2.045-1.045 3.947-2.812 4.978-1.766 1.031-3.951 1.031-5.717 0-1.766-1.031-2.841-2.933-2.812-4.978V12.286c-0.043-3.127 2.454-5.699 5.582-5.748 1.533-0.024 3.01 0.574 4.095 1.656z" android:strokeWidth="2" android:strokeColor="#8c8c8c" android:strokeLineJoin="round"/>
+    <path android:fillColor="#ecf0f1" android:pathData="M85.911 6.539c-3.127 0.049-5.624 2.62-5.582 5.748v147.427c-0.029 2.045 1.045 3.947 2.812 4.978 1.766 1.031 3.951 1.031 5.717 0 1.766-1.031 2.841-2.933 2.812-4.978V12.287c0.021-1.533-0.579-3.009-1.664-4.091-1.085-1.083-2.562-1.68-4.095-1.656z" android:strokeWidth="1"/>
 </vector>

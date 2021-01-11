@@ -2,16 +2,14 @@ package com.khoben.autotitle.common
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import kotlin.math.max
 
 object ViewUtils {
 
     /**
-     * Get bitmap from [view] with [parentView] scale/rotation properties
+     * Get bitmap from [view] with [parentView] scale properties
      * @param view
      * @param parentView
      * @param _scaleX
@@ -30,29 +28,21 @@ object ViewUtils {
         val scaleX = parentView.scaleX * _scaleX
         val scaleY = parentView.scaleY * _scaleY
 
-        var newSizeX = displayedWidth * scaleX
-        var newSizeY = displayedHeight * scaleY
+        val newSizeX = displayedWidth * scaleX
+        val newSizeY = displayedHeight * scaleY
 
         if (newSizeX < 1 || newSizeY < 1) return null
 
-        val maxSize = max(newSizeX, newSizeY)
-        newSizeX = maxSize
-        newSizeY = maxSize
-
-        val pivotX = maxSize / 2
-        val pivotY = maxSize / 2
-        val rotation = parentView.rotation
+        val pivotX = newSizeX / 2F
+        val pivotY = newSizeY / 2F
 
         val returnedBitmap =
             Bitmap.createBitmap(
-                (maxSize).toInt(),
-                (maxSize).toInt(),
+                (newSizeX).toInt(),
+                (newSizeY).toInt(),
                 Bitmap.Config.ARGB_8888
             )
-        returnedBitmap.setHasAlpha(true)
-        returnedBitmap.eraseColor(Color.TRANSPARENT)
         val canvas = Canvas(returnedBitmap)
-        canvas.rotate(rotation, pivotX, pivotY)
         canvas.scale(scaleX, scaleY, pivotX, pivotY)
         if (view is TextView) {
             // text metrics
@@ -69,9 +59,9 @@ object ViewUtils {
      * Gets relative position of [view] in the [parent]
      * @param parent ViewGroup
      * @param view View
-     * @return IntArray
+     * @return Pair<Int, Int>
      */
-    fun getPositionInParent(parent: ViewGroup, view: View): IntArray {
+    fun getPositionInParent(parent: ViewGroup, view: View): Pair<Int, Int> {
         val relativePosition = intArrayOf(view.left, view.top)
         var currentParent = view.parent as ViewGroup
         while (currentParent !== parent) {
@@ -79,7 +69,7 @@ object ViewUtils {
             relativePosition[1] += currentParent.top
             currentParent = currentParent.parent as ViewGroup
         }
-        return relativePosition
+        return Pair(relativePosition[0], relativePosition[1])
     }
 
     /**

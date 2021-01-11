@@ -3,13 +3,13 @@ package com.khoben.autotitle.service.mediaplayer
 import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.net.Uri
-import android.util.Log
 import android.view.Surface
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.khoben.autotitle.model.VideoInfo
+import timber.log.Timber
 
 class MediaExoPlayerSurfaceWrapper(private var context: Context) :
     MediaSurfacePlayer,
@@ -22,27 +22,33 @@ class MediaExoPlayerSurfaceWrapper(private var context: Context) :
     private var mediaPlayerCallback: MediaPlayerSurfaceCallback? = null
     private var isPreparing = true
 
-    companion object {
-        private var TAG = MediaExoPlayerSurfaceWrapper::class.java.simpleName
+    init {
+        mediaPlayer = SimpleExoPlayer.Builder(context)
+            .build()
+            .apply {
+                addListener(this@MediaExoPlayerSurfaceWrapper)
+            }
     }
 
     override fun setDataSourceUri(uri: Uri) {
         dataSourceUri = uri
-        val mediaRetriever = MediaMetadataRetriever()
-        val info = VideoInfo()
-        mediaRetriever.setDataSource(context, dataSourceUri)
+        val mediaRetriever =
+            MediaMetadataRetriever().apply { setDataSource(context, dataSourceUri) }
         val rotation =
             mediaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)
         val width = mediaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
         val height =
             mediaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)
         val duration = mediaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-        info.uri = dataSourceUri
+        val info = VideoInfo()
         try {
-            info.rotation = rotation!!.toInt()
-            info.width = width!!.toInt()
-            info.height = height!!.toInt()
-            info.duration = duration!!.toLong()
+            info.apply {
+                this.uri = dataSourceUri
+                this.rotation = rotation!!.toInt()
+                this.width = width!!.toInt()
+                this.height = height!!.toInt()
+                this.duration = duration!!.toLong()
+            }
         } catch (e: NumberFormatException) {
             e.printStackTrace()
         } finally {
@@ -59,30 +65,27 @@ class MediaExoPlayerSurfaceWrapper(private var context: Context) :
     }
 
     override fun prepare() {
-        mediaPlayer = SimpleExoPlayer.Builder(context)
-            .build()
-        mediaPlayer!!.addListener(this)
         mediaPlayer!!.setMediaItem(MediaItem.fromUri(dataSourceUri!!))
         isPreparing = true
         mediaPlayer!!.prepare()
     }
 
     override fun initSurface() {
-        Log.d(TAG, "Surface init")
+        Timber.d("Surface init")
         mediaPlayer!!.setVideoSurface(surface)
     }
 
     override fun play() {
         if (!isPlaying()) {
             mediaPlayer!!.play()
-            Log.d(TAG, "Playing started")
+            Timber.d("Playing started")
         }
     }
 
     override fun pause() {
         if (isPlaying()) {
             mediaPlayer?.pause()
-            Log.d(TAG, "Paused")
+            Timber.d("Paused")
         }
     }
 
@@ -97,8 +100,8 @@ class MediaExoPlayerSurfaceWrapper(private var context: Context) :
     override fun isPlaying(): Boolean {
         return mediaPlayer != null &&
                 ((mediaPlayer!!.playWhenReady &&
-                mediaPlayer!!.playbackState == Player.STATE_READY) ||
-                mediaPlayer!!.playbackState == Player.STATE_ENDED)
+                        mediaPlayer!!.playbackState == Player.STATE_READY) ||
+                        mediaPlayer!!.playbackState == Player.STATE_ENDED)
 
     }
 
@@ -140,7 +143,7 @@ class MediaExoPlayerSurfaceWrapper(private var context: Context) :
     }
 
     override fun seekTo(timestamp: Long) {
-        Log.d(TAG, "Seek to $timestamp")
+        Timber.d("Seek to $timestamp")
         mediaPlayer!!.seekTo(timestamp)
     }
 
@@ -153,7 +156,7 @@ class MediaExoPlayerSurfaceWrapper(private var context: Context) :
     }
 
     override fun setVolumeLevel(volume: Float) {
-        mediaPlayer?.volume = volume
+        mediaPlayer!!.volume = volume
     }
 
     override fun setMediaCallbackListener(mediaPlayerCallback: MediaPlayerSurfaceCallback?) {

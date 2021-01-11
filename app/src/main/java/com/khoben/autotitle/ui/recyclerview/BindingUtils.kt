@@ -5,17 +5,17 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.khoben.autotitle.R
-import com.khoben.autotitle.extension.toReadableTimeString
+import com.khoben.autotitle.extension.formattedTime
 import com.khoben.autotitle.ui.overlay.OverlayDataMapper
 
 @BindingAdapter("overlayFromString")
 fun TextView.setOverlayFromString(item: OverlayDataMapper) {
-    text = item.startTime.toReadableTimeString()
+    text = item.startTime.formattedTime()
 }
 
 @BindingAdapter("overlayToString")
 fun TextView.setOverlayToString(item: OverlayDataMapper) {
-    text = item.endTime.toReadableTimeString()
+    text = item.endTime.formattedTime()
 }
 
 @BindingAdapter("overlayContentString")
@@ -24,7 +24,7 @@ fun TextView.setOverlayContentString(item: OverlayDataMapper) {
         setTypeface(typeface, Typeface.ITALIC)
         context.getString(R.string.empty_overlay_recycler)
     } else {
-        setTypeface(typeface, Typeface.BOLD)
+        setTypeface(typeface, Typeface.NORMAL)
         item.text
     }
 }

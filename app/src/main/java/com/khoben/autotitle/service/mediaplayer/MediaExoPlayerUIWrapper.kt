@@ -53,6 +53,10 @@ class MediaExoPlayerUIWrapper : MediaPlayer {
         exoPlayer.pause()
     }
 
+    override fun stop() {
+        exoPlayer.stop()
+    }
+
     private fun initializePlayer() {
         exoPlayer = SimpleExoPlayer.Builder(context).build()
     }

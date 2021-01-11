@@ -35,8 +35,8 @@ public class Mp4Composer {
 
     private final static String TAG = Mp4Composer.class.getSimpleName();
 
-    private final DataSource srcDataSource;
-    private final String destPath;
+    private DataSource srcDataSource;
+    private String destPath;
     private FileDescriptor destFileDescriptor;
     private GlFilter filter;
     private Size outputResolution;
@@ -90,6 +90,25 @@ public class Mp4Composer {
         this.logger = logger;
         this.srcDataSource = new UriDataSource(srcUri, context, logger, errorDataSource);
         this.destPath = destPath;
+    }
+
+    public Mp4Composer() {
+        this.logger = new AndroidLogger();
+    }
+
+    public Mp4Composer source(@NonNull final Context context, @NonNull final Uri srcUri) {
+        this.srcDataSource = new UriDataSource(srcUri, context, logger, errorDataSource);
+        return this;
+    }
+
+    public Mp4Composer source(@NonNull final String srcPath) {
+        this.srcDataSource = new FilePathDataSource(srcPath, logger, errorDataSource);
+        return this;
+    }
+
+    public Mp4Composer destinationPath(@NonNull final String destPath) {
+        this.destPath = destPath;
+        return this;
     }
 
     @TargetApi(Build.VERSION_CODES.O)
@@ -333,7 +352,7 @@ public class Mp4Composer {
 
                 } catch (Exception e) {
                     if (e instanceof MediaCodec.CodecException) {
-                        logger.error(TAG, "This devicel cannot codec with that setting. Check width, height, bitrate and video format.", e);
+                        logger.error(TAG, "This device cannot codec with that setting. Check width, height, bitrate and video format.", e);
                         notifyListenerOfFailureAndShutdown(e);
                         return;
                     }
@@ -364,6 +383,18 @@ public class Mp4Composer {
         }
         if (executorService != null) {
             executorService.shutdown();
+        }
+    }
+
+    public void pause() {
+        if (engine != null) {
+            engine.pause();
+        }
+    }
+
+    public void resume() {
+        if (engine != null) {
+            engine.resume();
         }
     }
 

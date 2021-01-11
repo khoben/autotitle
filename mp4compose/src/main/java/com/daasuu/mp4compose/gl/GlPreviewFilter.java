@@ -48,6 +48,7 @@ public class GlPreviewFilter extends GlFilter {
     }
 
     public void draw(final int texName, final float[] mvpMatrix, final float[] stMatrix, final float aspectRatio) {
+
         useProgram();
 
         GLES20.glUniformMatrix4fv(getHandle("uMVPMatrix"), 1, false, mvpMatrix, 0);

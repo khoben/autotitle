@@ -2,26 +2,27 @@ package com.khoben.autotitle.ui.overlay
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RelativeLayout
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.FrameLayout
 import com.khoben.autotitle.App.Companion.FRAME_TIME_MS
+import com.khoben.autotitle.extension.getRect
+import com.khoben.autotitle.model.MLCaption
 import com.khoben.autotitle.ui.overlay.gesture.MultiTouchListener
-import com.khoben.autotitle.ui.popup.TextEditorDialogFragment
+import timber.log.Timber
+import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.math.min
 
 class OverlayHandler private constructor(
     private var context: Context,
-    private var parentView: RelativeLayout
+    private var parentView: WeakReference<ViewGroup>
 ) {
-
-    private var TAG: String = OverlayHandler::class.java.simpleName
     private val overlayFactory = OverlayFactory(context)
-    private val overlayViews = ArrayList<OverlayText>()
-    private var currentOverlayView: OverlayText? = null
+    private val overlayViews = ArrayList<OverlayObject>()
+    private var currentOverlayView: OverlayObject? = null
+    private var lastDeletedOverlay: OverlayObject? = null
 
     var overlayObjectEventListener: OverlayObjectEventListener? = null
 
@@ -30,25 +31,27 @@ class OverlayHandler private constructor(
     }
 
     interface OverlayObjectEventListener {
-        fun onEdited(overlay: List<OverlayText>)
-        fun onUnEditable(overlay: OverlayText?, overlays: List<OverlayText>)
-        fun onAdded(overlay: OverlayText?, overlays: List<OverlayText>, isEdit: Boolean = true)
+        fun onEdit(overlay: OverlayObject)
+        fun onEdited(overlay: List<OverlayObject>)
+        fun onUnEditable(overlay: OverlayObject?, overlays: List<OverlayObject>)
+        fun onAdded(overlay: OverlayObject?, overlays: List<OverlayObject>, isEdit: Boolean = true)
+        fun onAddedAll(overlays: List<OverlayObject>)
         fun onSelect(
-            overlay: OverlayText?,
-            overlays: List<OverlayText>,
+            overlay: OverlayObject?,
+            overlays: List<OverlayObject>,
             seekToOverlayStart: Boolean
         )
 
         fun onRemoved(
             idxRemoved: Int,
-            removedOverlay: OverlayText,
-            overlays: ArrayList<OverlayText>
+            removedOverlay: OverlayObject,
+            overlays: ArrayList<OverlayObject>
         )
     }
 
     fun setLayout(
         context: Context,
-        parentView: RelativeLayout
+        parentView: WeakReference<ViewGroup>
     ) {
         this.context = context
         this.parentView = parentView
@@ -69,8 +72,8 @@ class OverlayHandler private constructor(
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun createOverlay(startTime: Long, endTime: Long, text: String = ""): OverlayText {
-        val newOverlay = overlayFactory.get(OverlayType.TEXT) as OverlayText
+    private fun createTextOverlay(startTime: Long, endTime: Long, text: String = ""): OverlayText {
+        val newOverlay = overlayFactory.get(TEXT) as OverlayText
         newOverlay.apply {
             this.startTime = startTime
             this.endTime = endTime
@@ -87,45 +90,51 @@ class OverlayHandler private constructor(
         return newOverlay
     }
 
-    private fun setSelectedOverlay(overlay: OverlayText) {
+    private fun setSelectedOverlay(overlay: OverlayObject) {
         currentOverlayView?.isInEdit = false
         currentOverlayView = overlay
         currentOverlayView!!.isInEdit = true
     }
 
-    fun addOverlay(startTime: Long, endTime: Long, text: String) {
+    fun addTextOverlay(startTime: Long, endTime: Long, text: String, batch: Boolean = false) {
         val filteredText = filterPunctuation(text)
         if (filteredText.isEmpty()) {
-            Log.e(TAG, "Skip adding empty overlay")
+            Timber.e("Skip adding empty overlay")
             return
         }
 
-        val newOverlay = createOverlay(startTime, endTime, filteredText)
+        val newOverlay = createTextOverlay(startTime, endTime, filteredText)
 
-        setSelectedOverlay(newOverlay)
-
-        addOverlayToParent(newOverlay)
-        overlayViews.add(newOverlay)
-        overlayViews.sort()
-
-        overlayObjectEventListener?.onAdded(newOverlay, overlayViews, true)
-    }
-
-    fun addOverlay(startTime: Long, videoDuration: Long, type: OverlayType = OverlayType.TEXT) {
-        val newOverlay = createOverlay(startTime, min(startTime + FRAME_TIME_MS, videoDuration))
-
-        setSelectedOverlay(newOverlay)
+        if (!batch) setSelectedOverlay(newOverlay)
 
         addOverlayToParent(newOverlay)
         overlayViews.add(newOverlay)
-        overlayViews.sort()
-
-        overlayObjectEventListener?.onAdded(newOverlay, overlayViews)
+        if (!batch) {
+            overlayViews.sort()
+            overlayObjectEventListener?.onAdded(newOverlay, overlayViews, true)
+        }
     }
 
-    fun addOverlayAfterSpecificPosition(pos: Int): Long {
+    fun addOverlay(startTime: Long, videoDuration: Long, type: @OverlayType Int = TEXT) {
+        val newOverlay: OverlayObject?
+        if (type == TEXT) {
+            newOverlay = createTextOverlay(startTime, min(startTime + FRAME_TIME_MS, videoDuration))
+        } else {
+            newOverlay = null
+        }
+
+        newOverlay?.let {
+            setSelectedOverlay(it)
+            addOverlayToParent(it)
+            overlayViews.add(it)
+            overlayViews.sort()
+            overlayObjectEventListener?.onAdded(it, overlayViews)
+        }
+    }
+
+    fun addTextOverlayAfterSpecificPosition(pos: Int): Long {
         val newOverlay =
-            createOverlay(overlayViews[pos].endTime, overlayViews[pos].endTime + FRAME_TIME_MS)
+            createTextOverlay(overlayViews[pos].endTime, overlayViews[pos].endTime + FRAME_TIME_MS)
 
         addOverlayToParent(newOverlay)
         overlayViews.add(pos + 1, newOverlay)
@@ -137,10 +146,11 @@ class OverlayHandler private constructor(
         return newOverlay.startTime
     }
 
-    fun addOverlayAtSpecificPosition(pos: Int, item: OverlayText) {
+    fun addOverlayAtSpecificPosition(pos: Int, item: OverlayObject) {
         addOverlayToParent(item)
         overlayViews.add(pos, item)
         overlayViews.sort()
+        if (lastDeletedOverlay == item) setSelectedOverlay(item)
         overlayObjectEventListener?.onAdded(currentOverlayView, overlayViews)
     }
 
@@ -148,16 +158,17 @@ class OverlayHandler private constructor(
         removeOverlay(overlayViews[item])
     }
 
-    private fun removeOverlay(overlayObject: OverlayText) {
-        val idxRemoved = overlayViews.indexOf(overlayObject)
-        overlayViews.remove(overlayObject)
-        parentView.removeView(overlayObject)
+    private fun removeOverlay(overlay: OverlayObject) {
+        val idxRemoved = overlayViews.indexOf(overlay)
+        overlayViews.remove(overlay)
+        parentView.get()!!.removeView(overlay)
         // deselect
-        if (overlayObject == currentOverlayView) {
+        if (overlay == currentOverlayView) {
+            lastDeletedOverlay = currentOverlayView
             currentOverlayView?.isInEdit = false
             currentOverlayView = null
         }
-        overlayObjectEventListener?.onRemoved(idxRemoved, overlayObject, overlayViews)
+        overlayObjectEventListener?.onRemoved(idxRemoved, overlay, overlayViews)
     }
 
     fun getOverlays() = overlayViews
@@ -171,19 +182,19 @@ class OverlayHandler private constructor(
     }
 
     private fun addOverlayToParent(child: View) {
-        parentView.addView(
+        parentView.get()!!.addView(
             child,
-            RelativeLayout.LayoutParams(
+            FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
             ).apply {
-                addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE)
+                gravity = Gravity.CENTER
             }
         )
     }
 
     private fun getMultiTouchListener(overlay: OverlayText): MultiTouchListener {
         return MultiTouchListener(
-            parentView,
+            parentView.get()!!.getRect(),
             true,
         ).apply {
             setOnGestureControl(object : MultiTouchListener.OnGestureControl {
@@ -209,25 +220,25 @@ class OverlayHandler private constructor(
         editOverlay(overlayViews[index])
     }
 
-    private fun editOverlay(overlay: OverlayText) {
-        TextEditorDialogFragment.show(
-            context as AppCompatActivity,
-            overlay.text,
-            overlay.textView!!.currentTextColor
-        ).setOnTextEditorListener(object : TextEditorDialogFragment.TextEditorEvent {
-            override fun onDone(inputText: String?, colorCode: Int) {
-                overlay.text = inputText
-                overlay.textView!!.setTextColor(colorCode)
-                overlayObjectEventListener?.onEdited(overlayViews)
-            }
-        })
+    fun editedOverlay(overlay: OverlayObject, text: String, color: Int) {
+        if (overlay is OverlayText) {
+            overlay.text = text
+            overlay.textView!!.setTextColor(color)
+            overlayObjectEventListener?.onEdited(overlayViews)
+        }
+    }
+
+    private fun editOverlay(overlay: OverlayObject) {
+        if (overlay is OverlayText) {
+            overlayObjectEventListener?.onEdit(overlay)
+        }
     }
 
     fun selectedOverlayId(pos: Int) {
         selectedOverlay(overlayViews[pos], true)
     }
 
-    fun selectedOverlay(overlay: OverlayText, seekToOverlayStart: Boolean = false) {
+    fun selectedOverlay(overlay: OverlayObject, seekToOverlayStart: Boolean = false) {
         // do nothing if selected previously selected overlay
         if (overlay == currentOverlayView && currentOverlayView!!.isInEdit) return
         setSelectedOverlay(overlay)
@@ -268,19 +279,28 @@ class OverlayHandler private constructor(
     }
 
     fun hideRootView() {
-        parentView.visibility = View.GONE
+        parentView.get()?.visibility = View.GONE
     }
 
     fun showRootView() {
-        parentView.visibility = View.VISIBLE
+        parentView.get()?.visibility = View.VISIBLE
+    }
+
+    fun addAllOverlay(overlays: List<MLCaption>) {
+        overlayViews.clear()
+        overlays.forEach {
+            addTextOverlay(it.startTime, it.endTime, it.text, true)
+        }
+        overlayViews.sort()
+        overlayObjectEventListener?.onAddedAll(overlayViews)
     }
 
     data class Builder(
         private var context: Context? = null,
-        private var parentView: RelativeLayout? = null
+        private var parentView: ViewGroup? = null
     ) {
         fun ctx(context: Context) = apply { this.context = context }
-        fun parent(view: RelativeLayout) = apply { this.parentView = view }
-        fun build() = OverlayHandler(context!!, parentView!!)
+        fun parent(view: ViewGroup) = apply { this.parentView = view }
+        fun build() = OverlayHandler(context!!, WeakReference(parentView!!))
     }
 }

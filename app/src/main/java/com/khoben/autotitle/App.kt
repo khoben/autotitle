@@ -1,22 +1,34 @@
 package com.khoben.autotitle
 
 import android.app.Application
+import android.content.Context
 import com.huawei.hms.mlsdk.common.MLApplication
-import com.khoben.autotitle.common.APIKeyStore
-import com.khoben.autotitle.common.DisplayUtils
+import com.khoben.autotitle.common.FileUtils
+import com.khoben.autotitle.common.NotificationUtils
 import com.khoben.autotitle.di.components.ApplicationComponent
 import com.khoben.autotitle.di.components.DaggerApplicationComponent
 import com.khoben.autotitle.di.modules.ApplicationModule
 import com.khoben.autotitle.di.modules.ContextModule
+import com.khoben.autotitle.extension.dp
+import timber.log.Timber
 
 class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
         appContext = applicationContext
+        initFoldersPath()
+        if (BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
         MLApplication.getInstance().apiKey =
             "CgB6e3x9/hsdbdBs4UtMv9w9yHOgLLpQWbfDNjtbW5685ZLdOW5HlpWzDmveL69IjxoeAg8TClmuNnbmvZ9xprrw"
         createApplicationComponent()
+        NotificationUtils.createNotificationChannel(applicationContext, appName)
+    }
+
+    private fun initFoldersPath() {
+        APP_MAIN_FOLDER = "${FileUtils.getApplicationMainDir()}"
+        PROJECTS_FOLDER = "${APP_MAIN_FOLDER}/Projects"
+        PROJECTS_FILE_SERIALIZED = "${APP_MAIN_FOLDER}/proj"
     }
 
     private fun createApplicationComponent() {
@@ -29,17 +41,23 @@ class App : Application() {
     companion object {
         @JvmStatic
         lateinit var applicationComponent: ApplicationComponent
+        @JvmStatic
+        lateinit var appContext: Context
+        const val appName = "AutoTitle"
         const val FRAMES_PER_SCREEN = 8
         const val SEEKBAR_HEIGHT_DP = 60F
-        val SEEKBAR_HEIGHT_DP_PIXELS = DisplayUtils.dipToPx(60)
+        val SEEKBAR_HEIGHT_DP_PIXELS = 60.dp()
         const val FRAME_TIME_MS = 1000L
         const val LIMIT_DURATION_MS = 60 * 1000L
         const val TIME_FORMAT_MS = "m:ss.S"
         const val VIDEO_EXTENSION = "mp4"
         const val AUDIO_EXTENSION = "aac"
         const val VIDEO_MIME_TYPE = "video/mp4"
-        val THUMB_SIZE = Pair(150, 150)
+        val THUMB_SIZE = Pair(100, 100)
         const val GUIDE_SHOW_DELAY: Long = 2000L
         const val DEFAULT_MUTE_STATE = false
+        lateinit var APP_MAIN_FOLDER: String
+        lateinit var PROJECTS_FOLDER: String
+        lateinit var PROJECTS_FILE_SERIALIZED: String
     }
 }

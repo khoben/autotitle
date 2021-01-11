@@ -13,5 +13,7 @@ data class DraggingStateData(val draggingState: DraggingState, var motionX: Floa
         fun left(motionEvent: MotionEvent) = DraggingStateData(DraggingState.DRAGGING_LEFT_TOGGLE, 0f, 0f)
 
         fun right(motionEvent: MotionEvent) = DraggingStateData(DraggingState.DRAGGING_RIGHT_TOGGLE, 0f, 0f)
+
+        fun range(motionEvent: MotionEvent) = DraggingStateData(DraggingState.DRAGGING_RANGE, motionEvent.rawX, motionEvent.rawY)
     }
 }

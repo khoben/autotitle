@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.khoben.autotitle.ui.overlay.OverlayObject xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:background="@drawable/overlay_rounded_border"
+    tools:background="@color/black">
+
+    <View
+        android:id="@+id/overlay_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent" />
+
+    <ImageView
+        android:id="@+id/overlay_delete_btn"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_gravity="top|end"
+        android:elevation="1dp"
+        android:src="@drawable/close_icon"
+        android:visibility="gone"
+        tools:ignore="ContentDescription"
+        tools:visibility="visible" />
+
+</com.khoben.autotitle.ui.overlay.OverlayObject>

@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ll_play_video"
     android:layout_width="60dp"
-    android:layout_height="60dp"
-    android:background="@drawable/primary_color_border_filled"
-    android:gravity="center">
+    android:layout_height="60dp">
 
     <ImageView
         android:id="@+id/bigicon_play"
-        app:tint="?colorOnPrimary"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_gravity="center"
         app:srcCompat="@drawable/play_to_pause_btn"
+        app:tint="?colorPrimary"
         tools:ignore="ContentDescription">
 
     </ImageView>
 
-</LinearLayout>
+</FrameLayout>

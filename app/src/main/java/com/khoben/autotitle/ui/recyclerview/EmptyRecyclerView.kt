@@ -2,9 +2,10 @@ package com.khoben.autotitle.ui.recyclerview
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import timber.log.Timber
 
 
 class EmptyRecyclerView : RecyclerView {
@@ -13,12 +14,12 @@ class EmptyRecyclerView : RecyclerView {
 
     private val observer: AdapterDataObserver = object : AdapterDataObserver() {
         override fun onChanged() {
-            Log.i(TAG, "onChanged.")
+            Timber.d("onChanged")
             checkIfEmpty()
         }
 
         override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-            Log.i(TAG, "onItemRangeInserted. Inserted: $itemCount items")
+            Timber.d("onItemRangeInserted. Inserted: $itemCount items from $positionStart position")
             checkIfEmpty()
         }
 
@@ -34,17 +35,16 @@ class EmptyRecyclerView : RecyclerView {
         defStyle: Int
     ) : super(context, attrs, defStyle)
 
-    private fun checkIfEmpty() {
+    fun checkIfEmpty() {
         if (adapter != null) {
             val emptyViewVisible = adapter!!.itemCount == 0
-            emptyView?.visibility = if (emptyViewVisible) VISIBLE else GONE
-            visibility = if (emptyViewVisible) GONE else VISIBLE
+            emptyView?.isVisible = emptyViewVisible
+            isVisible = !emptyViewVisible
         }
     }
 
     override fun setAdapter(adapter: Adapter<*>?) {
-        val oldAdapter = getAdapter()
-        oldAdapter?.unregisterAdapterDataObserver(observer)
+        getAdapter()?.unregisterAdapterDataObserver(observer)
         super.setAdapter(adapter)
         adapter?.registerAdapterDataObserver(observer)
         checkIfEmpty()
@@ -53,9 +53,5 @@ class EmptyRecyclerView : RecyclerView {
     fun setEmptyView(emptyView: View) {
         this.emptyView = emptyView
         checkIfEmpty()
-    }
-
-    companion object {
-        private val TAG = EmptyRecyclerView::class.java.simpleName
     }
 }

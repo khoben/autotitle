@@ -6,4 +6,4 @@ package com.khoben.autotitle.model
  * @property playState current [PlaybackState]
  * @property currentPosition current position of playback
  */
-data class PlaybackEvent(val playState: PlaybackState, val currentPosition: Long = 0L)
+data class PlaybackEvent(val playState: @PlaybackState Int, val currentPosition: Long = 0L)

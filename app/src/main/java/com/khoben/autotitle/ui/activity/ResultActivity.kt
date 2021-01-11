@@ -1,8 +1,12 @@
 package com.khoben.autotitle.ui.activity
 
 import android.Manifest
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import com.google.android.material.button.MaterialButton
 import com.khoben.autotitle.R
 import com.khoben.autotitle.databinding.ActivityPostVideoBinding
 import com.khoben.autotitle.extension.activityresult.permission.permissionsDSL
@@ -19,9 +23,11 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView {
 
     private var videoPath: String? = null
 
+    private lateinit var saveBtn: MaterialButton
+
     private val saveResult = permissionsDSL {
         allGranted = {
-            presenter.save(this@ResultActivity)
+            presenter.save()
         }
         denied = {
             // denied
@@ -36,16 +42,20 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView {
         val binding = ActivityPostVideoBinding.inflate(layoutInflater)
         setContentView(binding.root)
         videoPath = intent.getStringExtra(VIDEO_OUTPUT_URI_INTENT)
+        binding.backBtn.setOnClickListener {
+            finish()
+        }
+        binding.homeBtn.setOnClickListener {
+            toMainActivity()
+        }
         binding.shareBtn.setOnClickListener {
             shareVideo()
         }
-        binding.saveGalleryBtn.setOnClickListener {
+        saveBtn = binding.saveGalleryBtn
+        saveBtn.setOnClickListener {
             saveVideo()
         }
-        binding.finishOkBtn.setOnClickListener {
-            finish()
-        }
-        binding.epVideoView.player = presenter.getPlayer().getPlayerImpl(this)
+        binding.epVideoView.player = presenter.getPlayer()
         presenter.init(videoPath!!)
     }
 
@@ -57,10 +67,14 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView {
         presenter.share(this)
     }
 
+    private fun toMainActivity() {
+        startActivity(Intent(this, MainActivity::class.java))
+        finishAffinity()
+    }
+
     override fun onDestroy() {
+        presenter.releasePlayer()
         super.onDestroy()
-        presenter.deactivate()
-        presenter.setMediaSessionState(false)
     }
 
     override fun onPause() {
@@ -74,5 +88,11 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView {
             getString(R.string.saved_path_video, path),
             Toast.LENGTH_LONG
         ).show()
+    }
+
+    override fun alreadySaved() {
+        saveBtn.text = "Saved"
+        saveBtn.setBackgroundColor(ContextCompat.getColor(this, R.color.green_color_picker))
+        saveBtn.icon = ContextCompat.getDrawable(this, R.drawable.check_circle_icon_24dp)
     }
 }

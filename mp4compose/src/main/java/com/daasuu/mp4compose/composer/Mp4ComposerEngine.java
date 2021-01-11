@@ -38,6 +38,8 @@ class Mp4ComposerEngine {
     private long durationUs;
     private MediaMetadataRetriever mediaMetadataRetriever;
     private volatile boolean canceled;
+    public final Object lock = this;
+    private volatile boolean paused = false;
     private final Logger logger;
 
     Mp4ComposerEngine(@NonNull final Logger logger) {
@@ -104,6 +106,7 @@ class Mp4ComposerEngine {
             }
 
             final MediaFormat actualVideoOutputFormat = createVideoOutputFormatWithAvailableEncoders(videoFormatMimeType, bitrate, outputResolution);
+            logger.debug(TAG, "Output codec: " + actualVideoOutputFormat);
             if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP) {
                 // Only LOLLIPOP sets KEY_FRAME_RATE here.
                 actualVideoOutputFormat.setInteger(MediaFormat.KEY_FRAME_RATE, 30);
@@ -173,8 +176,36 @@ class Mp4ComposerEngine {
         }
     }
 
+    private void checkIfShouldPaused ()
+    {
+        synchronized (lock) {
+            if (paused) {
+                try {
+                    logger.debug(TAG, "Composer was paused");
+                    lock.wait();
+                } catch (InterruptedException ignored) { }
+            }
+        }
+    }
+
+    void pause() {
+        paused = true;
+    }
+
+    void resume() {
+        paused = false;
+        synchronized (lock) {
+            logger.debug(TAG, "Composer was resumed");
+            lock.notifyAll();
+        }
+    }
+
     void cancel() {
         canceled = true;
+        synchronized (lock) {
+            logger.debug(TAG, "Composer was cancelled");
+            lock.notifyAll();
+        }
     }
 
     boolean isCanceled() {
@@ -208,10 +239,9 @@ class Mp4ComposerEngine {
         if (mediaCodecList.findEncoderForFormat(mp4vesMediaFormat) != null) {
             return mp4vesMediaFormat;
         }
-        // fix for huawei devices
-        // HEVC
+        // fix for huawei devices (using HEVC codec seems like solve error)
         // https://github.com/MasayukiSuda/Mp4Composer-android/issues/74#issuecomment-602737842
-        return createVideoFormat(VideoFormatMimeType.AVC.getFormat(), bitrate, outputResolution);
+        return createVideoFormat(VideoFormatMimeType.HEVC.getFormat(), bitrate, outputResolution);
     }
 
     @NonNull
@@ -265,6 +295,7 @@ class Mp4ComposerEngine {
             }// unknown
         }
         while (!canceled && !(videoComposer.isFinished() && audioComposer.isFinished())) {
+            checkIfShouldPaused();
             boolean stepped = videoComposer.stepPipeline()
                     || audioComposer.stepPipeline();
             loopCount++;
@@ -299,6 +330,7 @@ class Mp4ComposerEngine {
             } // unknown
         }
         while (!canceled && !videoComposer.isFinished()) {
+            checkIfShouldPaused();
             boolean stepped = videoComposer.stepPipeline();
             loopCount++;
             if (durationUs > 0 && loopCount % PROGRESS_INTERVAL_STEPS == 0) {

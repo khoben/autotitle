@@ -7,9 +7,10 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.khoben.autotitle.R
+import java.lang.ref.WeakReference
 
-class CustomAlertDialog(val context: Context) {
-    private val inflater = LayoutInflater.from(context)
+class CustomAlertDialog(val context: WeakReference<Context>) {
+    private val inflater = LayoutInflater.from(context.get())
     private var view: View? = null
     private var dialog: AlertDialog? = null
 
@@ -19,7 +20,7 @@ class CustomAlertDialog(val context: Context) {
         view!!.findViewById<TextView>(R.id.messageButton).setOnClickListener {
             dismiss()
         }
-        dialog = MaterialAlertDialogBuilder(context, R.style.CustomAlertDialog).apply {
+        dialog = MaterialAlertDialogBuilder(context.get()!!, R.style.CustomAlertDialog).apply {
             setCancelable(false)
             setView(view)
         }.create()

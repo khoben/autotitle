@@ -4,14 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
-import android.widget.RelativeLayout
+import android.view.ViewGroup
 import com.khoben.autotitle.App
 import com.khoben.autotitle.R
 import com.khoben.autotitle.common.FileUtils
-import com.khoben.autotitle.model.MLCaption
-import com.khoben.autotitle.model.PlaybackEvent
-import com.khoben.autotitle.model.PlaybackState
+import com.khoben.autotitle.model.*
 import com.khoben.autotitle.mvp.view.VideoEditActivityView
 import com.khoben.autotitle.service.mediaplayer.MediaController
 import com.khoben.autotitle.service.mediaplayer.VideoRender
@@ -19,12 +16,14 @@ import com.khoben.autotitle.service.videoloader.VideoLoader
 import com.khoben.autotitle.service.videosaver.VideoProcessorBase
 import com.khoben.autotitle.service.videosaver.VideoProcessorListener
 import com.khoben.autotitle.ui.overlay.OverlayHandler
-import com.khoben.autotitle.ui.overlay.OverlayText
+import com.khoben.autotitle.ui.overlay.OverlayObject
 import com.khoben.autotitle.ui.player.PlayPauseMaterialButton
 import com.khoben.autotitle.ui.player.VideoControlsView
 import com.khoben.autotitle.ui.player.seekbar.SeekBarListener
 import moxy.InjectViewState
 import moxy.MvpPresenter
+import timber.log.Timber
+import java.lang.ref.WeakReference
 import java.util.*
 import javax.inject.Inject
 
@@ -56,7 +55,8 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         mediaController.addSubscription(this)
     }
 
-    fun setUri(uri: Uri) {
+    fun setDataSourceUri(uri: Uri) {
+        if (sourceUri != null) return
         sourceUri = uri
     }
 
@@ -64,31 +64,56 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         super.onFirstViewAttach()
 
         mediaController.setVideoSource(sourceUri!!)
+
+//        RecentProjectsLoader.store(
+//            ThumbProject(
+//                UUID.randomUUID().toString(),
+//                sourceUri?.getFileName(appContext),
+//                dateCreated = System.currentTimeMillis()
+//            )
+//        )
+//
+//        RecentProjectsLoader.save()
+
         processVideo(appContext)
         viewState.initVideoContainerLayoutParams(mediaController.mediaPlayer, videoRenderer)
-        toggleMute(App.DEFAULT_MUTE_STATE, false)
     }
 
     /**
-     * Init editor that handles add/edit/delete operations
-     * on overlays
+     * Init object that handles add/edit/delete operations
+     * with overlays
      * @param parentView Parent view to attach to this overlays
      */
-    fun initEditor(
-        context: Context,
-        parentView: RelativeLayout,
+    fun initOverlayHandler(
+        parentView: ViewGroup,
         videoView: VideoControlsView
     ) {
         if (overlayHandler == null) {
             overlayHandler = OverlayHandler.Builder()
-                .ctx(context)
+                .ctx(appContext)
                 .parent(parentView)
                 .build()
             overlayHandler?.overlayObjectEventListener = this
         } else {
-            overlayHandler?.setLayout(context, parentView)
+            overlayHandler?.setLayout(appContext, WeakReference(parentView))
+            // TODO: need to move to better place
+            restoreCurrentPlaybackTime()
         }
         videoView.seekBarListener = this
+    }
+
+    /**
+     * @return True if muted, otherwise false
+     */
+    fun getMuteState() = mediaController.isMuted
+
+    /**
+     * Sets media volume to 0% (muted) or to 100% (unmuted)
+     * @param mute True if muted, otherwise false
+     */
+    fun setMuteState(mute: Boolean) {
+        viewState.toggledMuteState(mute, false)
+        mediaController.toggleMute(mute)
     }
 
     /**
@@ -106,11 +131,11 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     fun addOverlayAfterSpecificPosition(pos: Int) {
         // pause playback before adding new overlay
         pausePlayback()
-        val toTime = overlayHandler!!.addOverlayAfterSpecificPosition(pos)
+        val toTime = overlayHandler!!.addTextOverlayAfterSpecificPosition(pos)
         viewState.setControlsToTime(toTime)
     }
 
-    fun addOverlayAtSpecificPosition(pos: Int, item: OverlayText) {
+    fun addOverlayAtSpecificPosition(pos: Int, item: OverlayObject) {
         pausePlayback()
         overlayHandler!!.addOverlayAtSpecificPosition(pos, item)
     }
@@ -124,83 +149,109 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     /**
      * Saves video with overlays
      */
-    fun saveVideo(context: Context, parentViewSize: Pair<Int, Int>) {
+    fun saveVideo(parentViewSize: Pair<Int, Int>) {
         pausePlayback()
         // make visible all overlays
         overlayHandler!!.showRootView()
-        val outputPath = FileUtils.getRandomFilepath(context, App.VIDEO_EXTENSION)
-        videoProcessor.setup(
-            overlayHandler!!.getOverlays(),
-            sourceUri!!,
-            outputPath,
-            context,
-            mediaController.videoDetails!!,
-            parentViewSize
-        )
+        val outputPath = FileUtils.getRandomFilepath(appContext, App.VIDEO_EXTENSION)
         viewState.onVideoSavingStarted()
-        videoProcessor.listener = object : VideoProcessorListener {
-            override fun onProgress(progress: Double) {
-                viewState.onVideoSavingProgress(progress)
-            }
+        videoProcessor.apply {
+            setup(
+                overlayHandler!!.getOverlays(),
+                sourceUri!!,
+                outputPath,
+                appContext,
+                mediaController.videoDetails!!,
+                parentViewSize
+            )
+            listener = object : VideoProcessorListener {
+                override fun onProgress(progress: Double) {
+                    viewState.onVideoSavingProgress(progress)
+                }
 
-            override fun onComplete(filepath: String) {
-                viewState.onVideoSavingComplete(outputPath)
-            }
+                override fun onComplete(filepath: String) {
+                    viewState.onVideoSavingComplete(outputPath)
+                }
 
-            override fun onCanceled() {
-                viewState.onVideoSavingCancelled()
-                FileUtils.deleteFile(context, outputPath)
-            }
+                override fun onCanceled() {
+                    viewState.onVideoSavingCancelled()
+                    FileUtils.deleteFile(appContext, outputPath)
+                }
 
-            override fun onError(message: String) {
-                viewState.onVideoSavingError(message)
-                FileUtils.deleteFile(context, outputPath)
+                override fun onError(message: String) {
+                    viewState.onVideoSavingError(message)
+                    FileUtils.deleteFile(appContext, outputPath)
+                }
             }
-
-        }
-        videoProcessor.start()
+        }.start()
     }
 
     /**
-     * Cancels video saving process
+     * Cancel video saving process
      */
     fun cancelSavingVideo() {
         videoProcessor.cancel()
     }
 
+    /**
+     * Pause video saving process
+     */
+    fun pauseSavingVideo() {
+        videoProcessor.pause()
+    }
+
+    fun resumeSavingVideo() {
+        videoProcessor.resume()
+    }
+
     fun unEditable() {
         pausePlayback()
+        viewState.unSelectRecycler()
         overlayHandler!!.unEditable()
     }
 
-    override fun onEdited(overlay: List<OverlayText>) {
+    override fun onEdit(overlay: OverlayObject) {
+        viewState.showOverlayEditor(overlay)
+    }
+
+    override fun onEdited(overlay: List<OverlayObject>) {
         viewState.onOverlaysChangedList(overlay)
     }
 
-    override fun onUnEditable(overlay: OverlayText?, overlays: List<OverlayText>) {
+    override fun onUnEditable(overlay: OverlayObject?, overlays: List<OverlayObject>) {
         viewState.updatePlayback(overlays, overlay, isPlaying = false)
     }
 
-    override fun onAdded(overlay: OverlayText?, overlays: List<OverlayText>, isEdit: Boolean) {
+    override fun onAdded(overlay: OverlayObject?, overlays: List<OverlayObject>, isEdit: Boolean) {
         viewState.updatePlayback(overlays, overlay, isPlaying = false)
+        viewState.onOverlaysChangedList(overlays)
+        val index = overlays.indexOf(overlay)
+        if (index != -1) {
+            Timber.d("onAdded $index")
+            viewState.highlightListViewItem(index, overlay!!.uuid)
+        }
+    }
+
+    override fun onAddedAll(overlays: List<OverlayObject>) {
+        viewState.updatePlayback(overlays, null, isPlaying = false)
         viewState.onOverlaysChangedList(overlays)
     }
 
     override fun onSelect(
-        overlay: OverlayText?,
-        overlays: List<OverlayText>,
+        overlay: OverlayObject?,
+        overlays: List<OverlayObject>,
         seekToOverlayStart: Boolean
     ) {
         if (seekToOverlayStart)
             viewState.setControlsToTime(overlay!!.startTime)
         viewState.updatePlayback(overlays, overlay, isPlaying = false)
-        viewState.highlightListViewItem(overlays.indexOf(overlay))
+        viewState.highlightListViewItem(overlays.indexOf(overlay), overlay!!.uuid)
     }
 
     override fun onRemoved(
         idxRemoved: Int,
-        removedOverlay: OverlayText,
-        overlays: ArrayList<OverlayText>
+        removedOverlay: OverlayObject,
+        overlays: ArrayList<OverlayObject>
     ) {
         viewState.onRemovedOverlay(idxRemoved, removedOverlay, overlays)
         viewState.onOverlaysChangedList(overlays)
@@ -211,20 +262,14 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         overlayHandler!!.changeTimeRangeSelectedOverlay(startTime, endTime)
     }
 
-    override fun updateVideoPositionWithSeekBar(time: Long) {
+    override fun syncCurrentPlaybackTimeWithSeekBar(time: Long, isSeeking: Boolean) {
         if (time >= mediaController.videoDuration) return
+        if (isSeeking) seekTo(time)
         overlayHandler!!.changeVisibilityOverlayByTime(time)
     }
 
-    override fun seekBarRewind(currentTime: Long) {
-        pausePlayback()
-        mediaController.seekTo(currentTime)
-        overlayHandler!!.changeVisibilityOverlayByTime(currentTime)
-    }
-
     override fun seekBarCompletePlaying() {
-        pausePlayback()
-        mediaController.seekTo(0L)
+        seekTo(0L)
         viewState.setControlsToTime(0L)
     }
 
@@ -239,14 +284,20 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         overlayHandler!!.editOverlay(index)
     }
 
+    fun onEditedOverlayFragment(overlay: OverlayObject, text: String?, colorCode: Int) {
+        if (text == null) return
+        overlayHandler!!.editedOverlay(overlay, text, colorCode)
+    }
+
     @SuppressLint("CheckResult")
     fun processVideo(context: Context) {
+        viewState.setLoadingViewVisibility(true)
         val videoDuration = mediaController.videoDuration
         val amountFrames = videoDuration / App.FRAME_TIME_MS
         val frameTime = if (amountFrames > 0) videoDuration / amountFrames else App.FRAME_TIME_MS
         videoLoader.init(context, sourceUri!!, frameTime)
             .onError { error ->
-                Log.d(TAG, "Error while loading video $error")
+                Timber.d("Error while loading video $error")
                 errorProcessVideo(error)
             }
             .load {
@@ -255,7 +306,7 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
                 when {
                     // Service transcription is not available
                     audioTranscribeResult.throwable != null -> {
-                        Log.e(TAG, "No captions. Network service error")
+                        Timber.e("No captions. Network service error")
                         viewState.showPopupWindow(
                             context.getString(R.string.error_no_captions)
                                     + "\n"
@@ -265,12 +316,12 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
                     // Empty result
                     audioTranscribeResult.caption == null ||
                             audioTranscribeResult.caption.isEmpty() -> {
-                        Log.d(TAG, "No captions")
+                        Timber.d("No captions")
                         viewState.showPopupWindow(context.getString(R.string.error_no_captions))
                     }
                     //Success
                     else -> {
-                        Log.d(TAG, "Text = $audioTranscribeResult")
+                        Timber.d("Text = $audioTranscribeResult")
                         processTranscribe(audioTranscribeResult.caption)
                     }
                 }
@@ -279,24 +330,28 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     }
 
     private fun successProcessedVideo(frames: List<Bitmap>, frameTime: Long) {
-        Log.d(TAG, "Success video load")
+        Timber.d("Success video load")
         viewState.onVideoProcessed(frames, frameTime)
         viewState.updatePlayback(overlayHandler!!.getOverlays(), null, false)
     }
 
     private fun errorProcessVideo(e: Throwable) {
-        Log.e(TAG, "Error video processing")
+        Timber.e("Error video processing")
         viewState.onErrorVideoProcessing(e)
     }
 
     /**
-     * Add auto captions
+     * Add caption
      * @param start Long
      * @param end Long
      * @param text String
      */
     private fun addOverlay(start: Long, end: Long, text: String) {
-        overlayHandler!!.addOverlay(start, end, text)
+        overlayHandler!!.addTextOverlay(start, end, text)
+    }
+
+    private fun addAllOverlay(overlays: List<MLCaption>) {
+        overlayHandler!!.addAllOverlay(overlays)
     }
 
     /**
@@ -304,7 +359,7 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
      * @param result List<MLCaption>
      */
     private fun processTranscribe(result: List<MLCaption>) {
-        result.forEach { addOverlay(it.startTime, it.endTime, it.text) }
+        addAllOverlay(result)
         // TODO("View cant be drawn if it has never been displayed.
         //       On adding stage we will show all of these, but next we should hide it")
         overlayHandler!!.hideAllOverlaysExceptAtStart()
@@ -318,27 +373,31 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     fun togglePlaybackState() = mediaController.toggle()
     fun pausePlayback() = mediaController.setPlayState(false)
     fun startPlayback() = mediaController.setPlayState(false)
+    fun seekTo(time: Long, withPause: Boolean = true) {
+        if (withPause) pausePlayback()
+        mediaController.seekTo(time)
+    }
 
     override fun handlePlaybackState(state: PlaybackEvent) {
         when (state.playState) {
-            PlaybackState.PLAY -> {
+            PLAY -> {
                 val overlays = overlayHandler!!.getOverlaysWithSelected()
                 viewState.updatePlayback(
                     overlays.second, overlays.first,
                     isPlaying = true
                 )
             }
-            PlaybackState.PAUSED -> {
+            PAUSED -> {
                 val overlays = overlayHandler!!.getOverlaysWithSelected()
                 viewState.updatePlayback(
                     overlays.second, overlays.first,
                     isPlaying = false
                 )
             }
-            PlaybackState.STOP -> {
+            STOP -> {
 
             }
-            PlaybackState.REWIND -> {
+            REWIND -> {
 
             }
         }
@@ -357,11 +416,11 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         viewState.toggledMuteState(state, clicked)
     }
 
-    companion object {
-        private val TAG = VideoEditActivityPresenter::class.java.simpleName
-    }
-
     override fun onPlayPauseButtonClicked() {
         togglePlaybackState()
+    }
+
+    private fun restoreCurrentPlaybackTime() {
+        viewState.setControlsToTime(mediaController.currentPosition)
     }
 }

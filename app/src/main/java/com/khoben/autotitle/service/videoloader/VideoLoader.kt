@@ -3,17 +3,20 @@ package com.khoben.autotitle.service.videoloader
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
 import com.khoben.autotitle.App
 import com.khoben.autotitle.common.FileUtils
 import com.khoben.autotitle.model.MLCaptionEnvelop
 import com.khoben.autotitle.service.audioextractor.AudioExtractor
 import com.khoben.autotitle.service.audiotranscriber.AudioTranscriber
+import com.khoben.autotitle.service.frameretriever.MEDIA_CODEC
+import com.khoben.autotitle.service.frameretriever.NATIVE_ANDROID
 import com.khoben.autotitle.service.frameretriever.VideoFrameRetriever
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class VideoLoader {
@@ -48,7 +51,7 @@ class VideoLoader {
         this.uri = uri
         this.frameTime = frameTime
 
-        this.frames = videoFrameRetriever.init(uri)
+        this.frames = videoFrameRetriever.init(uri, MEDIA_CODEC)
             .retrieveFrames(frameTime, App.THUMB_SIZE.first, App.THUMB_SIZE.second)
         this.tempAudioPath = FileUtils.getRandomFilepath(context, App.AUDIO_EXTENSION)
         this.audio = extractAudio(context, tempAudioPath!!)
@@ -66,7 +69,7 @@ class VideoLoader {
         Observable.zip(
             frames,
             audio!!.onErrorReturn { error ->
-                Log.e(TAG, "Audio Transcription error: $error")
+                Timber.e("Audio Transcription error: $error")
                 MLCaptionEnvelop(null, error)
             },
             { f, a -> Pair<List<Bitmap>, MLCaptionEnvelop>(f, a) }
@@ -85,7 +88,7 @@ class VideoLoader {
     private fun extractAudio(context: Context, outputPath: String): Observable<MLCaptionEnvelop> {
         return audioExtractor.extractAudio(context, uri!!, outputPath)
             .flatMap { path ->
-                Log.d(TAG, "Audio has been extracted with path = $path")
+                Timber.d("Audio has been extracted with path = $path")
                 // TODO("LANG CODE")
                 audioTranscriber.setLangCode("en-US")
                 audioTranscriber.start(path)
@@ -100,9 +103,5 @@ class VideoLoader {
         }
         callback = null
         errorListener = null
-    }
-
-    companion object {
-        private var TAG = VideoLoader::class.java.simpleName
     }
 }

@@ -2,10 +2,12 @@ package com.khoben.autotitle.mvp.view
 
 import android.net.Uri
 import moxy.MvpView
-import moxy.viewstate.strategy.AddToEndSingleStrategy
-import moxy.viewstate.strategy.StateStrategyType
+import moxy.viewstate.strategy.alias.AddToEndSingle
 
-@StateStrategyType(value = AddToEndSingleStrategy::class)
 interface MainActivityView : MvpView {
+    @AddToEndSingle
     fun onVideoSelected(uri: Uri)
+
+    @AddToEndSingle
+    fun hideRecentProject()
 }

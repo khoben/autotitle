@@ -3,9 +3,15 @@ package com.daasuu.mp4compose.filter;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.util.Size;
+
+import static android.opengl.GLES20.GL_CLAMP_TO_EDGE;
+import static android.opengl.GLES20.GL_TEXTURE_2D;
+import static android.opengl.GLES20.GL_TEXTURE_WRAP_S;
+import static android.opengl.GLES20.GL_TEXTURE_WRAP_T;
 
 /**
  * Created by sudamasayuki on 2018/01/07.
@@ -54,12 +60,12 @@ public abstract class GlOverlayFilter extends GlFilter {
     public void setup() {
         super.setup();// 1
         GLES20.glGenTextures(1, textures, 0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textures[0]);
+        GLES20.glBindTexture(GL_TEXTURE_2D, textures[0]);
 
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameteri(GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
         createBitmap();
     }
@@ -73,7 +79,7 @@ public abstract class GlOverlayFilter extends GlFilter {
             createBitmap();
         }
 
-        bitmap.eraseColor(Color.argb(0, 0, 0, 0));
+        bitmap.eraseColor(Color.argb(0F, 1F, 1F, 1F));
         Canvas bitmapCanvas = new Canvas(bitmap);
         bitmapCanvas.scale(1, -1, bitmapCanvas.getWidth() / 2F, bitmapCanvas.getHeight() / 2F);
         drawCanvas(bitmapCanvas, currentTimeUs);
@@ -81,10 +87,10 @@ public abstract class GlOverlayFilter extends GlFilter {
         int offsetDepthMapTextureUniform = getHandle("oTexture");// 3
 
         GLES20.glActiveTexture(GLES20.GL_TEXTURE3);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textures[0]);
+        GLES20.glBindTexture(GL_TEXTURE_2D, textures[0]);
 
         if (bitmap != null && !bitmap.isRecycled()) {
-            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, bitmap, 0);
+            GLUtils.texImage2D(GL_TEXTURE_2D, 0, GLES20.GL_RGBA, bitmap, 0);
         }
 
         GLES20.glUniform1i(offsetDepthMapTextureUniform, 3);

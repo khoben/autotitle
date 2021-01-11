@@ -5,7 +5,7 @@ import android.graphics.Rect
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
-import android.widget.RelativeLayout
+import androidx.annotation.IntDef
 import kotlin.math.max
 import kotlin.math.min
 
@@ -17,7 +17,7 @@ import kotlin.math.min
  *
  */
 internal class MultiTouchListener(
-    private val parentView: RelativeLayout,
+    parentRect: Rect,
     private val mIsTextPinchZoomable: Boolean
 ) :
     View.OnTouchListener {
@@ -42,12 +42,11 @@ internal class MultiTouchListener(
     private var parentCenterX = 0F
     private var parentCenterY = 0F
 
-    internal enum class DIRECTION {
-        X,
-        Y,
-        BOTH,
-        NONE
-    }
+    private var parentWidth = 0F
+    private var parentHeight = 0F
+    private var parentX = 0F
+    private var parentY = 0F
+
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouch(view: View, event: MotionEvent): Boolean {
@@ -85,28 +84,28 @@ internal class MultiTouchListener(
                 val isVisible = isViewVisible(view)
                 if (!isVisible.first) {
                     when (isVisible.second) {
-                        DIRECTION.X -> {
-                            var translation = (parentView.width - view.width) / 2f
+                        X -> {
+                            var translation = (parentWidth - view.width) / 2f
                             if (view.x < 0) translation *= -1
                             view.animate().translationX(translation)
                         }
-                        DIRECTION.Y -> {
-                            var translation = (parentView.height - view.height) / 2f
+                        Y -> {
+                            var translation = (parentHeight - view.height) / 2f
                             if (view.y < 0) translation *= -1
                             view.animate().translationY(translation)
                         }
-                        DIRECTION.BOTH -> {
-                            var translationX = (parentView.width - view.width) / 2f
+                        BOTH -> {
+                            var translationX = (parentWidth - view.width) / 2f
                             if (view.x < 0) translationX *= -1
 
-                            var translationY = (parentView.height - view.height) / 2f
+                            var translationY = (parentHeight - view.height) / 2f
                             if (view.y < 0) translationY *= -1
 
                             view.animate()
                                 .translationX(translationX)
                                 .translationY(translationY)
                         }
-                        DIRECTION.NONE -> {
+                        NONE -> {
                         }
                     }
                 }
@@ -126,19 +125,19 @@ internal class MultiTouchListener(
         return true
     }
 
-    private fun isViewVisible(view: View): Pair<Boolean, DIRECTION> {
+    private fun isViewVisible(view: View): Pair<Boolean, @DIRECTION Int> {
         view.getHitRect(boundingRect)
         val centerX = boundingRect.exactCenterX()
         val centerY = boundingRect.exactCenterY()
 
-        val limitX = centerX < 0 || centerX > parentView.width
-        val limitY = centerY < 0 || centerY > parentView.height
+        val limitX = centerX < 0 || centerX > parentWidth
+        val limitY = centerY < 0 || centerY > parentHeight
 
         return when {
-            limitX && limitY -> Pair(false, DIRECTION.BOTH)
-            limitX -> Pair(false, DIRECTION.X)
-            limitY -> Pair(false, DIRECTION.Y)
-            else -> Pair(true, DIRECTION.NONE)
+            limitX && limitY -> Pair(false, BOTH)
+            limitX -> Pair(false, X)
+            limitY -> Pair(false, Y)
+            else -> Pair(true, NONE)
         }
     }
 
@@ -182,7 +181,7 @@ internal class MultiTouchListener(
         }
     }
 
-    private inner class TransformInfo {
+    inner class TransformInfo {
         var deltaX = 0f
         var deltaY = 0f
         var deltaScale = 0f
@@ -238,7 +237,7 @@ internal class MultiTouchListener(
             return deg
         }
 
-        private fun move(view: View, info: TransformInfo) {
+        internal fun move(view: View, info: TransformInfo) {
             computeRenderOffset(view, info.pivotX, info.pivotY)
             adjustTranslation(view, info.deltaX, info.deltaY)
             var scale = view.scaleX * info.deltaScale
@@ -249,7 +248,7 @@ internal class MultiTouchListener(
             view.rotation = rotation
         }
 
-        private fun adjustTranslation(view: View, deltaX: Float, deltaY: Float) {
+        internal fun adjustTranslation(view: View, deltaX: Float, deltaY: Float) {
             val deltaVector = floatArrayOf(deltaX, deltaY)
             view.matrix.mapVectors(deltaVector)
             view.translationX = view.translationX + deltaVector[0]
@@ -271,13 +270,29 @@ internal class MultiTouchListener(
             view.translationX = view.translationX - offsetX
             view.translationY = view.translationY - offsetY
         }
+
+        @Target(AnnotationTarget.TYPE)
+        @IntDef(value = [X, Y, BOTH, NONE])
+        @Retention(AnnotationRetention.SOURCE)
+        annotation class DIRECTION
+
+        const val X = 0
+        const val Y = 1
+        const val BOTH = 2
+        const val NONE = 3
     }
 
     init {
         mScaleGestureDetector = ScaleGestureDetector(ScaleGestureListener())
         mGestureListener = GestureDetector(GestureListener())
-        parentCenterX = parentView.x + parentView.width / 2
-        parentCenterY = parentView.y + parentView.height / 2
+
+        parentX = parentRect.left.toFloat()
+        parentY = parentRect.top.toFloat()
+        parentWidth = parentRect.width().toFloat()
+        parentHeight = parentRect.height().toFloat()
+
+        parentCenterX = parentX + parentWidth / 2
+        parentCenterY = parentX + parentHeight / 2
         outRect = Rect(0, 0, 0, 0)
     }
 }

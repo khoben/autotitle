@@ -10,66 +10,73 @@
             type="com.khoben.autotitle.ui.overlay.OverlayDataMapper" />
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content">
 
-        <LinearLayout
+        <ImageView
+            android:id="@+id/badge"
+            android:layout_width="6dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/rounded_3dp_rectangle"
+            android:backgroundTint="@color/colorPrimary"
+            app:badgeColor="@{overlay}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/overlay_from"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/overlay_from"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center">
+            android:layout_marginStart="4dp"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/badge"
+            app:layout_constraintTop_toTopOf="parent"
+            app:overlayFromString="@{overlay}"
+            tools:text="from" />
 
-            <ImageView
-                android:layout_width="6dp"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="4dp"
-                android:layout_marginStart="4dp"
-                android:background="@drawable/rounded_rectangle"
-                android:backgroundTint="@color/colorPrimary"
-                app:badgeColor="@{overlay}"
-                tools:ignore="ContentDescription" />
+        <TextView
+            android:id="@+id/dash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" — "
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/overlay_from"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText" />
 
-            <TextView
-                android:id="@+id/overlay_from"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                app:overlayFromString="@{overlay}"
-                tools:text="from" />
+        <TextView
+            android:id="@+id/overlay_to"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/item_content"
+            app:layout_constraintStart_toEndOf="@+id/dash"
+            app:layout_constraintTop_toTopOf="parent"
+            app:overlayToString="@{overlay}"
+            tools:text="to" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=" — "
-                android:textSize="12sp"
-                tools:ignore="HardcodedText" />
-
-            <TextView
-                android:id="@+id/overlay_to"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                app:overlayToString="@{overlay}"
-                tools:text="to" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/item_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:id="@+id/item_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                app:overlayContentString="@{overlay}"
-                tools:text="content" />
-        </LinearLayout>
-    </LinearLayout>
+            android:gravity="center"
+            android:padding="16dp"
+            android:textAppearance="?textAppearanceBody1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/overlay_to"
+            app:layout_constraintTop_toTopOf="parent"
+            app:overlayContentString="@{overlay}"
+            tools:text="content" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

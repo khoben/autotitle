@@ -5,8 +5,8 @@ import android.opengl.GLES20
 import android.opengl.Matrix
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.Surface
+import timber.log.Timber
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -132,7 +132,7 @@ class SimpleVideoRender : VideoRender(),
             try {
                 mediaPlayer!!.prepare()
             } catch (t: IOException) {
-                Log.e(TAG, "Error while MediaPlayer preparing")
+                Timber.e("Error while MediaPlayer preparing")
             }
             mediaPlayer!!.initSurface()
         }
@@ -147,11 +147,8 @@ class SimpleVideoRender : VideoRender(),
             val compiled = IntArray(1)
             GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compiled, 0)
             if (compiled[0] == 0) {
-                Log.e(
-                    TAG,
-                    "Could not compile shader $shaderType:"
-                )
-                Log.e(TAG, GLES20.glGetShaderInfoLog(shader))
+                Timber.e("Could not compile shader $shaderType:")
+                Timber.e(GLES20.glGetShaderInfoLog(shader))
                 GLES20.glDeleteShader(shader)
                 shader = 0
             }
@@ -178,8 +175,8 @@ class SimpleVideoRender : VideoRender(),
             val linkStatus = IntArray(1)
             GLES20.glGetProgramiv(program, GLES20.GL_LINK_STATUS, linkStatus, 0)
             if (linkStatus[0] != GLES20.GL_TRUE) {
-                Log.e(TAG, "Could not link program: ")
-                Log.e(TAG, GLES20.glGetProgramInfoLog(program))
+                Timber.e("Could not link program: ")
+                Timber.e(GLES20.glGetProgramInfoLog(program))
                 GLES20.glDeleteProgram(program)
                 program = 0
             }
@@ -190,13 +187,12 @@ class SimpleVideoRender : VideoRender(),
     private fun checkGlError(op: String) {
         var error: Int
         while (GLES20.glGetError().also { error = it } != GLES20.GL_NO_ERROR) {
-            Log.e(TAG, "$op: glError $error")
+            Timber.e("$op: glError $error")
             throw RuntimeException("$op: glError $error")
         }
     }
 
     companion object {
-        private const val TAG = "VideoRender"
         private const val FLOAT_SIZE_BYTES = 4
         private const val TRIANGLE_VERTICES_DATA_STRIDE_BYTES = 5 * FLOAT_SIZE_BYTES
         private const val TRIANGLE_VERTICES_DATA_POS_OFFSET = 0

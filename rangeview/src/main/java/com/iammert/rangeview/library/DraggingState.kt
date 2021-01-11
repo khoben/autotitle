@@ -20,5 +20,10 @@ enum class DraggingState {
     /**
      * Dragging end
      */
-    DRAGGING_END
+    DRAGGING_END,
+
+    /**
+     * Dragging whole range
+     */
+    DRAGGING_RANGE
 }

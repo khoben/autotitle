@@ -3,69 +3,78 @@ package com.khoben.autotitle.mvp.view
 import android.graphics.Bitmap
 import com.khoben.autotitle.service.mediaplayer.MediaSurfacePlayer
 import com.khoben.autotitle.service.mediaplayer.VideoRender
-import com.khoben.autotitle.ui.overlay.OverlayText
+import com.khoben.autotitle.ui.overlay.OverlayObject
 import moxy.MvpView
-import moxy.viewstate.strategy.*
-import java.util.ArrayList
+import moxy.viewstate.strategy.alias.AddToEnd
+import moxy.viewstate.strategy.alias.OneExecution
+import moxy.viewstate.strategy.alias.SingleState
+import moxy.viewstate.strategy.alias.Skip
+import java.util.*
 
-@StateStrategyType(value = AddToEndSingleStrategy::class)
 interface VideoEditActivityView : MvpView {
 
-    @StateStrategyType(value = SkipStrategy::class)
-    fun stopLoadingView()
+    @Skip
+    fun setLoadingViewVisibility(visible: Boolean)
 
-    @StateStrategyType(value = AddToEndStrategy::class)
+    @AddToEnd
     fun onVideoProcessed(thumbnails: List<Bitmap>, frameTime: Long)
 
-    @StateStrategyType(value = SingleStateStrategy::class)
+    @SingleState
     fun onErrorVideoProcessing(e: Throwable)
 
-    @StateStrategyType(value = SkipStrategy::class)
+    @Skip
     fun showPopupWindow(content: String)
 
-    @StateStrategyType(value = OneExecutionStateStrategy::class)
+    @OneExecution
     fun setControlsToTime(time: Long)
 
-    @StateStrategyType(value = AddToEndStrategy::class)
+    @AddToEnd
     fun initVideoContainerLayoutParams(mediaPlayer: MediaSurfacePlayer, videoRenderer: VideoRender)
 
-    fun onOverlaysChangedList(overlays: List<OverlayText>)
+    @AddToEnd
+    fun onOverlaysChangedList(overlays: List<OverlayObject>)
 
-    @StateStrategyType(value = SkipStrategy::class)
+    @Skip
     fun finishOnError()
 
-    @StateStrategyType(value = SkipStrategy::class)
+    @Skip
     fun onVideoSavingStarted()
 
-    @StateStrategyType(value = SkipStrategy::class)
+    @Skip
     fun onVideoSavingCancelled()
 
-    @StateStrategyType(value = SkipStrategy::class)
+    @Skip
     fun onVideoSavingError(msg: String)
 
-    @StateStrategyType(value = SkipStrategy::class)
+    @Skip
     fun onVideoSavingProgress(progress: Double)
 
-    @StateStrategyType(value = SkipStrategy::class)
+    @Skip
     fun onVideoSavingComplete(filepath: String)
 
-    @StateStrategyType(value = AddToEndStrategy::class)
+    @AddToEnd
     fun updatePlayback(
-        overlays: List<OverlayText>,
-        selectedOverlay: OverlayText?,
+        overlays: List<OverlayObject>,
+        selectedOverlay: OverlayObject?,
         isPlaying: Boolean
     )
 
-    @StateStrategyType(value = SkipStrategy::class)
+    @Skip
     fun onRemovedOverlay(
         idxRemoved: Int,
-        removedOverlay: OverlayText,
-        overlays: ArrayList<OverlayText>
+        removedOverlay: OverlayObject,
+        overlays: ArrayList<OverlayObject>
     )
 
-    @StateStrategyType(value = AddToEndStrategy::class)
-    fun highlightListViewItem(index: Int)
+    @AddToEnd
+    fun highlightListViewItem(index: Int, uuid: UUID? = null)
 
-    @StateStrategyType(value = SkipStrategy::class)
+    @AddToEnd
+    fun unSelectRecycler()
+
+    @OneExecution
     fun toggledMuteState(state: Boolean, clicked: Boolean)
+
+    @OneExecution
+    fun showOverlayEditor(overlay: OverlayObject)
 }

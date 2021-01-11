@@ -1,15 +1,61 @@
 package com.khoben.autotitle.common
 
+import android.content.ContentResolver
 import android.content.Context
+import android.database.Cursor
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Environment
-import android.util.Log
+import android.provider.MediaStore
+import android.provider.OpenableColumns
 import androidx.core.content.FileProvider
+import com.khoben.autotitle.App
 import com.khoben.autotitle.BuildConfig
+import timber.log.Timber
 import java.io.File
 
+
 object FileUtils {
+
+    /**
+     * Get filename of file with this Uri
+     *
+     * @return File name
+     */
+    fun Uri.getFileName(context: Context): String? = when (scheme) {
+        ContentResolver.SCHEME_FILE -> File(path!!).name
+        ContentResolver.SCHEME_CONTENT -> getCursorContent(context)
+        else -> null
+    }
+
+    private fun Uri.getCursorContent(context: Context): String? = try {
+        context.contentResolver.query(this, null, null, null, null)?.let { cursor ->
+            cursor.run {
+                if (moveToFirst()) getString(getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                else null
+            }.also { cursor.close() }
+        }
+    } catch (e: Exception) {
+        null
+    }
+
+    fun getApplicationMainDir() = App.appContext.getExternalFilesDir(null)
+
+    fun createDirIfNotExists(filepath: String) {
+        val file = File(filepath)
+        if (!file.exists()) {
+            try {
+                when (file.mkdir()) {
+                    true -> Timber.d("Directory $filepath was created")
+                    else -> Timber.e("Directory $filepath dir wasn't created")
+                }
+            } catch (e: SecurityException) {
+                Timber.e(e, "Directory $filepath dir wasn't created")
+            }
+        } else {
+            Timber.d("Directory $filepath already created")
+        }
+    }
 
     /**
      * Get random filepath in external specified directory
@@ -21,7 +67,7 @@ object FileUtils {
     fun getRandomFilepath(
         context: Context,
         extension: String,
-        directory: String = Environment.DIRECTORY_PICTURES
+        directory: String = Environment.DIRECTORY_MOVIES
     ): String {
         return "${context.getExternalFilesDir(directory)?.absolutePath}/${System.currentTimeMillis()}.$extension"
     }
@@ -36,7 +82,7 @@ object FileUtils {
     fun getRandomUri(
         context: Context,
         extension: String,
-        directory: String = Environment.DIRECTORY_PICTURES
+        directory: String = Environment.DIRECTORY_MOVIES
     ): Uri {
         return getUriFromPath(context, getRandomFilepath(context, extension, directory))
     }
@@ -56,6 +102,28 @@ object FileUtils {
     }
 
     /**
+     * Get filepath from provided [uri] and [context]
+     * @param context Context
+     * @param uri Uri
+     * @return String?
+     */
+    fun getRealPathFromURI(context: Context, uri: Uri): String? {
+        var cursor: Cursor? = null
+        return try {
+            val projection = arrayOf(MediaStore.Images.Media.DATA)
+            cursor = context.contentResolver.query(uri, projection, null, null, null)
+            val columnIndex = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+            cursor.moveToFirst()
+            cursor.getString(columnIndex)
+        } catch (e: java.lang.Exception) {
+            Timber.e(e, "getRealPathFromURI() Exception")
+            null
+        } finally {
+            cursor?.close()
+        }
+    }
+
+    /**
      * Deletes file from provided path
      * @param context Context
      * @param path String
@@ -68,9 +136,9 @@ object FileUtils {
             arrayOf(file.name), null
         )
         if (deleted) {
-            Log.d("FileUtils", "File $path was deleted")
+            Timber.d("File $path was deleted")
         } else {
-            Log.e("FileUtils", "File $path wasnot deleted")
+            Timber.e("File $path wasn't deleted")
         }
     }
 

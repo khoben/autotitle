@@ -12,8 +12,8 @@ android {
         applicationId "com.khoben.autotitle"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 107
-        versionName "1.0.7"
+        versionCode 1081
+        versionName "1.0.8-beta"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -108,11 +108,22 @@ dependencies {
     implementation 'com.huawei.agconnect:agconnect-core:1.4.2.301'
     implementation 'com.huawei.hms:ml-computer-voice-aft:2.1.0.300'
 
+    // Logging
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+
     // Video renderer
     implementation project(path: ':mp4compose')
 
     // Range seekbar selector
     implementation project(path: ':rangeview')
+
+    // Frame grabber
+    implementation project(path: ':framegrab')
+
+    // Leak detector
+    // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
+
+//    implementation 'androidx.preference:preference:1.1.0'
 
     testImplementation 'junit:junit:4.13.1'
 

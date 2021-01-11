@@ -3,8 +3,8 @@ package com.khoben.autotitle.service.audioextractor
 import android.content.Context
 import android.media.*
 import android.net.Uri
-import android.util.Log
 import io.reactivex.rxjava3.core.Observable
+import timber.log.Timber
 import java.io.IOException
 import java.nio.ByteBuffer
 
@@ -164,13 +164,13 @@ class AudioExtractorImpl : AudioExtractor {
             bufferInfo.offset = offset
             bufferInfo.size = extractor.readSampleData(dstBuf, offset)
             if (bufferInfo.size < 0) {
-                Log.d(TAG, "Saw input EOS.")
+                Timber.d("Saw input EOS.")
                 bufferInfo.size = 0
                 break
             } else {
                 bufferInfo.presentationTimeUs = extractor.sampleTime
                 if (endMs > 0 && bufferInfo.presentationTimeUs > endMs * 1000) {
-                    Log.d(TAG, "The current sample is over the trim end time.")
+                    Timber.d("The current sample is over the trim end time.")
                     break
                 } else {
                     bufferInfo.flags = extractor.sampleFlags
@@ -187,6 +187,5 @@ class AudioExtractorImpl : AudioExtractor {
 
     companion object {
         private const val DEFAULT_BUFFER_SIZE = 1 * 1024 * 1024
-        private const val TAG = "AudioExtractorDecoder"
     }
 }

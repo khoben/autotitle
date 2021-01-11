@@ -1,10 +1,13 @@
 package com.khoben.autotitle.mvp.view
 
 import moxy.MvpView
-import moxy.viewstate.strategy.AddToEndSingleStrategy
-import moxy.viewstate.strategy.StateStrategyType
+import moxy.viewstate.strategy.alias.AddToEndSingle
+import moxy.viewstate.strategy.alias.Skip
 
-@StateStrategyType(value = AddToEndSingleStrategy::class)
 interface ResultActivityView : MvpView {
+    @Skip
     fun showVideoSavedToast(path: String?)
+
+    @AddToEndSingle
+    fun alreadySaved()
 }

@@ -5,21 +5,22 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.khoben.autotitle.App.Companion.VIDEO_EXTENSION
 import com.khoben.autotitle.R
-import com.khoben.autotitle.common.OpeningVideoFileState
-import com.khoben.autotitle.common.FileUtils
+import com.khoben.autotitle.common.*
 import com.khoben.autotitle.databinding.ActivityMainBinding
 import com.khoben.autotitle.extension.activityresult.permission.permissionsDSL
 import com.khoben.autotitle.extension.activityresult.result.getContentDSL
 import com.khoben.autotitle.extension.activityresult.result.takeVideoDSL
 import com.khoben.autotitle.mvp.presenter.MainActivityPresenter
 import com.khoben.autotitle.mvp.view.MainActivityView
+import com.khoben.autotitle.ui.etc.OpenSourceLicensesDialog
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
+import timber.log.Timber
+
 
 class MainActivity : MvpAppCompatActivity(), MainActivityView {
 
@@ -31,7 +32,7 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView {
             onVideoSelected(outputPath as Uri)
         }
         error = { message ->
-            Log.e(TAG, "$message")
+            Timber.e("$message")
         }
     }
 
@@ -41,7 +42,7 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView {
             onVideoSelected(takenVideoUri!!)
         }
         error = { message ->
-            Log.e(TAG, "$message")
+            Timber.e("$message")
         }
     }
 
@@ -60,32 +61,47 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView {
         }
     }
 
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(ActivityMainBinding.inflate(layoutInflater).root)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.settingsBtn.setOnClickListener {  settingsClick(it)  }
+        binding.cameraCaptureButton.setOnClickListener { takeVideoClick(it) }
+        binding.filestoreLoadButton.setOnClickListener { getContentClick(it) }
     }
 
-    fun takeVideoClick(view: View) {
+    override fun hideRecentProject() {
+//        binding.recentProjects.visibility = View.INVISIBLE
+    }
+
+    private fun settingsClick(view: View) {
+        OpenSourceLicensesDialog().showLicenses(this)
+    }
+
+    private fun takeVideoClick(view: View) {
         takeVideoWithPermission.launch(arrayOf(Manifest.permission.CAMERA))
     }
 
-    fun getContentClick(view: View) {
+    private fun getContentClick(view: View) {
         getContentActivityResult.launch(VIDEO_FILE_SELECT_TYPE)
     }
 
     override fun onVideoSelected(uri: Uri) {
-        when (presenter.verifyMedia(this, uri)) {
-            OpeningVideoFileState.FAILED -> {
+        when (presenter.verifyMedia(uri)) {
+            FAILED -> {
                 Toast.makeText(
                     this,
                     getString(R.string.error_while_opening_file),
                     Toast.LENGTH_SHORT
                 ).show()
             }
-            OpeningVideoFileState.LIMIT -> {
+            LIMIT -> {
                 Toast.makeText(this, getString(R.string.check_limit), Toast.LENGTH_SHORT).show()
             }
-            OpeningVideoFileState.SUCCESS -> {
+            SUCCESS -> {
                 val intent = Intent(this, VideoEditActivity::class.java).apply {
                     putExtra(VIDEO_SOURCE_URI_INTENT, uri)
                 }
@@ -95,7 +111,6 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView {
     }
 
     companion object {
-        private var TAG = MainActivity::class.java.simpleName
         private const val VIDEO_FILE_SELECT_TYPE = "video/*"
         const val VIDEO_SOURCE_URI_INTENT = "com.khoben.autotitle.VIDEO_SOURCE"
     }

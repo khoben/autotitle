@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AutoTitle</string>
-    <string name="load_button_title">Выбрать Видео</string>
-    <string name="record_button_title">Записать Видео</string>
+    <string name="load_button_title">Выбрать</string>
+    <string name="record_button_title">Записать</string>
     <string name="edit_caption">Субтитры</string>
     <string name="stickers_caption">Стикеры</string>
     <string name="text_caption">Текст</string>
@@ -13,14 +13,14 @@
     <string name="cancel_video_saving_question">Отменить обработку видео?</string>
     <string name="exit_question">Точно хотите выйти?</string>
     <string name="share_caption">Поделиться</string>
-    <string name="save_to_gallery_caption">Сохранить в галерею</string>
+    <string name="save_to_gallery_caption">Сохранить</string>
     <string name="share_video_title">Поделиться</string>
     <string name="saved_path_video">Видео сохранено %1$s</string>
     <string name="video_saving_cancelled_caption">Сохранение видео было отменено</string>
     <string name="some_error">Ошибка</string>
     <string name="or_caption">ИЛИ</string>
     <string name="welcome_title">AutoTitle</string>
-    <string name="need_load_title">Загрузите видео для добавления субтитров</string>
+    <string name="need_load_title">Загрузите видео\nдля добавления субтитров</string>
     <string name="save_captions">Обработка</string>
     <string name="save_button_caption">Сохранить</string>
     <string name="empty_overlay_recycler">Нажмите два раза для редактирования</string>
