@@ -22,12 +22,14 @@ This work is designed for <a href="https://honorcup.ru/">Huawei Honor Cup 2020 c
 ### Built with
 - [Huawei ML Kit](https://developer.huawei.com/consumer/en/hms/huawei-mlkit/)
 - [Moxy](https://github.com/moxy-community/Moxy)
-- Dagger2
+- [Dagger2](https://github.com/google/dagger)
 - [RxJava3](https://github.com/ReactiveX/RxJava)
 - [Mp4Composer-android](https://github.com/MasayukiSuda/Mp4Composer-android)
 
 
-Pre-built apk files are [here](https://github.com/khoben/autotitle/releases)
+## Pre-built apk
+
+https://github.com/khoben/autotitle/releases
 
 ## Screenshots
 
@@ -39,3 +41,4 @@ Pre-built apk files are [here](https://github.com/khoben/autotitle/releases)
 ### Inspired by
 * [Android Camera](https://github.com/aserbao/AndroidCamera)
 * [PhotoEditor](https://github.com/burhanrashid52/PhotoEditor)
+* [MotionViews-Android](https://github.com/uptechteam/MotionViews-Android)
