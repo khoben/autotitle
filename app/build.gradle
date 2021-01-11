@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.khoben.autotitle"
-        minSdkVersion 23
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode 107
         versionName "1.0.7"
