@@ -4,12 +4,10 @@ import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.view.View
 import android.widget.Toast
-import com.khoben.autotitle.App.Companion.VIDEO_EXTENSION
 import com.khoben.autotitle.R
-import com.khoben.autotitle.common.*
+import com.khoben.autotitle.common.OpeningVideoFileState
 import com.khoben.autotitle.databinding.ActivityMainBinding
 import com.khoben.autotitle.extension.activityresult.permission.permissionsDSL
 import com.khoben.autotitle.extension.activityresult.result.getContentDSL
@@ -28,18 +26,17 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView {
     lateinit var presenter: MainActivityPresenter
 
     private val getContentActivityResult = getContentDSL {
-        success = { outputPath ->
-            onVideoSelected(outputPath as Uri)
+        success = { uri ->
+            onVideoSelected(uri as Uri)
         }
         error = { message ->
             Timber.e("$message")
         }
     }
 
-    private var takenVideoUri: Uri? = null
     private val takeVideoActivityResult = takeVideoDSL {
-        success = { _ ->
-            onVideoSelected(takenVideoUri!!)
+        success = { uri ->
+            onVideoSelected(uri as Uri)
         }
         error = { message ->
             Timber.e("$message")
@@ -48,10 +45,8 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView {
 
     private val takeVideoWithPermission = permissionsDSL {
         allGranted = {
-            takenVideoUri = FileUtils.getRandomUri(
-                    this@MainActivity, VIDEO_EXTENSION, Environment.DIRECTORY_MOVIES
-            )
-            takeVideoActivityResult.launch(takenVideoUri)
+            // unused input but required
+            takeVideoActivityResult.launch(null)
         }
         denied = {
             // denied
@@ -93,9 +88,9 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView {
         when (presenter.verifyMedia(uri)) {
             OpeningVideoFileState.FAILED -> {
                 Toast.makeText(
-                        this,
-                        getString(R.string.error_while_opening_file),
-                        Toast.LENGTH_SHORT
+                    this,
+                    getString(R.string.error_while_opening_file),
+                    Toast.LENGTH_SHORT
                 ).show()
             }
             OpeningVideoFileState.LIMIT -> {
