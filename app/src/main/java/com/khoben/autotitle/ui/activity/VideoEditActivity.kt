@@ -19,8 +19,6 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.*
-import com.getkeepsafe.taptargetview.TapTarget
-import com.getkeepsafe.taptargetview.TapTargetView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
@@ -323,15 +321,15 @@ class VideoEditActivity : MvpAppCompatActivity(),
             )
         }
 
-        TapTargetView.showFor(this,  // `this` is an Activity
-            TapTarget.forView(
-                saveBtn,
-                "This is a target",
-                "We have the best targets, believe me"
-            ) // All options below are optional
-                .outerCircleAlpha(0.96f) // Specify the alpha amount for the outer circle
-                .targetCircleColor(R.color.white) // Specify a color for the target circle
-                .titleTextSize(20) // Specify the size (in sp) of the title text
+        Handler(Looper.getMainLooper()).postDelayed({
+            val addCase = FancyShowCaseView.Builder(this)
+                .backgroundColor(R.color.white)
+                .focusCircleRadiusFactor(2.0)
+                .focusOn(addItemBtn)
+                .enableAutoTextPosition()
+                .title(getString(R.string.guide_add_case))
+                .build()
+
                 .titleTextColor(R.color.white) // Specify the color of the title text
                 .descriptionTextSize(10) // Specify the size (in sp) of the description text
                 .textTypeface(Typeface.SANS_SERIF) // Specify a typeface for the text
@@ -344,85 +342,16 @@ class VideoEditActivity : MvpAppCompatActivity(),
             object : TapTargetView.Listener() {
             })
 
-//        Handler(Looper.getMainLooper()).postDelayed({
-//            val addCase = FancyShowCaseView.Builder(this)
-//                .backgroundColor(R.color.white75)
-//                .focusCircleRadiusFactor(2.0)
-//                .focusOn(addItemBtn)
-//                .closeOnTouch(false)
-//                .enableAutoTextPosition()
-//                .title(getString(R.string.guide_add_case))
-//                .build()
-//
-//            val recyclerItemCase = FancyShowCaseView.Builder(this)
-//                .backgroundColor(R.color.white75)
-//                .focusShape(FocusShape.ROUNDED_RECTANGLE)
-//                .focusOn(recyclerView[0])
-//                .enableAutoTextPosition()
-//                .title(getString(R.string.guide_recycler_item))
-//                .build()
-//
-//            val recyclerItemEditCase = FancyShowCaseView.Builder(this)
-//                .backgroundColor(R.color.white75)
-//                .focusShape(FocusShape.ROUNDED_RECTANGLE)
-//                .focusOn(recyclerView[0])
-//                .enableAutoTextPosition()
-//                .title(getString(R.string.guide_recycler_item_edit))
-//                .build()
-//
-//            val recyclerItemDeleteCase = FancyShowCaseView.Builder(this)
-//                .backgroundColor(R.color.white75)
-//                .focusShape(FocusShape.ROUNDED_RECTANGLE)
-//                .focusOn(recyclerView[0])
-//                .enableAutoTextPosition()
-//                .title(getString(R.string.guide_recycler_delete))
-//                .build()
-//
-//            val doubleTapCase = FancyShowCaseView.Builder(this)
-//                .backgroundColor(R.color.white75)
-//                .focusShape(FocusShape.ROUNDED_RECTANGLE)
-//                .focusOn(overlayView)
-//                .enableAutoTextPosition()
-//                .title(getString(R.string.guide_doubletap))
-//                .build()
-//
-//            val resizeCase = FancyShowCaseView.Builder(this)
-//                .backgroundColor(R.color.white75)
-//                .focusShape(FocusShape.ROUNDED_RECTANGLE)
-//                .focusOn(overlayView)
-//                .enableAutoTextPosition()
-//                .title(getString(R.string.guide_resize))
-//                .build()
-//
-//            val saveCase = FancyShowCaseView.Builder(this)
-//                .backgroundColor(R.color.white75)
-//                .focusOn(saveBtn)
-//                .enableAutoTextPosition()
-//                .title(getString(R.string.guide_save))
-//                .build()
-//
-//
-//
-//            FancyShowCaseQueue().apply {
-//                completeListener = object : OnCompleteListener {
-//                    override fun onComplete() {
-//                        if (dummy) {
-//                            dummy = false
-//                            overlayViewAdapter.submitList(emptyList())
-//                        }
-//                    }
-//
-//                }
-//            }
-//                .add(addCase)
-//                .add(recyclerItemCase)
-//                .add(recyclerItemEditCase)
-//                .add(recyclerItemDeleteCase)
-//                .add(doubleTapCase)
-//                .add(resizeCase)
-//                .add(saveCase)
-//                .show()
-//        }, 500)
+                }
+            }.add(addCase)
+                .add(recyclerItemCase)
+                .add(recyclerItemEditCase)
+                .add(recyclerItemDeleteCase)
+                .add(doubleTapCase)
+                .add(resizeCase)
+                .add(saveCase)
+                .show()
+        }, 500)
     }
 
     override fun finishOnError() {
