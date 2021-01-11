@@ -132,9 +132,9 @@ class OverlayHandler private constructor(
         }
     }
 
-    fun addOverlay(startTime: Long, videoDuration: Long, type: @OverlayType Int = TEXT) {
+    fun addOverlay(startTime: Long, videoDuration: Long, type: OverlayType = OverlayType.TEXT) {
         val newOverlay: OverlayObject?
-        if (type == TEXT) {
+        if (type == OverlayType.TEXT) {
             newOverlay = createTextOverlay(startTime, min(startTime + FRAME_TIME_MS, videoDuration))
         } else {
             newOverlay = null

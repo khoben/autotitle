@@ -7,7 +7,7 @@ import io.reactivex.rxjava3.core.Observable
 interface VideoFrameRetriever {
     fun init(
         uri: Uri,
-        providerType: @ProviderType Int = NATIVE_ANDROID
+        providerType: ProviderType = ProviderType.NATIVE_ANDROID
     ): VideoFrameRetriever
 
     fun load(frameTime: Long, w: Int, h: Int, callback: (List<Bitmap>) -> Unit)

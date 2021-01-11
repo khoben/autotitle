@@ -91,17 +91,17 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView {
 
     override fun onVideoSelected(uri: Uri) {
         when (presenter.verifyMedia(uri)) {
-            FAILED -> {
+            OpeningVideoFileState.FAILED -> {
                 Toast.makeText(
                     this,
                     getString(R.string.error_while_opening_file),
                     Toast.LENGTH_SHORT
                 ).show()
             }
-            LIMIT -> {
+            OpeningVideoFileState.LIMIT -> {
                 Toast.makeText(this, getString(R.string.check_limit), Toast.LENGTH_SHORT).show()
             }
-            SUCCESS -> {
+            OpeningVideoFileState.SUCCESS -> {
                 val intent = Intent(this, VideoEditActivity::class.java).apply {
                     putExtra(VIDEO_SOURCE_URI_INTENT, uri)
                 }

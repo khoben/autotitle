@@ -8,15 +8,13 @@ import com.khoben.autotitle.common.FileUtils
 import com.khoben.autotitle.model.MLCaptionEnvelop
 import com.khoben.autotitle.service.audioextractor.AudioExtractor
 import com.khoben.autotitle.service.audiotranscriber.AudioTranscriber
-import com.khoben.autotitle.service.frameretriever.MEDIA_CODEC
-import com.khoben.autotitle.service.frameretriever.NATIVE_ANDROID
+import com.khoben.autotitle.service.frameretriever.ProviderType
 import com.khoben.autotitle.service.frameretriever.VideoFrameRetriever
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class VideoLoader {
@@ -51,7 +49,7 @@ class VideoLoader {
         this.uri = uri
         this.frameTime = frameTime
 
-        this.frames = videoFrameRetriever.init(uri, MEDIA_CODEC)
+        this.frames = videoFrameRetriever.init(uri, ProviderType.MEDIA_CODEC)
             .retrieveFrames(frameTime, App.THUMB_SIZE.first, App.THUMB_SIZE.second)
         this.tempAudioPath = FileUtils.getRandomFilepath(context, App.AUDIO_EXTENSION)
         this.audio = extractAudio(context, tempAudioPath!!)

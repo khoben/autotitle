@@ -7,6 +7,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.IntDef
+import timber.log.Timber
 import kotlin.math.max
 import kotlin.math.min
 
@@ -32,9 +33,9 @@ class MultiTouchListener(
     private var mPrevRawX = 0f
     private var mPrevRawY = 0f
     private val mScaleGestureDetector: ScaleGestureDetector
-    private val location = IntArray(2)
     private var outRect: Rect? = null
     private var mOnGestureControl: OnGestureControl? = null
+    private var mControlClickDetector = OnControlClickDetector()
 
     private var boundingRect = Rect()
     private var parentCenterX = 0F
@@ -45,9 +46,14 @@ class MultiTouchListener(
     private var parentX = 0F
     private var parentY = 0F
 
+    enum class DIRECTION {
+        X, Y, BOTH, NONE
+    }
+
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouch(view: View, event: MotionEvent): Boolean {
+        mControlClickDetector.onTouchEvent(event)
         mScaleGestureDetector.onTouchEvent(view, event)
         mGestureListener.onTouchEvent(event)
         if (!isTranslateEnabled) {
@@ -79,20 +85,21 @@ class MultiTouchListener(
             MotionEvent.ACTION_CANCEL -> mActivePointerId = INVALID_POINTER_ID
             MotionEvent.ACTION_UP -> {
                 mActivePointerId = INVALID_POINTER_ID
+                // translate if overlay not visible
                 val isVisible = isViewVisible(view)
                 if (!isVisible.first) {
                     when (isVisible.second) {
-                        X -> {
+                        DIRECTION.X -> {
                             var translation = (parentWidth - view.width) / 2f
                             if (view.x < 0) translation *= -1
                             view.animate().translationX(translation)
                         }
-                        Y -> {
+                        DIRECTION.Y -> {
                             var translation = (parentHeight - view.height) / 2f
                             if (view.y < 0) translation *= -1
                             view.animate().translationY(translation)
                         }
-                        BOTH -> {
+                        DIRECTION.BOTH -> {
                             var translationX = (parentWidth - view.width) / 2f
                             if (view.x < 0) translationX *= -1
 
@@ -103,7 +110,7 @@ class MultiTouchListener(
                                 .translationX(translationX)
                                 .translationY(translationY)
                         }
-                        NONE -> {
+                        DIRECTION.NONE -> {
                         }
                     }
                 }
@@ -123,7 +130,7 @@ class MultiTouchListener(
         return true
     }
 
-    private fun isViewVisible(view: View): Pair<Boolean, @DIRECTION Int> {
+    private fun isViewVisible(view: View): Pair<Boolean, DIRECTION> {
         view.getHitRect(boundingRect)
         val centerX = boundingRect.exactCenterX()
         val centerY = boundingRect.exactCenterY()
@@ -132,18 +139,11 @@ class MultiTouchListener(
         val limitY = centerY < 0 || centerY > parentHeight
 
         return when {
-            limitX && limitY -> Pair(false, BOTH)
-            limitX -> Pair(false, X)
-            limitY -> Pair(false, Y)
-            else -> Pair(true, NONE)
+            limitX && limitY -> Pair(false, DIRECTION.BOTH)
+            limitX -> Pair(false, DIRECTION.X)
+            limitY -> Pair(false, DIRECTION.Y)
+            else -> Pair(true, DIRECTION.NONE)
         }
-    }
-
-    private fun isViewInBounds(view: View, x: Int, y: Int): Boolean {
-        view.getDrawingRect(outRect)
-        view.getLocationOnScreen(location)
-        outRect!!.offset(location[0], location[1])
-        return outRect!!.contains(x, y)
     }
 
     private inner class ScaleGestureListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
@@ -274,16 +274,6 @@ class MultiTouchListener(
             view.translationX = view.translationX - offsetX
             view.translationY = view.translationY - offsetY
         }
-
-        @Target(AnnotationTarget.TYPE)
-        @IntDef(value = [X, Y, BOTH, NONE])
-        @Retention(AnnotationRetention.SOURCE)
-        annotation class DIRECTION
-
-        const val X = 0
-        const val Y = 1
-        const val BOTH = 2
-        const val NONE = 3
     }
 
     init {

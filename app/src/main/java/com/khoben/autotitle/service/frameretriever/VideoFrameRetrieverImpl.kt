@@ -29,7 +29,7 @@ class VideoFrameRetrieverImpl(
         callObservable(retrieveFrames(frameTime))
     }
 
-    override fun init(uri: Uri, providerType: @ProviderType Int): VideoFrameRetrieverImpl {
+    override fun init(uri: Uri, providerType: ProviderType): VideoFrameRetrieverImpl {
         videoMetadataProvider = MetadataProviderFactory.get(
             providerType = providerType,
             context = context,

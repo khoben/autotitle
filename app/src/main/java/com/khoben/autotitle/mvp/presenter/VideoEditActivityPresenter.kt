@@ -380,24 +380,24 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
 
     override fun handlePlaybackState(state: PlaybackEvent) {
         when (state.playState) {
-            PLAY -> {
+            PlaybackState.PLAY -> {
                 val overlays = overlayHandler!!.getOverlaysWithSelected()
                 viewState.updatePlayback(
                     overlays.second, overlays.first,
                     isPlaying = true
                 )
             }
-            PAUSED -> {
+            PlaybackState.PAUSED -> {
                 val overlays = overlayHandler!!.getOverlaysWithSelected()
                 viewState.updatePlayback(
                     overlays.second, overlays.first,
                     isPlaying = false
                 )
             }
-            STOP -> {
+            PlaybackState.STOP -> {
 
             }
-            REWIND -> {
+            PlaybackState.SEEK -> {
 
             }
         }
