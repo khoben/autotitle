@@ -11,12 +11,9 @@ import kotlin.math.min
 
 /**
  * Created on 18/01/2017.
- *
  * @author [Burhanuddin Rashid](https://github.com/burhanrashid52)
- *
- *
  */
-internal class MultiTouchListener(
+class MultiTouchListener(
     parentRect: Rect,
     private val mIsTextPinchZoomable: Boolean
 ) :
@@ -35,7 +32,6 @@ internal class MultiTouchListener(
     private val mScaleGestureDetector: ScaleGestureDetector
     private val location = IntArray(2)
     private var outRect: Rect? = null
-    private var onMultiTouchListener: OnMultiTouchListener? = null
     private var mOnGestureControl: OnGestureControl? = null
 
     private var boundingRect = Rect()
@@ -148,10 +144,6 @@ internal class MultiTouchListener(
         return outRect!!.contains(x, y)
     }
 
-    fun setOnMultiTouchListener(onMultiTouchListener: OnMultiTouchListener?) {
-        this.onMultiTouchListener = onMultiTouchListener
-    }
-
     private inner class ScaleGestureListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         private var mPivotX = 0f
         private var mPivotY = 0f
@@ -192,12 +184,7 @@ internal class MultiTouchListener(
         var maximumScale = 0f
     }
 
-    internal interface OnMultiTouchListener {
-        fun onEditTextClickListener(text: String?, colorCode: Int)
-        fun onRemoveViewListener(removedView: View?)
-    }
-
-    internal interface OnGestureControl {
+    interface OnGestureControl {
         fun onClick()
         fun onLongClick()
         fun onDoubleTap()

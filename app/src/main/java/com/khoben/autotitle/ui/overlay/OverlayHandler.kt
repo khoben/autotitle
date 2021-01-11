@@ -83,9 +83,23 @@ class OverlayHandler private constructor(
                 removeOverlay(this)
             }
             // gestures
-            this.setOnTouchListener(getMultiTouchListener(this))
-            // generate unique id
-            this.uuid = UUID.randomUUID()
+            this.initMultiTouchListener(parentView.get()!!.getRect(), object: MultiTouchListener.OnGestureControl {
+                override fun onClick() {
+                    selectedOverlay(newOverlay, false)
+                }
+
+                override fun onLongClick() {
+                }
+
+                override fun onDoubleTap() {
+                    editOverlay(newOverlay)
+                }
+
+                override fun onMove() {
+                    selectedOverlay(newOverlay, false)
+                }
+
+            })
         }
         return newOverlay
     }
@@ -134,7 +148,8 @@ class OverlayHandler private constructor(
 
     fun addTextOverlayAfterSpecificPosition(pos: Int): Long {
         val newOverlay =
-            createTextOverlay(overlayViews[pos].endTime, overlayViews[pos].endTime + FRAME_TIME_MS)
+            createTextOverlay(overlayViews[pos].endTime, 
+                overlayViews[pos].endTime + FRAME_TIME_MS)
 
         addOverlayToParent(newOverlay)
         overlayViews.add(pos + 1, newOverlay)
@@ -190,30 +205,6 @@ class OverlayHandler private constructor(
                 gravity = Gravity.CENTER
             }
         )
-    }
-
-    private fun getMultiTouchListener(overlay: OverlayText): MultiTouchListener {
-        return MultiTouchListener(
-            parentView.get()!!.getRect(),
-            true,
-        ).apply {
-            setOnGestureControl(object : MultiTouchListener.OnGestureControl {
-                override fun onClick() {
-                    selectedOverlay(overlay, false)
-                }
-
-                override fun onLongClick() {
-                }
-
-                override fun onDoubleTap() {
-                    editOverlay(overlay)
-                }
-
-                override fun onMove() {
-                    selectedOverlay(overlay, false)
-                }
-            })
-        }
     }
 
     fun editOverlay(index: Int) {
@@ -288,9 +279,7 @@ class OverlayHandler private constructor(
 
     fun addAllOverlay(overlays: List<MLCaption>) {
         overlayViews.clear()
-        overlays.forEach {
-            addTextOverlay(it.startTime, it.endTime, it.text, true)
-        }
+        overlays.forEach { addTextOverlay(it.startTime, it.endTime, it.text, true) }
         overlayViews.sort()
         overlayObjectEventListener?.onAddedAll(overlayViews)
     }

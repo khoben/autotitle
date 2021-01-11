@@ -1,23 +1,37 @@
 package com.khoben.autotitle.ui.overlay
 
 import android.content.Context
+import android.graphics.Rect
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import com.khoben.autotitle.R
+import com.khoben.autotitle.ui.overlay.gesture.MultiTouchListener
 import java.util.*
 
 
 abstract class OverlayObject(context: Context, attrs: AttributeSet) :
     FrameLayout(context, attrs), Comparable<OverlayObject> {
 
+    // generate unique id
+    val uuid: UUID = UUID.randomUUID()
+
     var startTime: Long = 0
     var endTime: Long = 0
 
-    // TODO: Move uuid init in constructor
-    var uuid: UUID? = null
+    /**
+     * Init multitouch gesture listener with [rect] bounds
+     * @param rect Rect bound
+     * @param listener MultiTouch event listener
+     */
+    fun initMultiTouchListener(rect: Rect, listener: MultiTouchListener.OnGestureControl) {
+        setOnTouchListener(
+            MultiTouchListener(rect, true).apply { setOnGestureControl(listener) }
+        )
+    }
+
     var isInEdit = false
         set(value) {
             field = value
