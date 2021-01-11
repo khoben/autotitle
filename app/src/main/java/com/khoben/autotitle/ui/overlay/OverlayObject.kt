@@ -81,6 +81,8 @@ abstract class OverlayObject(context: Context, attrs: AttributeSet) :
         )
     }
 
+    abstract fun getBitmap(scaleX: Float = 1F, scaleY: Float = 1F): Bitmap?
+
     override fun compareTo(other: OverlayObject): Int {
         return (this.startTime - other.startTime).toInt()
     }
