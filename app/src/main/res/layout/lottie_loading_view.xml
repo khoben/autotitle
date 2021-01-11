@@ -11,7 +11,7 @@
         android:id="@+id/lottie_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/loading_fading_textView"
+        app:layout_constraintBottom_toTopOf="@+id/lottie_loading_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -21,18 +21,17 @@
         app:lottie_repeatMode="reverse"
         app:lottie_loop="true"/>
 
-    <com.tomer.fadingtextview.FadingTextView
-        android:id="@+id/loading_fading_textView"
+    <TextView
+        android:id="@+id/lottie_loading_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/lottie_view"
-        android:textSize="36sp"
+        android:textAppearance="?textAppearanceHeadline4"
+        android:text="Processing the video"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lottie_view"
-        app:texts="@array/loading_text"
-        app:timeout="999" />
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
