@@ -1,11 +1,14 @@
 package com.khoben.autotitle.ui.overlay
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.core.animation.addListener
 import com.khoben.autotitle.App.Companion.FRAME_TIME_MS
 import com.khoben.autotitle.extension.getRect
 import com.khoben.autotitle.model.MLCaption
@@ -179,14 +182,36 @@ class OverlayHandler private constructor(
     private fun removeOverlay(overlay: OverlayObject) {
         val idxRemoved = overlayViews.indexOf(overlay)
         overlayViews.remove(overlay)
-        parentView.get()!!.removeView(overlay)
-        // deselect
-        if (overlay == currentOverlayView) {
-            lastDeletedOverlay = currentOverlayView
-            currentOverlayView?.isInEdit = false
-            currentOverlayView = null
-        }
-        overlayObjectEventListener?.onRemoved(idxRemoved, overlay, overlayViews)
+
+        // save origin values before animation
+        val oldAlpha = overlay.alpha
+        val oldScaleX = overlay.scaleX
+        val oldScaleY = overlay.scaleY
+
+        AnimatorSet().apply {
+            playTogether(
+                    ObjectAnimator.ofFloat(overlay, "alpha", oldAlpha, 0f),
+                    ObjectAnimator.ofFloat(overlay, "scaleX", oldScaleX, 0f),
+                    ObjectAnimator.ofFloat(overlay, "scaleY", oldScaleY, 0f)
+            )
+            addListener(
+                    onEnd = {
+                        parentView.get()!!.removeView(overlay)
+                        // deselect
+                        if (overlay == currentOverlayView) {
+                            lastDeletedOverlay = currentOverlayView
+                            currentOverlayView?.isInEdit = false
+                            currentOverlayView = null
+                        }
+                        // restore properties after animation
+                        overlay.alpha = oldAlpha
+                        overlay.scaleX = oldScaleX
+                        overlay.scaleY = oldScaleY
+
+                        overlayObjectEventListener?.onRemoved(idxRemoved, overlay, overlayViews)
+                    }
+            )
+        }.start()
     }
 
     fun getOverlays() = overlayViews
