@@ -7,19 +7,23 @@
     android:background="?colorSurface"
     android:elevation="@dimen/elevation_top">
 
-    <com.airbnb.lottie.LottieAnimationView
+    <com.khoben.autotitle.ui.etc.LottieAnimationViewEx
         android:id="@+id/lottie_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@+id/lottie_loading_text"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
         app:lottie_autoPlay="true"
         app:lottie_fileName="loading.json"
-        app:lottie_speed="0.35"
+        app:lottie_loop="true"
+        app:lottie_minFrame="5"
+        app:lottie_maxFrame="116"
         app:lottie_repeatMode="reverse"
-        app:lottie_loop="true"/>
+        app:lottie_speed="0.33" />
 
     <TextView
         android:id="@+id/lottie_loading_text"
