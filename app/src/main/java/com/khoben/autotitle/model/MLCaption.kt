@@ -8,7 +8,7 @@ package com.khoben.autotitle.model
  * @property endTime Ending visible time
  */
 data class MLCaption(
-    var text: String,
-    var startTime: Long,
-    var endTime: Long
+        var text: String,
+        var startTime: Long,
+        var endTime: Long
 )

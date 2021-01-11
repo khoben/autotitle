@@ -27,8 +27,8 @@ import kotlin.math.min
 
 
 class VideoSeekBarFramesView(
-    context: Context,
-    attrs: AttributeSet?
+        context: Context,
+        attrs: AttributeSet?
 ) : FrameLayout(context, attrs) {
     private var rangeView: RangeView? = null
 
@@ -59,10 +59,10 @@ class VideoSeekBarFramesView(
     override fun dispatchDraw(canvas: Canvas) {
         // clip left side before playPauseButton
         canvas.clipRect(
-            16F.dp(),
-            top.toFloat(),
-            right.toFloat(),
-            bottom.toFloat()
+                16F.dp(),
+                top.toFloat(),
+                right.toFloat(),
+                bottom.toFloat()
         )
         super.dispatchDraw(canvas)
     }
@@ -107,15 +107,15 @@ class VideoSeekBarFramesView(
         val singleFrameWidthPx = screenWidth / FRAMES_PER_SCREEN
         bitmaps.forEach { bitmap ->
             imageList!!.addView(
-                ImageView(context).apply {
-                    layoutParams =
-                        LayoutParams(singleFrameWidthPx, App.SEEKBAR_HEIGHT_DP_PIXELS)
-                    scaleType = ImageView.ScaleType.CENTER_CROP
-                    // keep original colors in dark mode
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-                        isForceDarkAllowed = false
-                    setImageBitmap(bitmap)
-                }
+                    ImageView(context).apply {
+                        layoutParams =
+                                LayoutParams(singleFrameWidthPx, App.SEEKBAR_HEIGHT_DP_PIXELS)
+                        scaleType = ImageView.ScaleType.CENTER_CROP
+                        // keep original colors in dark mode
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                            isForceDarkAllowed = false
+                        setImageBitmap(bitmap)
+                    }
             )
         }
 
@@ -131,14 +131,14 @@ class VideoSeekBarFramesView(
 
     private fun addRangeView(w: Int, h: Int) {
         rangeView = LayoutInflater.from(context)
-            .inflate(R.layout.range_view, null) as RangeView
+                .inflate(R.layout.range_view, null) as RangeView
 
         movableFrameLineContainer.addView(
-            rangeView,
-            LayoutParams(w, h)
-                .apply {
-                    gravity = Gravity.CENTER_VERTICAL
-                }
+                rangeView,
+                LayoutParams(w, h)
+                        .apply {
+                            gravity = Gravity.CENTER_VERTICAL
+                        }
         )
         rangeView?.visibility = View.GONE
 
@@ -147,11 +147,11 @@ class VideoSeekBarFramesView(
 
         rangeView!!.rangeValueChangeListener = object : RangeView.OnRangeValueListener {
             override fun rangeChanged(
-                maxValue: Float,
-                minValue: Float,
-                currentLeftValue: Float,
-                currentRightValue: Float,
-                draggingStateData: DraggingState
+                    maxValue: Float,
+                    minValue: Float,
+                    currentLeftValue: Float,
+                    currentRightValue: Float,
+                    draggingStateData: DraggingState
             ) {
                 val leftTime = (currentLeftValue * videoDuration).toLong()
                 val rightTime = (currentRightValue * videoDuration).toLong()
@@ -159,25 +159,26 @@ class VideoSeekBarFramesView(
                 val currentTime = xCoordinateToTimestamp(movableFrameLineContainer.x)
                 // TODO: Hardcoded constants
                 val leftLimit =
-                    currentTime + 500L - (screenWidth / 2 - 60.dp()) * videoDuration / videoSeekBarViewWidth
+                        currentTime + 500L - (screenWidth / 2 - 60.dp()) * videoDuration / videoSeekBarViewWidth
                 val rightLimit =
-                    currentTime - 500L + screenWidth / 2 * videoDuration / videoSeekBarViewWidth
+                        currentTime - 500L + screenWidth / 2 * videoDuration / videoSeekBarViewWidth
 
                 when (draggingStateData) {
                     DraggingState.DRAGGING_LEFT_TOGGLE -> {
                         if (leftTime <= leftLimit && leftLimit > 0L) movableFrameLineContainer.x =
-                            timestampToXCoordinate(currentTime - (leftLimit - leftTime))
+                                timestampToXCoordinate(currentTime - (leftLimit - leftTime))
                     }
                     DraggingState.DRAGGING_RIGHT_TOGGLE -> {
                         if (rightTime >= rightLimit && rightLimit < videoDuration) movableFrameLineContainer.x = (timestampToXCoordinate(currentTime + (rightTime - rightLimit)))
 
                     }
-                    else -> { }
+                    else -> {
+                    }
                 }
 
                 seekBarListener?.changeTimeRangeSelectedOverlay(
-                    leftTime,
-                    rightTime
+                        leftTime,
+                        rightTime
                 )
             }
         }
@@ -259,8 +260,8 @@ class VideoSeekBarFramesView(
     private fun syncRangeViewWithPlayback(selectedOverlay: OverlayObject?) {
         if (selectedOverlay != null) {
             rangeView?.setCurrentValues(
-                selectedOverlay.startTime.toFloat() / videoDuration,
-                selectedOverlay.endTime.toFloat() / videoDuration
+                    selectedOverlay.startTime.toFloat() / videoDuration,
+                    selectedOverlay.endTime.toFloat() / videoDuration
             )
             rangeView?.visibility = VISIBLE
         } else {
@@ -269,8 +270,8 @@ class VideoSeekBarFramesView(
     }
 
     private fun syncOverlaysRangesWithPlayback(
-        selectedOverlay: OverlayObject?,
-        overlays: List<OverlayObject?>
+            selectedOverlay: OverlayObject?,
+            overlays: List<OverlayObject?>
     ) {
         existingOverlaysBackground = overlayTimeRangeBackgrounds.toMutableMap()
         for (overlay in overlays) {
@@ -294,11 +295,11 @@ class VideoSeekBarFramesView(
                 backgroundOverlay.x = timeRangeStartX.toFloat()
                 backgroundOverlay.setBackgroundColor((overlay as OverlayText).badgeColor)
                 movableFrameLineContainer.addView(
-                    backgroundOverlay,
-                    LayoutParams(timeRangeWidth, 10.dp()).apply {
-                        gravity = Gravity.CENTER_VERTICAL
-                        setMargins(0, 0, 0, 35.dp())
-                    }
+                        backgroundOverlay,
+                        LayoutParams(timeRangeWidth, 10.dp()).apply {
+                            gravity = Gravity.CENTER_VERTICAL
+                            setMargins(0, 0, 0, 35.dp())
+                        }
                 )
                 overlayTimeRangeBackgrounds[overlay.uuid!!] = backgroundOverlay
             } else { // update existing
@@ -324,9 +325,9 @@ class VideoSeekBarFramesView(
      * @param isPlaying Is playing
      */
     fun updatePlayback(
-        overlays: List<OverlayObject?>,
-        selectedOverlay: OverlayObject?,
-        isPlaying: Boolean
+            overlays: List<OverlayObject?>,
+            selectedOverlay: OverlayObject?,
+            isPlaying: Boolean
     ) {
         playbackState = isPlaying
 
@@ -335,8 +336,8 @@ class VideoSeekBarFramesView(
 
         if (playbackState) {
             startSeekBarAnimation(
-                width = movableFrameLineContainer.measuredWidth.toFloat(),
-                duration = videoDuration
+                    width = movableFrameLineContainer.measuredWidth.toFloat(),
+                    duration = videoDuration
             )
         }
         syncRangeViewWithPlayback(selectedOverlay)
@@ -355,23 +356,23 @@ class VideoSeekBarFramesView(
      * Long press gesture detector
      */
     private val gestureDetector = GestureDetector(
-        context,
-        object : GestureDetector.SimpleOnGestureListener() {
-            override fun onDown(e: MotionEvent): Boolean {
-                rangeView?.setLongPressState(false, e)
-                return super.onDown(e)
-            }
+            context,
+            object : GestureDetector.SimpleOnGestureListener() {
+                override fun onDown(e: MotionEvent): Boolean {
+                    rangeView?.setLongPressState(false, e)
+                    return super.onDown(e)
+                }
 
-            override fun onSingleTapUp(e: MotionEvent): Boolean {
-                rangeView?.setLongPressState(false, e)
-                return false
-            }
+                override fun onSingleTapUp(e: MotionEvent): Boolean {
+                    rangeView?.setLongPressState(false, e)
+                    return false
+                }
 
-            override fun onLongPress(e: MotionEvent) {
-                rangeView?.setLongPressState(true, e)
-                super.onLongPress(e)
+                override fun onLongPress(e: MotionEvent) {
+                    rangeView?.setLongPressState(true, e)
+                    super.onLongPress(e)
+                }
             }
-        }
     )
 
     private fun seekTouchEvent(view: View, event: MotionEvent) {
@@ -385,7 +386,7 @@ class VideoSeekBarFramesView(
                 seekBarListener?.seekBarOnTouch()
             }
             MotionEvent.ACTION_MOVE -> {
-                                    // x diff
+                // x diff
                 val toX = view.x + event.x - onTouchEventMotionStartX
                 //   min  <= x <=  max
                 view.x = max(minScrollWidth.toFloat(), min(toX, maxScrollWidth.toFloat()))
@@ -416,8 +417,8 @@ class VideoSeekBarFramesView(
         }
 
         addView(movableFrameLineContainer, LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
         ).apply {
             gravity = Gravity.CENTER_VERTICAL
         })
@@ -428,13 +429,13 @@ class VideoSeekBarFramesView(
         }
 
         movableFrameLineContainer.addView(
-            imageList,
-            LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            ).apply {
-                gravity = Gravity.CENTER_VERTICAL
-            }
+                imageList,
+                LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    gravity = Gravity.CENTER_VERTICAL
+                }
         )
         moveViewToCenterOfScreen(movableFrameLineContainer)
         /*********************************************/

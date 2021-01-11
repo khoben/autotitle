@@ -7,6 +7,6 @@ package com.khoben.autotitle.model
  * @property throwable An Error
  */
 data class MLCaptionEnvelop(
-    val caption: List<MLCaption>?,
-    val throwable: Throwable? = null
+        val caption: List<MLCaption>?,
+        val throwable: Throwable? = null
 )

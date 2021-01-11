@@ -12,8 +12,8 @@ import com.khoben.autotitle.model.VideoInfo
 import timber.log.Timber
 
 class MediaExoPlayerSurfaceWrapper(private var context: Context) :
-    MediaSurfacePlayer,
-    Player.EventListener {
+        MediaSurfacePlayer,
+        Player.EventListener {
 
     private var mediaPlayer: SimpleExoPlayer? = null
     private var dataSourceUri: Uri? = null
@@ -24,21 +24,21 @@ class MediaExoPlayerSurfaceWrapper(private var context: Context) :
 
     init {
         mediaPlayer = SimpleExoPlayer.Builder(context)
-            .build()
-            .apply {
-                addListener(this@MediaExoPlayerSurfaceWrapper)
-            }
+                .build()
+                .apply {
+                    addListener(this@MediaExoPlayerSurfaceWrapper)
+                }
     }
 
     override fun setDataSourceUri(uri: Uri) {
         dataSourceUri = uri
         val mediaRetriever =
-            MediaMetadataRetriever().apply { setDataSource(context, dataSourceUri) }
+                MediaMetadataRetriever().apply { setDataSource(context, dataSourceUri) }
         val rotation =
-            mediaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)
+                mediaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)
         val width = mediaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
         val height =
-            mediaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)
+                mediaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)
         val duration = mediaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
         val info = VideoInfo()
         try {

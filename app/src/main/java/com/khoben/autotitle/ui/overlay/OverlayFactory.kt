@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import com.khoben.autotitle.R
-import timber.log.Timber
 
 class OverlayFactory(context: Context) {
     private val layoutInflater: LayoutInflater =

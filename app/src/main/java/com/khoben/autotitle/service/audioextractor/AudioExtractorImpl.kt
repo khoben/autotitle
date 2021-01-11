@@ -15,20 +15,20 @@ import java.nio.ByteBuffer
 class AudioExtractorImpl : AudioExtractor {
 
     override fun extractAudio(
-        context: Context,
-        uri: Uri,
-        outAudioPath: String
+            context: Context,
+            uri: Uri,
+            outAudioPath: String
     ): Observable<String> {
         return Observable.create { emitter ->
             try {
                 AudioExtractorImpl().genVideoUsingMuxer(
-                    context,
-                    uri,
-                    outAudioPath,
-                    -1,
-                    -1,
-                    useAudio = true,
-                    useVideo = false
+                        context,
+                        uri,
+                        outAudioPath,
+                        -1,
+                        -1,
+                        useAudio = true,
+                        useVideo = false
                 )
             } catch (e: Exception) {
                 emitter.onError(e)
@@ -42,12 +42,12 @@ class AudioExtractorImpl : AudioExtractor {
         return Observable.create { emitter ->
             try {
                 AudioExtractorImpl().genVideoUsingMuxer(
-                    videoFile,
-                    outAudioPath,
-                    -1,
-                    -1,
-                    useAudio = true,
-                    useVideo = false
+                        videoFile,
+                        outAudioPath,
+                        -1,
+                        -1,
+                        useAudio = true,
+                        useVideo = false
                 )
             } catch (e: Exception) {
                 emitter.onError(e)
@@ -58,12 +58,12 @@ class AudioExtractorImpl : AudioExtractor {
     }
 
     private fun genVideoUsingMuxer(
-        srcPath: String?,
-        dstPath: String?,
-        startMs: Int,
-        endMs: Int,
-        useAudio: Boolean,
-        useVideo: Boolean
+            srcPath: String?,
+            dstPath: String?,
+            startMs: Int,
+            endMs: Int,
+            useAudio: Boolean,
+            useVideo: Boolean
     ) {
         // Set up MediaExtractor to read from the source.
         val extractor = MediaExtractor()
@@ -74,13 +74,13 @@ class AudioExtractorImpl : AudioExtractor {
     }
 
     private fun genVideoUsingMuxer(
-        context: Context,
-        uri: Uri,
-        dstPath: String?,
-        startMs: Int,
-        endMs: Int,
-        useAudio: Boolean,
-        useVideo: Boolean
+            context: Context,
+            uri: Uri,
+            dstPath: String?,
+            startMs: Int,
+            endMs: Int,
+            useAudio: Boolean,
+            useVideo: Boolean
     ) {
         // Set up MediaExtractor to read from the source.
         val extractor = MediaExtractor()
@@ -102,13 +102,13 @@ class AudioExtractorImpl : AudioExtractor {
      * @throws IOException
      */
     private fun genVideoUsingMuxer(
-        extractor: MediaExtractor,
-        retrieverSrc: MediaMetadataRetriever,
-        dstPath: String?,
-        startMs: Int,
-        endMs: Int,
-        useAudio: Boolean,
-        useVideo: Boolean
+            extractor: MediaExtractor,
+            retrieverSrc: MediaMetadataRetriever,
+            dstPath: String?,
+            startMs: Int,
+            endMs: Int,
+            useAudio: Boolean,
+            useVideo: Boolean
     ) {
 
         val trackCount = extractor.trackCount
@@ -142,7 +142,7 @@ class AudioExtractorImpl : AudioExtractor {
         }
         // Set up the orientation and starting time for extractor.
         val degreesString =
-            retrieverSrc.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)
+                retrieverSrc.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)
         if (degreesString != null) {
             val degrees = degreesString.toInt()
             if (degrees >= 0) {

@@ -15,13 +15,13 @@ class AudioTranscriberTest(context: Context) : AudioTranscriber {
     private fun resultMockService(): Observable<MLCaptionEnvelop> {
         return Observable.create { emitter ->
             emitter.onNext(
-                MLCaptionEnvelop(
-                    arrayListOf(
-                        MLCaption("First sentence", 0L, 1000L),
-                        MLCaption("LOL", 1000L, 2000L),
-                        MLCaption("Sample text sample text sample text", 4000L, 5000L),
+                    MLCaptionEnvelop(
+                            arrayListOf(
+                                    MLCaption("First sentence", 0L, 1000L),
+                                    MLCaption("LOL", 1000L, 2000L),
+                                    MLCaption("Sample text sample text sample text", 4000L, 5000L),
+                            )
                     )
-                )
             )
             emitter.onComplete()
         }
@@ -30,9 +30,9 @@ class AudioTranscriberTest(context: Context) : AudioTranscriber {
     private fun emptyMockService(): Observable<MLCaptionEnvelop> {
         return Observable.create { emitter ->
             emitter.onNext(
-                MLCaptionEnvelop(
-                    emptyList()
-                )
+                    MLCaptionEnvelop(
+                            emptyList()
+                    )
             )
             emitter.onComplete()
         }
@@ -47,9 +47,9 @@ class AudioTranscriberTest(context: Context) : AudioTranscriber {
     private fun nullResultMockService(): Observable<MLCaptionEnvelop> {
         return Observable.create { emitter ->
             emitter.onNext(
-                MLCaptionEnvelop(
-                    null
-                )
+                    MLCaptionEnvelop(
+                            null
+                    )
             )
             emitter.onComplete()
         }

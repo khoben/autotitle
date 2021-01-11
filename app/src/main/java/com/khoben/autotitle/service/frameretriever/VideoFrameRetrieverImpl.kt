@@ -9,7 +9,7 @@ import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class VideoFrameRetrieverImpl(
-    private val context: Context
+        private val context: Context
 ) : VideoFrameRetriever {
 
     private var videoMetadataProvider: VideoMetaDataProvider? = null
@@ -31,9 +31,9 @@ class VideoFrameRetrieverImpl(
 
     override fun init(uri: Uri, providerType: ProviderType): VideoFrameRetrieverImpl {
         videoMetadataProvider = MetadataProviderFactory.get(
-            providerType = providerType,
-            context = context,
-            uri = uri
+                providerType = providerType,
+                context = context,
+                uri = uri
         )
         videoDuration = videoMetadataProvider!!.getVideoDuration()
         return this
@@ -46,10 +46,10 @@ class VideoFrameRetrieverImpl(
 
     private fun callObservable(o: Observable<List<Bitmap>>) {
         frameRetrieverDisposable = o.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { frames -> callback?.invoke(frames) },
-                { error -> errorListener?.invoke(error) })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { frames -> callback?.invoke(frames) },
+                        { error -> errorListener?.invoke(error) })
     }
 
     override fun cancel() {

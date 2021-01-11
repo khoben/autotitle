@@ -7,7 +7,6 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.isVisible
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.khoben.autotitle.R
 import java.lang.ref.WeakReference
@@ -25,6 +24,7 @@ class VideoProcessingProgressDialog(val context: WeakReference<Context>) {
     private var savedHintText = ""
 
     var listener: ProgressDialogListener? = null
+
     interface ProgressDialogListener {
         fun cancelBtnClicked()
         fun confirmCancelBtnClicked()
@@ -33,28 +33,26 @@ class VideoProcessingProgressDialog(val context: WeakReference<Context>) {
 
     fun show(hint: String = "") {
         mainView = inflater.inflate(R.layout.popup_window_video_process_layout, null)
-            .apply {
-                loadingTextView = findViewById<TextView>(R.id.loading_text).apply {
-                    text = hint
-                }
-                confirmationLayout = findViewById(R.id.confirmation)
-                curPercentTextView = findViewById(R.id.percentage)
+                .apply {
+                    loadingTextView = findViewById<TextView>(R.id.loading_text).apply {
+                        text = hint
+                    }
+                    confirmationLayout = findViewById(R.id.confirmation)
+                    curPercentTextView = findViewById(R.id.percentage)
 
-                cancelButton = findViewById<Button>(R.id.cancel_btn).apply {
-                    setOnClickListener { onCancelBtnClicked() }
-                }
+                    cancelButton = findViewById<Button>(R.id.cancel_btn).apply {
+                        setOnClickListener { onCancelBtnClicked() }
+                    }
 
-                findViewById<Button>(R.id.confirm).
-                    setOnClickListener {
+                    findViewById<Button>(R.id.confirm).setOnClickListener {
                         onConfirmCancelBtnClicked()
                     }
 
-                findViewById<Button>(R.id.nope).
-                    setOnClickListener {
+                    findViewById<Button>(R.id.nope).setOnClickListener {
                         onNopeCancelBtnClicked()
                     }
 
-            }
+                }
         dialog = MaterialAlertDialogBuilder(context.get()!!, R.style.CustomAlertDialog).apply {
             setCancelable(false)
             setView(mainView!!)

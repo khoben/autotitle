@@ -3,7 +3,6 @@ package com.khoben.autotitle.ui.activity
 import android.Manifest
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.google.android.material.button.MaterialButton
@@ -84,9 +83,9 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView {
 
     override fun showVideoSavedToast(path: String?) {
         Toast.makeText(
-            this,
-            getString(R.string.saved_path_video, path),
-            Toast.LENGTH_LONG
+                this,
+                getString(R.string.saved_path_video, path),
+                Toast.LENGTH_LONG
         ).show()
     }
 

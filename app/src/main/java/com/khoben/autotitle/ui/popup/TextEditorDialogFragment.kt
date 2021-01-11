@@ -34,16 +34,16 @@ class TextEditorDialogFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.window!!.setLayout(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
         )
         dialog?.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.add_text_dialog, container, false)
     }
@@ -57,7 +57,7 @@ class TextEditorDialogFragment : DialogFragment() {
         mAddTextEditText!!.setTextColor(mColorCode)
 
         mInputMethodManager =
-            requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
         view.findViewById<RecyclerView>(R.id.add_text_color_picker_recycler_view).apply {
             layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
@@ -65,7 +65,7 @@ class TextEditorDialogFragment : DialogFragment() {
             adapter = activity?.let {
                 ColorPickerAdapter(it).apply {
                     onColorPickerClickListener = object :
-                        ColorPickerAdapter.OnColorPickerClickListener {
+                            ColorPickerAdapter.OnColorPickerClickListener {
                         override fun onColorPickerClickListener(colorCode: Int) {
                             mColorCode = colorCode
                             mAddTextEditText!!.setTextColor(colorCode)
@@ -101,9 +101,9 @@ class TextEditorDialogFragment : DialogFragment() {
 
         @JvmOverloads
         fun show(
-            appCompatActivity: AppCompatActivity,
-            inputText: String? = "",
-            @ColorInt colorCode: Int = ContextCompat.getColor(appCompatActivity, R.color.white)
+                appCompatActivity: AppCompatActivity,
+                inputText: String? = "",
+                @ColorInt colorCode: Int = ContextCompat.getColor(appCompatActivity, R.color.white)
         ): TextEditorDialogFragment {
             return TextEditorDialogFragment().apply {
                 arguments = Bundle().apply {

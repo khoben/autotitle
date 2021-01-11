@@ -10,11 +10,11 @@ import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 
 
 class RecyclerViewClickListener(
-    context: Context,
-    recyclerView: RecyclerView,
-    private val clickListener: ClickListener?
+        context: Context,
+        recyclerView: RecyclerView,
+        private val clickListener: ClickListener?
 ) :
-    OnItemTouchListener {
+        OnItemTouchListener {
     private val gestureDetector: GestureDetector
     override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
         val child: View? = rv.findChildViewUnder(e.x, e.y)

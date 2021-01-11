@@ -55,12 +55,14 @@ abstract class OverlayObject(context: Context, attrs: AttributeSet) :
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         if (isInEdit) {
+            // draw frameborder
             canvas.drawRect(0F + deleteBtnWidth / 2F,
                     0F + deleteBtnHeight / 2F,
                     width.toFloat() - deleteBtnHeight / 2F,
                     height.toFloat() - deleteBtnHeight / 2F,
                     helpFramePaint)
 
+            // draw delete icon
             deleteRect.set((width - deleteBtnWidth).toFloat(), 0F, width.toFloat(), deleteBtnHeight.toFloat())
             canvas.drawBitmap(deleteBtn, null, deleteRect, null)
         }

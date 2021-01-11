@@ -49,7 +49,7 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView {
     private val takeVideoWithPermission = permissionsDSL {
         allGranted = {
             takenVideoUri = FileUtils.getRandomUri(
-                this@MainActivity, VIDEO_EXTENSION, Environment.DIRECTORY_MOVIES
+                    this@MainActivity, VIDEO_EXTENSION, Environment.DIRECTORY_MOVIES
             )
             takeVideoActivityResult.launch(takenVideoUri)
         }
@@ -68,7 +68,7 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.settingsBtn.setOnClickListener {  settingsClick(it)  }
+        binding.settingsBtn.setOnClickListener { settingsClick(it) }
         binding.cameraCaptureButton.setOnClickListener { takeVideoClick(it) }
         binding.filestoreLoadButton.setOnClickListener { getContentClick(it) }
     }
@@ -93,9 +93,9 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView {
         when (presenter.verifyMedia(uri)) {
             OpeningVideoFileState.FAILED -> {
                 Toast.makeText(
-                    this,
-                    getString(R.string.error_while_opening_file),
-                    Toast.LENGTH_SHORT
+                        this,
+                        getString(R.string.error_while_opening_file),
+                        Toast.LENGTH_SHORT
                 ).show()
             }
             OpeningVideoFileState.LIMIT -> {

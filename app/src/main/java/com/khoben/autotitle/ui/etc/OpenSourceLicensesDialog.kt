@@ -5,8 +5,6 @@ import android.app.Dialog
 import android.os.Bundle
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.marginTop
-import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.DialogFragment
 import com.khoben.autotitle.extension.dp
 
@@ -19,11 +17,11 @@ class OpenSourceLicensesDialog : DialogFragment() {
             loadUrl("file:///android_asset/licenses.html")
         }
         return AlertDialog.Builder(requireActivity())
-            .setTitle("Open Source Licenses")
-            .setPositiveButton(android.R.string.ok) { dialog, _ -> dialog.dismiss() }
-            .create().apply {
-                setView(webView, 0, 15.dp(), 0, 0)
-            }
+                .setTitle("Open Source Licenses")
+                .setPositiveButton(android.R.string.ok) { dialog, _ -> dialog.dismiss() }
+                .create().apply {
+                    setView(webView, 0, 15.dp(), 0, 0)
+                }
     }
 
 

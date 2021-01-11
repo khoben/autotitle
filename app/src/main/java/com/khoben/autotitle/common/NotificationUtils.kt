@@ -22,12 +22,12 @@ object NotificationUtils {
         }
     }
 
-    fun show(context:Context, text: String, title: String = App.appName) {
+    fun show(context: Context, text: String, title: String = App.appName) {
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_stat_name)
-            .setContentTitle(title)
-            .setContentText(text)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setSmallIcon(R.drawable.ic_stat_name)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         with(NotificationManagerCompat.from(context)) {
             // notificationId is a unique int for each notification that you must define
             notify(UUID.randomUUID().hashCode(), builder.build())

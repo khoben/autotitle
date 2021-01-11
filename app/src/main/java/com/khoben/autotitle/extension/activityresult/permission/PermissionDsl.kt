@@ -5,14 +5,14 @@ import androidx.activity.result.ActivityResultLauncher
 
 
 inline fun ComponentActivity.permissionsDSL(
-    builderPermission: MultiPermissionBuilder.() -> Unit
+        builderPermission: MultiPermissionBuilder.() -> Unit
 ): ActivityResultLauncher<Array<String>> {
     val builder =
-        MultiPermissionBuilder()
+            MultiPermissionBuilder()
     builder.builderPermission()
     return requestMultiplePermissions(
-        allGranted = builder.allGranted,
-        denied = builder.denied,
-        explained = builder.explained
+            allGranted = builder.allGranted,
+            denied = builder.denied,
+            explained = builder.explained
     )
 }

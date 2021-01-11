@@ -22,10 +22,10 @@ class AndroidMediaCodecMetadataProvider(context: Context, uri: Uri) : VideoMetaD
         val bitmapMin = min(bitmapWidth.toFloat(), bitmapHeight.toFloat())
         val scale = min / bitmapMin
         val scaledBitmap = Bitmap.createScaledBitmap(
-            frameBitmap,
-            (bitmapWidth * scale).toInt(),
-            (bitmapHeight * scale).toInt(),
-            true
+                frameBitmap,
+                (bitmapWidth * scale).toInt(),
+                (bitmapHeight * scale).toInt(),
+                true
         )
         frameBitmap.recycle()
         return scaledBitmap

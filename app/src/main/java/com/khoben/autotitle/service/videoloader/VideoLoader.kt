@@ -50,7 +50,7 @@ class VideoLoader {
         this.frameTime = frameTime
 
         this.frames = videoFrameRetriever.init(uri, ProviderType.MEDIA_CODEC)
-            .retrieveFrames(frameTime, App.THUMB_SIZE.first, App.THUMB_SIZE.second)
+                .retrieveFrames(frameTime, App.THUMB_SIZE.first, App.THUMB_SIZE.second)
         this.tempAudioPath = FileUtils.getRandomFilepath(context, App.AUDIO_EXTENSION)
         this.audio = extractAudio(context, tempAudioPath!!)
 
@@ -65,32 +65,32 @@ class VideoLoader {
     fun load(callback: (Pair<List<Bitmap>, MLCaptionEnvelop>) -> Unit) {
         this.callback = callback
         Observable.zip(
-            frames,
-            audio!!.onErrorReturn { error ->
-                Timber.e("Audio Transcription error: $error")
-                MLCaptionEnvelop(null, error)
-            },
-            { f, a -> Pair<List<Bitmap>, MLCaptionEnvelop>(f, a) }
+                frames,
+                audio!!.onErrorReturn { error ->
+                    Timber.e("Audio Transcription error: $error")
+                    MLCaptionEnvelop(null, error)
+                },
+                { f, a -> Pair<List<Bitmap>, MLCaptionEnvelop>(f, a) }
         ).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ result ->
-                FileUtils.deleteFile(context!!, tempAudioPath!!)
-                callback.invoke(result)
-            }, { error ->
-                FileUtils.deleteFile(context!!, tempAudioPath!!)
-                errorListener?.invoke(error)
-            })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ result ->
+                    FileUtils.deleteFile(context!!, tempAudioPath!!)
+                    callback.invoke(result)
+                }, { error ->
+                    FileUtils.deleteFile(context!!, tempAudioPath!!)
+                    errorListener?.invoke(error)
+                })
 
     }
 
     private fun extractAudio(context: Context, outputPath: String): Observable<MLCaptionEnvelop> {
         return audioExtractor.extractAudio(context, uri!!, outputPath)
-            .flatMap { path ->
-                Timber.d("Audio has been extracted with path = $path")
-                // TODO("LANG CODE")
-                audioTranscriber.setLangCode("en-US")
-                audioTranscriber.start(path)
-            }
+                .flatMap { path ->
+                    Timber.d("Audio has been extracted with path = $path")
+                    // TODO("LANG CODE")
+                    audioTranscriber.setLangCode("en-US")
+                    audioTranscriber.start(path)
+                }
     }
 
     fun cancel() {

@@ -13,7 +13,7 @@ import com.khoben.autotitle.extension.getBitmap
 class OverlayText(context: Context, attrs: AttributeSet) : OverlayObject(context, attrs) {
 
     private val timeRangeBackgroundColor =
-        ContextCompat.getColor(context, R.color.timelineBackgroundColor)
+            ContextCompat.getColor(context, R.color.timelineBackgroundColor)
 
     val timeline = View(context).apply {
         setBackgroundColor(timeRangeBackgroundColor)

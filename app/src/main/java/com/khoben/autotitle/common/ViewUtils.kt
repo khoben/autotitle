@@ -17,10 +17,10 @@ object ViewUtils {
      * @return Bitmap?
      */
     fun getBitmapFromView(
-        view: View,
-        parentView: View,
-        _scaleX: Float,
-        _scaleY: Float
+            view: View,
+            parentView: View,
+            _scaleX: Float,
+            _scaleY: Float
     ): Bitmap? {
 
         val displayedWidth = parentView.measuredWidth
@@ -37,11 +37,11 @@ object ViewUtils {
         val pivotY = newSizeY / 2F
 
         val returnedBitmap =
-            Bitmap.createBitmap(
-                (newSizeX).toInt(),
-                (newSizeY).toInt(),
-                Bitmap.Config.ARGB_8888
-            )
+                Bitmap.createBitmap(
+                        (newSizeX).toInt(),
+                        (newSizeY).toInt(),
+                        Bitmap.Config.ARGB_8888
+                )
         val canvas = Canvas(returnedBitmap)
         canvas.scale(scaleX, scaleY, pivotX, pivotY)
         if (view is TextView) {

@@ -6,8 +6,8 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 
 inline fun ComponentActivity.getContent(
-    crossinline onError: (error: Throwable) -> Unit = {},
-    crossinline onSuccess: (uri: Uri) -> Unit = {}
+        crossinline onError: (error: Throwable) -> Unit = {},
+        crossinline onSuccess: (uri: Uri) -> Unit = {}
 ): ActivityResultLauncher<String> {
     return registerForActivityResult(ActivityResultContracts.GetContent()) {
         when {
@@ -18,8 +18,8 @@ inline fun ComponentActivity.getContent(
 }
 
 inline fun ComponentActivity.takeVideo(
-    crossinline onError: (error: Throwable) -> Unit = {},
-    crossinline onSuccess: (message: String) -> Unit = {}
+        crossinline onError: (error: Throwable) -> Unit = {},
+        crossinline onSuccess: (message: String) -> Unit = {}
 ): ActivityResultLauncher<Uri> {
     return registerForActivityResult(ActivityResultContracts.TakeVideo()) {
         onSuccess.invoke("Video was taken")

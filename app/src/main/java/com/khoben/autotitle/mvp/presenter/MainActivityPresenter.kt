@@ -39,7 +39,7 @@ class MainActivityPresenter : MvpPresenter<MainActivityView>() {
         }
         try {
             val duration =
-                mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)!!.toLong()
+                    mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)!!.toLong()
             if (duration >= LIMIT_DURATION_MS) {
                 mediaMetadataRetriever.release()
                 return OpeningVideoFileState.LIMIT

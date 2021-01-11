@@ -15,7 +15,7 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 class SimpleVideoRender : VideoRender(),
-    SurfaceTexture.OnFrameAvailableListener {
+        SurfaceTexture.OnFrameAvailableListener {
 
     private val mTriangleVertices: FloatBuffer
     private val mMVPMatrix = FloatArray(16)
@@ -58,16 +58,16 @@ class SimpleVideoRender : VideoRender(),
         GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, mTextureID)
         mTriangleVertices.position(TRIANGLE_VERTICES_DATA_POS_OFFSET)
         GLES20.glVertexAttribPointer(
-            maPositionHandle, 3, GLES20.GL_FLOAT, false,
-            TRIANGLE_VERTICES_DATA_STRIDE_BYTES, mTriangleVertices
+                maPositionHandle, 3, GLES20.GL_FLOAT, false,
+                TRIANGLE_VERTICES_DATA_STRIDE_BYTES, mTriangleVertices
         )
         checkGlError("glVertexAttribPointer maPosition")
         GLES20.glEnableVertexAttribArray(maPositionHandle)
         checkGlError("glEnableVertexAttribArray maPositionHandle")
         mTriangleVertices.position(TRIANGLE_VERTICES_DATA_UV_OFFSET)
         GLES20.glVertexAttribPointer(
-            maTextureHandle, 3, GLES20.GL_FLOAT, false,
-            TRIANGLE_VERTICES_DATA_STRIDE_BYTES, mTriangleVertices
+                maTextureHandle, 3, GLES20.GL_FLOAT, false,
+                TRIANGLE_VERTICES_DATA_STRIDE_BYTES, mTriangleVertices
         )
         checkGlError("glVertexAttribPointer maTextureHandle")
         GLES20.glEnableVertexAttribArray(maTextureHandle)
@@ -112,12 +112,12 @@ class SimpleVideoRender : VideoRender(),
         GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, mTextureID)
         checkGlError("glBindTexture mTextureID")
         GLES20.glTexParameterf(
-            GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MIN_FILTER,
-            GLES20.GL_NEAREST.toFloat()
+                GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MIN_FILTER,
+                GLES20.GL_NEAREST.toFloat()
         )
         GLES20.glTexParameterf(
-            GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MAG_FILTER,
-            GLES20.GL_LINEAR.toFloat()
+                GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MAG_FILTER,
+                GLES20.GL_LINEAR.toFloat()
         )
 
         /*
@@ -200,10 +200,10 @@ class SimpleVideoRender : VideoRender(),
         private const val GL_TEXTURE_EXTERNAL_OES = 0x8D65
 
         private val mTriangleVerticesData = floatArrayOf( // X, Y, Z, U, V
-            -1.0f, -1.0f, 0f, 0f, 0f,
-            1.0f, -1.0f, 0f, 1f, 0f,
-            -1.0f, 1.0f, 0f, 0f, 1f,
-            1.0f, 1.0f, 0f, 1f, 1f
+                -1.0f, -1.0f, 0f, 0f, 0f,
+                1.0f, -1.0f, 0f, 1f, 0f,
+                -1.0f, 1.0f, 0f, 0f, 1f,
+                1.0f, 1.0f, 0f, 1f, 1f
         )
 
         private const val mVertexShader = """uniform mat4 uMVPMatrix;
@@ -229,9 +229,9 @@ class SimpleVideoRender : VideoRender(),
 
     init {
         mTriangleVertices = ByteBuffer.allocateDirect(
-            mTriangleVerticesData.size * FLOAT_SIZE_BYTES
+                mTriangleVerticesData.size * FLOAT_SIZE_BYTES
         )
-            .order(ByteOrder.nativeOrder()).asFloatBuffer()
+                .order(ByteOrder.nativeOrder()).asFloatBuffer()
         mTriangleVertices.put(mTriangleVerticesData).position(0)
         Matrix.setIdentityM(mSTMatrix, 0)
     }

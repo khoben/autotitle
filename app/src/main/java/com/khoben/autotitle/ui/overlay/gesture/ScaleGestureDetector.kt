@@ -250,9 +250,9 @@ internal class ScaleGestureDetector(private val mListener: OnScaleGestureListene
     }
 
     private fun findNewActiveIndex(
-        ev: MotionEvent,
-        otherActiveId: Int,
-        removedPointerIndex: Int
+            ev: MotionEvent,
+            otherActiveId: Int,
+            removedPointerIndex: Int
     ): Int {
         val pointerCount = ev.pointerCount
 

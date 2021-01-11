@@ -1,12 +1,8 @@
 package com.khoben.autotitle.extension
 
 import android.annotation.SuppressLint
-import android.provider.Settings.System.DATE_FORMAT
 import com.khoben.autotitle.App
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 /**

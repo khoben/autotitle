@@ -62,10 +62,10 @@ class ResultViewActivityPresenter : MvpPresenter<ResultActivityView>() {
     fun share(context: Context) {
         val fileUri = FileUtils.getUriFromPath(appContext, videoPath!!)
         ShareCompat.IntentBuilder.from(context as Activity)
-            .setStream(fileUri)
-            .setType(App.VIDEO_MIME_TYPE)
-            .setChooserTitle(context.getString(R.string.share_video_title))
-            .startChooser()
+                .setStream(fileUri)
+                .setType(App.VIDEO_MIME_TYPE)
+                .setChooserTitle(context.getString(R.string.share_video_title))
+                .startChooser()
     }
 
     fun getPlayer() = mediaPlayer.getPlayerImpl(appContext)

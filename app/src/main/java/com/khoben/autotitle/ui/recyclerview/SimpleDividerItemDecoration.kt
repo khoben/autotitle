@@ -11,7 +11,7 @@ import com.khoben.autotitle.R
 
 class SimpleDividerItemDecoration(context: Context) : ItemDecoration() {
     private val mDivider: Drawable =
-        ContextCompat.getDrawable(context, R.drawable.recycler_horizontal_divider)!!
+            ContextCompat.getDrawable(context, R.drawable.recycler_horizontal_divider)!!
 
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         val left = parent.paddingLeft
@@ -26,10 +26,10 @@ class SimpleDividerItemDecoration(context: Context) : ItemDecoration() {
             mDivider.draw(c)
             if (i == 0) {
                 mDivider.setBounds(
-                    left,
-                    top - child.bottom,
-                    right,
-                    top - child.bottom + mDivider.intrinsicHeight
+                        left,
+                        top - child.bottom,
+                        right,
+                        top - child.bottom + mDivider.intrinsicHeight
                 )
                 mDivider.draw(c)
             }

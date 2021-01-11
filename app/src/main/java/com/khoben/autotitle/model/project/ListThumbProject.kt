@@ -13,7 +13,7 @@ import java.io.File
 @ExperimentalSerializationApi
 @Serializable
 data class ListThumbProject(
-    var list: List<ThumbProject>? = null
+        var list: List<ThumbProject>? = null
 ) {
     private val FILE_CONTENT = App.PROJECTS_FILE_SERIALIZED
 

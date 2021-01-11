@@ -65,9 +65,9 @@ object FileUtils {
      * @return Filepath
      */
     fun getRandomFilepath(
-        context: Context,
-        extension: String,
-        directory: String = Environment.DIRECTORY_MOVIES
+            context: Context,
+            extension: String,
+            directory: String = Environment.DIRECTORY_MOVIES
     ): String {
         return "${context.getExternalFilesDir(directory)?.absolutePath}/${System.currentTimeMillis()}.$extension"
     }
@@ -80,9 +80,9 @@ object FileUtils {
      * @return Uri
      */
     fun getRandomUri(
-        context: Context,
-        extension: String,
-        directory: String = Environment.DIRECTORY_MOVIES
+            context: Context,
+            extension: String,
+            directory: String = Environment.DIRECTORY_MOVIES
     ): Uri {
         return getUriFromPath(context, getRandomFilepath(context, extension, directory))
     }
@@ -95,9 +95,9 @@ object FileUtils {
      */
     fun getUriFromPath(context: Context, path: String): Uri {
         return FileProvider.getUriForFile(
-            context,
-            "${BuildConfig.APPLICATION_ID}.fileprovider",
-            File(path)
+                context,
+                "${BuildConfig.APPLICATION_ID}.fileprovider",
+                File(path)
         )
     }
 
@@ -132,8 +132,8 @@ object FileUtils {
         val file = File(path)
         val deleted = file.delete()
         MediaScannerConnection.scanFile(
-            context, arrayOf(file.toString()),
-            arrayOf(file.name), null
+                context, arrayOf(file.toString()),
+                arrayOf(file.name), null
         )
         if (deleted) {
             Timber.d("File $path was deleted")

@@ -9,9 +9,9 @@ const val EXPLAINED = "EXPLAINED"
 
 
 inline fun ComponentActivity.requestMultiplePermissions(
-    crossinline denied: (List<String>) -> Unit = {},
-    crossinline explained: (List<String>) -> Unit = {},
-    crossinline allGranted: () -> Unit = {}
+        crossinline denied: (List<String>) -> Unit = {},
+        crossinline explained: (List<String>) -> Unit = {},
+        crossinline allGranted: () -> Unit = {}
 ): ActivityResultLauncher<Array<String>> {
     return registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result: MutableMap<String, Boolean> ->
         val deniedList = result.filter { !it.value }.map { it.key }

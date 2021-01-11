@@ -86,13 +86,13 @@ class VideoSurfaceView : GLSurfaceView {
 
                 Timber.d("Video source: $mVideoWidth x $mVideoHeight")
                 if (
-                    (heightSpecMode == MeasureSpec.AT_MOST && widthSpecMode == MeasureSpec.AT_MOST) &&
-                    ((height > heightSpecSize && width > widthSpecSize) ||
-                            (height < heightSpecSize && width < widthSpecSize))
+                        (heightSpecMode == MeasureSpec.AT_MOST && widthSpecMode == MeasureSpec.AT_MOST) &&
+                        ((height > heightSpecSize && width > widthSpecSize) ||
+                                (height < heightSpecSize && width < widthSpecSize))
                 ) {
                     val scale = min(
-                        widthSpecSize.toFloat() / mVideoWidth,
-                        heightSpecSize.toFloat() / mVideoHeight
+                            widthSpecSize.toFloat() / mVideoWidth,
+                            heightSpecSize.toFloat() / mVideoHeight
                     )
                     width = (mVideoWidth * scale).toInt()
                     height = (mVideoHeight * scale).toInt()

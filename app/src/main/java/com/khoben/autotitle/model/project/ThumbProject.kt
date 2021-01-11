@@ -12,9 +12,9 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class ThumbProject(
-    val id: String,
-    var title: String? = null,
-    val sourceVideoThumbPath: String = "thumb",
-    val dateCreated: Long = -1,
-    var dateUpdated: Long = -1,
+        val id: String,
+        var title: String? = null,
+        val sourceVideoThumbPath: String = "thumb",
+        val dateCreated: Long = -1,
+        var dateUpdated: Long = -1,
 )

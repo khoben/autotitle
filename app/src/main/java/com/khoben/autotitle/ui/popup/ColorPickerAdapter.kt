@@ -15,8 +15,8 @@ import com.khoben.autotitle.R
 
 
 class ColorPickerAdapter(
-    private val context: Context,
-    private val colorPickerColors: List<Int>
+        private val context: Context,
+        private val colorPickerColors: List<Int>
 ) : RecyclerView.Adapter<ColorPickerAdapter.ViewHolder>() {
 
     private val inflater = LayoutInflater.from(context)
@@ -59,7 +59,7 @@ class ColorPickerAdapter(
         init {
             itemView.setOnClickListener {
                 onColorPickerClickListener?.onColorPickerClickListener(
-                    colorPickerColors[adapterPosition]
+                        colorPickerColors[adapterPosition]
                 )
             }
         }
@@ -84,10 +84,10 @@ class ColorPickerAdapter(
             colorPickerColors.add(ContextCompat.getColor(context, R.color.white))
             colorPickerColors.add(ContextCompat.getColor(context, R.color.yellow_color_picker))
             colorPickerColors.add(
-                ContextCompat.getColor(
-                    context,
-                    R.color.yellow_green_color_picker
-                )
+                    ContextCompat.getColor(
+                            context,
+                            R.color.yellow_green_color_picker
+                    )
             )
             return colorPickerColors
         }

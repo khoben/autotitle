@@ -13,9 +13,9 @@ import com.khoben.autotitle.ui.overlay.OverlayDataMapper
 import java.util.*
 
 class OverlayViewListAdapter :
-    ListAdapter<OverlayDataMapper, OverlayViewListAdapter.OverlayViewHolder>(
-        OverlayViewDiffCallback()
-    ), RecyclerViewItemEventListener {
+        ListAdapter<OverlayDataMapper, OverlayViewListAdapter.OverlayViewHolder>(
+                OverlayViewDiffCallback()
+        ), RecyclerViewItemEventListener {
 
     private var selectedItemUUID: UUID? = null
     private var lastSelectedItemUUID: UUID? = null
@@ -48,8 +48,7 @@ class OverlayViewListAdapter :
         lastItemSelectedPos = if (lastItemSelectedPos == -1) {
             lastSelectedItemUUID = selectedItemUUID
             selectedItemPos
-        }
-        else {
+        } else {
             // deselect last selected item
             notifyItemChanged(currentList.indexOfFirst { it.uuid == lastSelectedItemUUID })
             // save for future deselection
@@ -67,7 +66,7 @@ class OverlayViewListAdapter :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OverlayViewHolder {
         return OverlayViewHolder.from(parent)
-            .apply { listItemEventListener = this@OverlayViewListAdapter }
+                .apply { listItemEventListener = this@OverlayViewListAdapter }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -81,25 +80,25 @@ class OverlayViewListAdapter :
     }
 
     class OverlayViewHolder(private val binding: RecyclerViewItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+            RecyclerView.ViewHolder(binding.root) {
 
         var listItemEventListener: RecyclerViewItemEventListener? = null
 
         private val itemSelectedColor by lazy {
             val typedValue = TypedValue()
             itemView.context.theme.resolveAttribute(
-                R.attr.colorControlHighlight,
-                typedValue,
-                true
+                    R.attr.colorControlHighlight,
+                    typedValue,
+                    true
             )
             ContextCompat.getColor(itemView.context, typedValue.resourceId)
         }
         private val surfaceColor by lazy {
             val typedValue = TypedValue()
             itemView.context.theme.resolveAttribute(
-                R.attr.colorSurface,
-                typedValue,
-                true
+                    R.attr.colorSurface,
+                    typedValue,
+                    true
             )
             ContextCompat.getColor(itemView.context, typedValue.resourceId)
         }

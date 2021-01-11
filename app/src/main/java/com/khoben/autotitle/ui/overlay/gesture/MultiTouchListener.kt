@@ -6,7 +6,6 @@ import android.graphics.RectF
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
-import androidx.annotation.IntDef
 import timber.log.Timber
 import kotlin.math.max
 import kotlin.math.min
@@ -20,7 +19,7 @@ class MultiTouchListener(
         private val controls: List<Pair<ControlType, RectF>>,
         private val mIsTextPinchZoomable: Boolean
 ) :
-    View.OnTouchListener {
+        View.OnTouchListener {
     private val mGestureListener: GestureDetector
     private val isRotateEnabled = true
     private val isTranslateEnabled = true
@@ -107,8 +106,8 @@ class MultiTouchListener(
                             if (view.y < 0) translationY *= -1
 
                             view.animate()
-                                .translationX(translationX)
-                                .translationY(translationY)
+                                    .translationX(translationX)
+                                    .translationY(translationY)
                         }
                         DIRECTION.NONE -> {
                         }
@@ -117,7 +116,7 @@ class MultiTouchListener(
             }
             MotionEvent.ACTION_POINTER_UP -> {
                 val pointerIndexPointerUp =
-                    action and MotionEvent.ACTION_POINTER_INDEX_MASK shr MotionEvent.ACTION_POINTER_INDEX_SHIFT
+                        action and MotionEvent.ACTION_POINTER_INDEX_MASK shr MotionEvent.ACTION_POINTER_INDEX_SHIFT
                 val pointerId = event.getPointerId(pointerIndexPointerUp)
                 if (pointerId == mActivePointerId) {
                     val newPointerIndex = if (pointerIndexPointerUp == 0) 1 else 0
@@ -161,8 +160,8 @@ class MultiTouchListener(
             val info = TransformInfo()
             info.deltaScale = if (isScaleEnabled) detector!!.getScaleFactor() else 1.0f
             info.deltaAngle = if (isRotateEnabled) Vector2D.getAngle(
-                mPrevSpanVector,
-                detector!!.getCurrentSpanVector()
+                    mPrevSpanVector,
+                    detector!!.getCurrentSpanVector()
             ) else 0.0f
             info.deltaX = if (isTranslateEnabled) detector!!.getFocusX() - mPivotX else 0.0f
             info.deltaY = if (isTranslateEnabled) detector!!.getFocusY() - mPivotY else 0.0f

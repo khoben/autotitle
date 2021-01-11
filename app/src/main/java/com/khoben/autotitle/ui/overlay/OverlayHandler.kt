@@ -20,8 +20,8 @@ import java.util.*
 import kotlin.math.min
 
 class OverlayHandler private constructor(
-    private var context: Context,
-    private var parentView: WeakReference<ViewGroup>
+        private var context: Context,
+        private var parentView: WeakReference<ViewGroup>
 ) {
     private val overlayFactory = OverlayFactory(context)
     private val overlayViews = ArrayList<OverlayObject>()
@@ -41,21 +41,21 @@ class OverlayHandler private constructor(
         fun onAdded(overlay: OverlayObject?, overlays: List<OverlayObject>, isEdit: Boolean = true)
         fun onAddedAll(overlays: List<OverlayObject>)
         fun onSelect(
-            overlay: OverlayObject?,
-            overlays: List<OverlayObject>,
-            seekToOverlayStart: Boolean
+                overlay: OverlayObject?,
+                overlays: List<OverlayObject>,
+                seekToOverlayStart: Boolean
         )
 
         fun onRemoved(
-            idxRemoved: Int,
-            removedOverlay: OverlayObject,
-            overlays: ArrayList<OverlayObject>
+                idxRemoved: Int,
+                removedOverlay: OverlayObject,
+                overlays: ArrayList<OverlayObject>
         )
     }
 
     fun setLayout(
-        context: Context,
-        parentView: WeakReference<ViewGroup>
+            context: Context,
+            parentView: WeakReference<ViewGroup>
     ) {
         this.context = context
         this.parentView = parentView
@@ -83,7 +83,7 @@ class OverlayHandler private constructor(
             this.endTime = endTime
             this.textView!!.text = text
             // gestures
-            this.initMultiTouchListener(parentView.get()!!.getRect(), object: MultiTouchListener.OnGestureControl {
+            this.initMultiTouchListener(parentView.get()!!.getRect(), object : MultiTouchListener.OnGestureControl {
                 override fun onClick() {
                     selectedOverlay(newOverlay, false)
                 }
@@ -154,8 +154,8 @@ class OverlayHandler private constructor(
 
     fun addTextOverlayAfterSpecificPosition(pos: Int): Long {
         val newOverlay =
-            createTextOverlay(overlayViews[pos].endTime, 
-                overlayViews[pos].endTime + FRAME_TIME_MS)
+                createTextOverlay(overlayViews[pos].endTime,
+                        overlayViews[pos].endTime + FRAME_TIME_MS)
 
         addOverlayToParent(newOverlay)
         overlayViews.add(pos + 1, newOverlay)
@@ -226,12 +226,12 @@ class OverlayHandler private constructor(
 
     private fun addOverlayToParent(child: View) {
         parentView.get()!!.addView(
-            child,
-            FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
-            ).apply {
-                gravity = Gravity.CENTER
-            }
+                child,
+                FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    gravity = Gravity.CENTER
+                }
         )
     }
 
@@ -313,8 +313,8 @@ class OverlayHandler private constructor(
     }
 
     data class Builder(
-        private var context: Context? = null,
-        private var parentView: ViewGroup? = null
+            private var context: Context? = null,
+            private var parentView: ViewGroup? = null
     ) {
         fun ctx(context: Context) = apply { this.context = context }
         fun parent(view: ViewGroup) = apply { this.parentView = view }
