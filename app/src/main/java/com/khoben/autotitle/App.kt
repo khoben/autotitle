@@ -13,7 +13,9 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        MLApplication.getInstance().apiKey = APIKeyStore.HuaweiMLKit()
+        appContext = applicationContext
+        MLApplication.getInstance().apiKey =
+            "CgB6e3x9/hsdbdBs4UtMv9w9yHOgLLpQWbfDNjtbW5685ZLdOW5HlpWzDmveL69IjxoeAg8TClmuNnbmvZ9xprrw"
         createApplicationComponent()
     }
 

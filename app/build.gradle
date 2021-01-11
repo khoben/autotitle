@@ -48,12 +48,6 @@ android {
         }
     }
 
-    externalNativeBuild {
-        ndkBuild {
-            path "src/main/jni/Android.mk"
-        }
-    }
-
     buildFeatures {
         viewBinding = true
         dataBinding = true
