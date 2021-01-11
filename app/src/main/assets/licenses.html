@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width,initial-scale=0.9" name="viewport">
+    <style>
+    body {
+    color: #4c4a40;
+    font-size: 87.5%;
+    }
+    .header, .library {
+    margin: 1em 0;
+    padding: 0 0.5em;
+    border-bottom: 1px solid #ebeae6;
+    }
+    .title {
+    font-size: 129%;
+    font-weight: bold;
+    margin: 1em 0
+    }
+    .license {
+    background-color: #f7f7f9;
+    border-radius: 4px;
+    border: 1px solid #e1e1e8;
+    font-size: 80%;
+    padding: 9px 14px;
+    margin-bottom: 14px;
+    }
+    .license h1, .license h2 {
+    font-size: 100%;
+    font-weight: bold;
+    }
+    .license .inline {
+    display: inline;
+    }
+    .license .block {
+    margin: 1em 0;
+    }
+    .license pre {
+    white-space: pre-wrap;
+    }
+    .license .low-alpha {
+    list-style-type: lower-alpha;
+    padding-left: 2em;
+    }
+    input ~ .license {
+    max-height: 200px;
+    overflow: hidden;
+    }
+    input, label {
+    position: absolute;
+    right: 16px;
+    width: 12px;
+    height: 12px;
+    margin: 20px;
+    }
+    input {
+    opacity: 0;
+    z-index: 1;
+    }
+    label {
+    margin-top: 16px;
+    text-align: center;
+    font-weight: bold;
+    }
+    label::before {
+    content: "+";
+    }
+    input:checked + label::before {
+    content: "-";
+    }
+    input:checked ~ .license {
+    max-height: none;
+    }
+
+    </style>
+</head>
+<body>
+<div class="library">
+    <!-- https://opensource.org/licenses/Apache-2.0 -->
+    <h1 class="title">Kotlin</h1>
+    <input type="checkbox"><label></label>
+    <div class="license">
+        <p class="notice">Copyright &copy; Jetbrains s.r.o. All rights reserved.</p>
+        <p><a href="https://kotlinlang.org/">https://kotlinlang.org/</a></p>
+        <p>Licensed under the <b>Apache License, Version 2.0 </b> (the "License");<br>
+        you may not use this file except in compliance with the License.<br>
+            You may obtain a copy of the License at</p>
+
+        <p>&emsp;http://www.apache.org/licenses/LICENSE-2.0</p>
+
+        <p>Unless required by applicable law or agreed to in writing, software<br>
+        distributed under the License is distributed on an "AS IS" BASIS,<br>
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
+        See the License for the specific language governing permissions and<br>
+            limitations under the License.</p>
+
+    </div>
+</div>
+<div class="library">
+    <!-- https://opensource.org/licenses/Apache-2.0 -->
+    <h1 class="title">RxJava</h1>
+    <input type="checkbox"><label></label>
+    <div class="license">
+        <p class="notice">Copyright &copy; RxJava Contributors. All rights reserved.</p>
+        <p><a href="https://github.com/ReactiveX/RxJava">https://github.com/ReactiveX/RxJava</a></p>
+        <p>Licensed under the <b>Apache License, Version 2.0 </b> (the "License");<br>
+            you may not use this file except in compliance with the License.<br>
+            You may obtain a copy of the License at</p>
+
+        <p>&emsp;http://www.apache.org/licenses/LICENSE-2.0</p>
+
+        <p>Unless required by applicable law or agreed to in writing, software<br>
+            distributed under the License is distributed on an "AS IS" BASIS,<br>
+            WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
+            See the License for the specific language governing permissions and<br>
+            limitations under the License.</p>
+
+    </div>
+</div>
+<div class="library">
+    <!-- https://opensource.org/licenses/mit-license.html -->
+    <h1 class="title">Moxy</h1>
+    <input type="checkbox"><label></label>
+    <div class="license">
+        <h2>The MIT License (MIT)</h2>
+        <p>Copyright &copy; Moxy Community. All rights reserved.</p>
+        <p><a href="https://github.com/moxy-community/Moxy">https://github.com/moxy-community/Moxy</a></p>
+        <p>
+            Permission is hereby granted, free of charge, to any person obtaining a copy
+            of this software and associated documentation files (the "Software"), to deal
+            in the Software without restriction, including without limitation the rights
+            to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+            copies of the Software, and to permit persons to whom the Software is
+            furnished to do so, subject to the following conditions:
+        </p>
+        <p>
+            The above copyright notice and this permission notice shall be included in
+            all copies or substantial portions of the Software.
+        </p>
+        <p>
+            THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+            IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+            FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+            AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+            LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+            OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+            THE SOFTWARE.
+        </p>
+    </div>
+</div>
+<div class="library">
+    <!-- https://opensource.org/licenses/Apache-2.0 -->
+    <h1 class="title">Dagger2</h1>
+    <input type="checkbox"><label></label>
+    <div class="license">
+        <p class="notice">Copyright &copy; The Dagger Authors. All rights reserved.</p>
+        <p><a href="https://github.com/google/dagger">https://github.com/google/dagger</a></p>
+        <p>Licensed under the <b>Apache License, Version 2.0 </b> (the "License");<br>
+            you may not use this file except in compliance with the License.<br>
+            You may obtain a copy of the License at</p>
+
+        <p>&emsp;http://www.apache.org/licenses/LICENSE-2.0</p>
+
+        <p>Unless required by applicable law or agreed to in writing, software<br>
+            distributed under the License is distributed on an "AS IS" BASIS,<br>
+            WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
+            See the License for the specific language governing permissions and<br>
+            limitations under the License.</p>
+
+    </div>
+</div>
+<div class="library">
+    <!-- https://opensource.org/licenses/Apache-2.0 -->
+    <h1 class="title">ExoPlayer</h1>
+    <input type="checkbox"><label></label>
+    <div class="license">
+        <p class="notice">Copyright &copy; Google, Inc. All rights reserved.</p>
+        <p><a href="https://github.com/google/exoplayer">https://github.com/google/exoplayer</a></p>
+        <p>Licensed under the <b>Apache License, Version 2.0 </b> (the "License");<br>
+            you may not use this file except in compliance with the License.<br>
+            You may obtain a copy of the License at</p>
+
+        <p>&emsp;http://www.apache.org/licenses/LICENSE-2.0</p>
+
+        <p>Unless required by applicable law or agreed to in writing, software<br>
+            distributed under the License is distributed on an "AS IS" BASIS,<br>
+            WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
+            See the License for the specific language governing permissions and<br>
+            limitations under the License.</p>
+
+    </div>
+</div>
+<div class="library">
+    <!-- https://opensource.org/licenses/Apache-2.0 -->
+    <h1 class="title">Timber</h1>
+    <input type="checkbox"><label></label>
+    <div class="license">
+        <p class="notice">Copyright &copy; Jake Wharton. All rights reserved.</p>
+        <p><a href="https://github.com/JakeWharton/timber">https://github.com/JakeWharton/timber</a></p>
+        <p>Licensed under the <b>Apache License, Version 2.0 </b> (the "License");<br>
+            you may not use this file except in compliance with the License.<br>
+            You may obtain a copy of the License at</p>
+
+        <p>&emsp;http://www.apache.org/licenses/LICENSE-2.0</p>
+
+        <p>Unless required by applicable law or agreed to in writing, software<br>
+            distributed under the License is distributed on an "AS IS" BASIS,<br>
+            WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
+            See the License for the specific language governing permissions and<br>
+            limitations under the License.</p>
+
+    </div>
+</div>
+<div class="library">
+    <!-- https://opensource.org/licenses/Apache-2.0 -->
+    <h1 class="title">Lottie</h1>
+    <input type="checkbox"><label></label>
+    <div class="license">
+        <p class="notice">Copyright &copy; Airbnb, Inc. All rights reserved.</p>
+        <p><a href="https://github.com/airbnb/lottie-android">https://github.com/airbnb/lottie-android</a></p>
+        <p>Licensed under the <b>Apache License, Version 2.0 </b> (the "License");<br>
+            you may not use this file except in compliance with the License.<br>
+            You may obtain a copy of the License at</p>
+
+        <p>&emsp;http://www.apache.org/licenses/LICENSE-2.0</p>
+
+        <p>Unless required by applicable law or agreed to in writing, software<br>
+            distributed under the License is distributed on an "AS IS" BASIS,<br>
+            WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
+            See the License for the specific language governing permissions and<br>
+            limitations under the License.</p>
+
+    </div>
+</div>
+<div class="library">
+    <!-- https://opensource.org/licenses/Apache-2.0 -->
+    <h1 class="title">FancyShowCaseView</h1>
+    <input type="checkbox"><label></label>
+    <div class="license">
+        <p class="notice">Copyright &copy; Faruk Toptaş. All rights reserved.</p>
+        <p><a href="https://github.com/faruktoptas/FancyShowCaseView">https://github.com/faruktoptas/FancyShowCaseView</a></p>
+        <p>Licensed under the <b>Apache License, Version 2.0 </b> (the "License");<br>
+            you may not use this file except in compliance with the License.<br>
+            You may obtain a copy of the License at</p>
+
+        <p>&emsp;http://www.apache.org/licenses/LICENSE-2.0</p>
+
+        <p>Unless required by applicable law or agreed to in writing, software<br>
+            distributed under the License is distributed on an "AS IS" BASIS,<br>
+            WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
+            See the License for the specific language governing permissions and<br>
+            limitations under the License.</p>
+    </div>
+</div>
+<div class="library">
+    <!-- https://opensource.org/licenses/Apache-2.0 -->
+    <h1 class="title">RangeView</h1>
+    <input type="checkbox"><label></label>
+    <div class="license">
+        <p class="notice">Copyright &copy; Mert Şimşek. All rights reserved.</p>
+        <p><a href="https://github.com/iammert/RangeView">https://github.com/iammert/RangeView</a></p>
+        <p>Licensed under the <b>Apache License, Version 2.0 </b> (the "License");<br>
+            you may not use this file except in compliance with the License.<br>
+            You may obtain a copy of the License at</p>
+
+        <p>&emsp;http://www.apache.org/licenses/LICENSE-2.0</p>
+
+        <p>Unless required by applicable law or agreed to in writing, software<br>
+            distributed under the License is distributed on an "AS IS" BASIS,<br>
+            WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
+            See the License for the specific language governing permissions and<br>
+            limitations under the License.</p>
+    </div>
+</div>
+<div class="library">
+    <!-- https://opensource.org/licenses/mit-license.html -->
+    <h1 class="title">Mp4Composer-android</h1>
+    <input type="checkbox"><label></label>
+    <div class="license">
+        <h2>The MIT License (MIT)</h2>
+        <p>Copyright &copy; Masayuki Suda. All rights reserved.</p>
+        <p><a href="https://github.com/MasayukiSuda/Mp4Composer-android">https://github.com/MasayukiSuda/Mp4Composer-android</a></p>
+        <p>
+            Permission is hereby granted, free of charge, to any person obtaining a copy
+            of this software and associated documentation files (the "Software"), to deal
+            in the Software without restriction, including without limitation the rights
+            to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+            copies of the Software, and to permit persons to whom the Software is
+            furnished to do so, subject to the following conditions:
+        </p>
+        <p>
+            The above copyright notice and this permission notice shall be included in
+            all copies or substantial portions of the Software.
+        </p>
+        <p>
+            THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+            IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+            FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+            AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+            LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+            OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+            THE SOFTWARE.
+        </p>
+    </div>
+</div>
+<div class="library">
+    <!-- https://opensource.org/licenses/mit-license.html -->
+    <h1 class="title">MCodec</h1>
+    <input type="checkbox"><label></label>
+    <div class="license">
+        <h2>The MIT License (MIT)</h2>
+        <p>Copyright &copy; Min Yin. All rights reserved.</p>
+        <p><a href="https://github.com/myin142/MCodec">https://github.com/myin142/MCodec</a></p>
+        <p>
+            Permission is hereby granted, free of charge, to any person obtaining a copy
+            of this software and associated documentation files (the "Software"), to deal
+            in the Software without restriction, including without limitation the rights
+            to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+            copies of the Software, and to permit persons to whom the Software is
+            furnished to do so, subject to the following conditions:
+        </p>
+        <p>
+            The above copyright notice and this permission notice shall be included in
+            all copies or substantial portions of the Software.
+        </p>
+        <p>
+            THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+            IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+            FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+            AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+            LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+            OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+            THE SOFTWARE.
+        </p>
+    </div>
+</div>
+
+<div class="library">
+    <h1 class="title">Memphis pattern</h1>
+    <p><a href="http://www.freepik.com">Designed by vvstudio / Freepik</a></p>
+</div>
+
+<div class="library">
+    <h1 class="title">Icons8.com</h1>
+    <p><a href="https://icons8.com">https://icons8.com</a></p>
+</div>
+
+<div class="library">
+    <h1 class="title">Material Design Icons</h1>
+    <input type="checkbox"><label></label>
+    <div class="license">
+        <p><a href="https://material.io/resources/icons/">https://material.io/resources/icons/</a></p>
+        <p>Licensed under the <b>Apache License, Version 2.0 </b> (the "License");<br>
+            you may not use this file except in compliance with the License.<br>
+            You may obtain a copy of the License at</p>
+
+        <p>&emsp;http://www.apache.org/licenses/LICENSE-2.0</p>
+
+        <p>Unless required by applicable law or agreed to in writing, software<br>
+            distributed under the License is distributed on an "AS IS" BASIS,<br>
+            WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
+            See the License for the specific language governing permissions and<br>
+            limitations under the License.</p>
+    </div>
+</div>
+</body>
+</html>
