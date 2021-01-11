@@ -40,7 +40,7 @@ class GLViewOverlayFilter(
     ): Pair<Bitmap, PointF>? {
         return bitmaps.getOrPut(view, {
             // view bitmap
-            val bitmap = view.getBitmap() ?: return null
+            val bitmap = view.getBitmap(scaleX, scaleY) ?: return null
 
             // getting center point
             view.getHitRect(hitRect)
