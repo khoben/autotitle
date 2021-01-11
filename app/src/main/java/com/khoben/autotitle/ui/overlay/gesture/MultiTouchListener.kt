@@ -2,6 +2,7 @@ package com.khoben.autotitle.ui.overlay.gesture
 
 import android.annotation.SuppressLint
 import android.graphics.Rect
+import android.graphics.RectF
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
@@ -14,8 +15,9 @@ import kotlin.math.min
  * @author [Burhanuddin Rashid](https://github.com/burhanrashid52)
  */
 class MultiTouchListener(
-    parentRect: Rect,
-    private val mIsTextPinchZoomable: Boolean
+        parentRect: Rect,
+        private val controls: List<Pair<ControlType, RectF>>,
+        private val mIsTextPinchZoomable: Boolean
 ) :
     View.OnTouchListener {
     private val mGestureListener: GestureDetector
@@ -189,6 +191,7 @@ class MultiTouchListener(
         fun onLongClick()
         fun onDoubleTap()
         fun onMove()
+        fun onControlClicked(which: ControlType)
     }
 
     fun setOnGestureControl(onGestureControl: OnGestureControl?) {
@@ -209,6 +212,20 @@ class MultiTouchListener(
         override fun onLongPress(e: MotionEvent) {
             super.onLongPress(e)
             mOnGestureControl?.onLongClick()
+        }
+    }
+
+    private inner class OnControlClickDetector() {
+        fun onTouchEvent(event: MotionEvent) {
+            if (event.action == MotionEvent.ACTION_UP) {
+                for ((name, rect) in controls) {
+                    if (rect.contains(event.x, event.y)) {
+                        Timber.d("Clicked on $name control")
+                        mOnGestureControl?.onControlClicked(name)
+                        break
+                    }
+                }
+            }
         }
     }
 

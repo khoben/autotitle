@@ -9,6 +9,7 @@ import android.widget.FrameLayout
 import com.khoben.autotitle.App.Companion.FRAME_TIME_MS
 import com.khoben.autotitle.extension.getRect
 import com.khoben.autotitle.model.MLCaption
+import com.khoben.autotitle.ui.overlay.gesture.ControlType
 import com.khoben.autotitle.ui.overlay.gesture.MultiTouchListener
 import timber.log.Timber
 import java.lang.ref.WeakReference
@@ -73,15 +74,11 @@ class OverlayHandler private constructor(
 
     @SuppressLint("ClickableViewAccessibility")
     private fun createTextOverlay(startTime: Long, endTime: Long, text: String = ""): OverlayText {
-        val newOverlay = overlayFactory.get(TEXT) as OverlayText
+        val newOverlay = overlayFactory.get(OverlayType.TEXT) as OverlayText
         newOverlay.apply {
             this.startTime = startTime
             this.endTime = endTime
             this.textView!!.text = text
-            // on delete
-            this.closeButton!!.setOnClickListener {
-                removeOverlay(this)
-            }
             // gestures
             this.initMultiTouchListener(parentView.get()!!.getRect(), object: MultiTouchListener.OnGestureControl {
                 override fun onClick() {
@@ -97,6 +94,12 @@ class OverlayHandler private constructor(
 
                 override fun onMove() {
                     selectedOverlay(newOverlay, false)
+                }
+
+                override fun onControlClicked(which: ControlType) {
+                    if (which == ControlType.DELETE_BTN) {
+                        removeOverlay(newOverlay)
+                    }
                 }
 
             })
