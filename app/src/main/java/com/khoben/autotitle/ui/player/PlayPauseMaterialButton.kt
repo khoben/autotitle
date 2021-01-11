@@ -55,8 +55,4 @@ class PlayPauseMaterialButton(context: Context, attrs: AttributeSet?) :
             animatedDrawable!!.start()
         }
     }
-
-    interface OnClickListener {
-        fun onPlayPauseButtonClicked()
-    }
 }

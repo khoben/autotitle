@@ -6,4 +6,5 @@ interface SeekBarListener {
     fun seekBarCompletePlaying()
     fun seekBarOnTouch()
     fun seekBarOnDoubleTap()
+    fun onPlayPauseButtonClicked()
 }

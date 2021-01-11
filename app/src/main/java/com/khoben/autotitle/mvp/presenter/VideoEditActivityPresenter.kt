@@ -31,8 +31,7 @@ import javax.inject.Inject
 class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     OverlayHandler.OverlayObjectEventListener,
     MediaController.Callback,
-    SeekBarListener,
-    PlayPauseMaterialButton.OnClickListener {
+    SeekBarListener {
 
     @Inject
     lateinit var videoProcessor: VideoProcessorBase

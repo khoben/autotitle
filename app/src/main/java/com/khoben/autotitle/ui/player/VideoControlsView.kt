@@ -27,8 +27,6 @@ class VideoControlsView(context: Context, attrs: AttributeSet) :
 
     private var screenWidth = context.resources.displayMetrics.widthPixels
 
-    var ppBtnListener: PlayPauseMaterialButton.OnClickListener? = null
-
     override fun onFinishInflate() {
         super.onFinishInflate()
         /****Current and total video time****/
@@ -44,9 +42,7 @@ class VideoControlsView(context: Context, attrs: AttributeSet) :
 
         /**********Play/pause button**************/
         playPauseButton = findViewById(R.id.pp_btn)
-        playPauseButton.setOnClickListener {
-            ppBtnListener?.onPlayPauseButtonClicked()
-        }
+        playPauseButton.setOnClickListener { onPlayPauseButtonClicked() }
         /************************************/
     }
 
@@ -118,5 +114,9 @@ class VideoControlsView(context: Context, attrs: AttributeSet) :
 
     override fun seekBarOnDoubleTap() {
         seekBarListener?.seekBarOnDoubleTap()
+    }
+
+    override fun onPlayPauseButtonClicked() {
+        seekBarListener?.onPlayPauseButtonClicked()
     }
 }
