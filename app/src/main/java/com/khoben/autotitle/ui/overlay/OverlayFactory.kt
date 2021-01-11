@@ -16,7 +16,7 @@ class OverlayFactory(context: Context) {
                 layoutInflater.inflate(R.layout.text_overlay_layout, null)
             }
             OverlayType.IMAGE -> {
-                layoutInflater.inflate(R.layout.custom_overlay_layout, null)
+                layoutInflater.inflate(R.layout.image_overlay_layout, null)
             }
         }
         return layout.apply { tag = overlayType }
