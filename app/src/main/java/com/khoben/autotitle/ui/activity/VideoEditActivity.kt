@@ -95,9 +95,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
             // ignore all touches on loading screen
             setOnTouchListener {_, _ -> true }
         }
-        videoControlsView = binding.videoSeekbarLayout.videoSeekbarView.apply {
-            ppBtnListener = presenter
-        }
+        videoControlsView = binding.videoSeekbarLayout.videoSeekbarView
         videoSurfaceView = binding.videolayer.videoPreview
         videoLayer = binding.videolayer.root
         overlayView = binding.videolayer.overlaysRoot
