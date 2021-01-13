@@ -119,13 +119,17 @@
         <com.khoben.autotitle.ui.recyclerview.EmptyRecyclerView
             android:id="@+id/recyclerview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            tools:parentTag="androidx.recyclerview.widget.RecyclerView"
+            tools:layoutManager="LinearLayoutManager"
+            tools:listitem="@layout/recycler_view_item"/>
 
         <include
             android:id="@+id/empty_recycler_view"
             layout="@layout/empty_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            tools:visibility="gone"/>
     </FrameLayout>
 
     <include

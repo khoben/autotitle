@@ -38,7 +38,7 @@
             app:layout_constraintStart_toEndOf="@+id/badge"
             app:layout_constraintTop_toTopOf="parent"
             app:overlayFromString="@{overlay}"
-            tools:text="from" />
+            tools:text="0:00.1" />
 
         <TextView
             android:id="@+id/dash"
@@ -62,7 +62,7 @@
             app:layout_constraintStart_toEndOf="@+id/dash"
             app:layout_constraintTop_toTopOf="parent"
             app:overlayToString="@{overlay}"
-            tools:text="to" />
+            tools:text="0:59.0" />
 
         <TextView
             android:id="@+id/item_content"
