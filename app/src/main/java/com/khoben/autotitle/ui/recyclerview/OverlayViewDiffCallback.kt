@@ -15,6 +15,7 @@ class OverlayViewDiffCallback : DiffUtil.ItemCallback<OverlayDataMapper>() {
         return oldItem.uuid == newItem.uuid &&
                 oldItem.text == newItem.text &&
                 oldItem.startTime == newItem.startTime &&
-                oldItem.endTime == newItem.endTime
+                oldItem.endTime == newItem.endTime &&
+                oldItem.isSelected == newItem.isSelected
     }
 }

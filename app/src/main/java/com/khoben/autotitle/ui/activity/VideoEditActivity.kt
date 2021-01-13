@@ -456,35 +456,30 @@ class VideoEditActivity : MvpAppCompatActivity(),
 
     override fun highlightListViewItem(index: Int, uuid: UUID?) {
         recyclerView.layoutManager?.scrollToPosition(index)
-        overlayViewListAdapter.setSelected(index, uuid)
         showGuideHowDeselectItemOnce()
-    }
-
-    override fun unSelectRecycler() {
-        overlayViewListAdapter.unSelect()
     }
 
     override fun onOverlaysChangedList(overlays: List<OverlayObject>) {
         // update recycler view
         runOnUiThread {
             overlayViewListAdapter.submitList(overlays.map {
-                val data: OverlayDataMapper
                 if (it is OverlayText) {
-                    data = OverlayDataMapper(
-                            startTime = it.startTime,
-                            endTime = it.endTime,
-                            uuid = it.uuid!!,
-                            text = it.text!!,
-                            badgeColor = it.badgeColor
+                    OverlayDataMapper(
+                        startTime = it.startTime,
+                        endTime = it.endTime,
+                        uuid = it.uuid,
+                        text = it.text!!,
+                        badgeColor = it.badgeColor,
+                        isSelected = it.isInEdit
                     )
                 } else {
-                    data = OverlayDataMapper(
-                            startTime = it.startTime,
-                            endTime = it.endTime,
-                            uuid = it.uuid!!
+                    OverlayDataMapper(
+                        startTime = it.startTime,
+                        endTime = it.endTime,
+                        uuid = it.uuid,
+                        isSelected = it.isInEdit
                     )
                 }
-                data
             })
         }
     }

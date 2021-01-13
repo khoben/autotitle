@@ -208,7 +208,6 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
 
     fun unEditable() {
         pausePlayback()
-        viewState.unSelectRecycler()
         overlayHandler!!.unEditable()
     }
 
@@ -222,6 +221,7 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
 
     override fun onUnEditable(overlay: OverlayObject?, overlays: List<OverlayObject>) {
         viewState.updatePlayback(overlays, overlay, isPlaying = false)
+        viewState.onOverlaysChangedList(overlays)
     }
 
     override fun onAdded(overlay: OverlayObject?, overlays: List<OverlayObject>, isEdit: Boolean) {
@@ -247,6 +247,7 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         if (seekToOverlayStart)
             viewState.setControlsToTime(overlay!!.startTime)
         viewState.updatePlayback(overlays, overlay, isPlaying = false)
+        viewState.onOverlaysChangedList(overlays)
         viewState.highlightListViewItem(overlays.indexOf(overlay), overlay!!.uuid)
     }
 
@@ -257,7 +258,7 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     ) {
         viewState.onRemovedOverlay(idxRemoved, removedOverlay, overlays)
         viewState.onOverlaysChangedList(overlays)
-        viewState.updatePlayback(overlays, overlayHandler!!.getSelectedOverlay(), isPlaying = false)
+        viewState.updatePlayback(overlays, null, isPlaying = false)
     }
 
     override fun changeTimeRangeSelectedOverlay(startTime: Long, endTime: Long) {

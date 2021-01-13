@@ -69,9 +69,6 @@ interface VideoEditActivityView : MvpView {
     @AddToEnd
     fun highlightListViewItem(index: Int, uuid: UUID? = null)
 
-    @AddToEnd
-    fun unSelectRecycler()
-
     @OneExecution
     fun toggledMuteState(state: Boolean, clicked: Boolean)
 

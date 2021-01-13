@@ -13,51 +13,9 @@ import com.khoben.autotitle.ui.overlay.OverlayDataMapper
 import java.util.*
 
 class OverlayViewListAdapter :
-        ListAdapter<OverlayDataMapper, OverlayViewListAdapter.OverlayViewHolder>(
-                OverlayViewDiffCallback()
-        ), RecyclerViewItemEventListener {
-
-    private var selectedItemUUID: UUID? = null
-    private var lastSelectedItemUUID: UUID? = null
-    private var selectedItemPos = -1
-    private var lastItemSelectedPos = -1
-
-    /**
-     * Remove item selection
-     */
-    fun unSelect() {
-        notifyItemChanged(selectedItemPos)
-        lastItemSelectedPos = -1
-        selectedItemUUID = null
-        lastSelectedItemUUID = null
-        selectedItemPos = -1
-    }
-
-    /**
-     * Select the recyclerview item
-     *
-     * If [uuid] is not null then use it as ID, therefore use ID
-     * from [getItem]
-     *
-     * @param pos Position
-     * @param uuid ID of selected item
-     */
-    fun setSelected(pos: Int, uuid: UUID? = null) {
-        selectedItemUUID = uuid ?: getItem(pos).uuid
-        selectedItemPos = pos
-        lastItemSelectedPos = if (lastItemSelectedPos == -1) {
-            lastSelectedItemUUID = selectedItemUUID
-            selectedItemPos
-        } else {
-            // deselect last selected item
-            notifyItemChanged(currentList.indexOfFirst { it.uuid == lastSelectedItemUUID })
-            // save for future deselection
-            lastSelectedItemUUID = selectedItemUUID
-            selectedItemPos
-        }
-        // select
-        notifyItemChanged(selectedItemPos)
-    }
+    ListAdapter<OverlayDataMapper,
+            OverlayViewListAdapter.OverlayViewHolder>(OverlayViewDiffCallback()),
+    RecyclerViewItemEventListener {
 
     var listItemEventListener: RecyclerViewItemEventListener? = null
     override fun onClickedAddBelow(item: Int) {
@@ -66,39 +24,36 @@ class OverlayViewListAdapter :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OverlayViewHolder {
         return OverlayViewHolder.from(parent)
-                .apply { listItemEventListener = this@OverlayViewListAdapter }
+            .apply { listItemEventListener = this@OverlayViewListAdapter }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: OverlayViewHolder, position: Int) {
         val item = getItem(position)
-        if (item.uuid == selectedItemUUID) {
-            selectedItemPos = position
-        }
-        holder.setSelected(item.uuid == selectedItemUUID)
+        holder.setSelected(item.isSelected)
         holder.bind(item)
     }
 
     class OverlayViewHolder(private val binding: RecyclerViewItemBinding) :
-            RecyclerView.ViewHolder(binding.root) {
+        RecyclerView.ViewHolder(binding.root) {
 
         var listItemEventListener: RecyclerViewItemEventListener? = null
 
         private val itemSelectedColor by lazy {
             val typedValue = TypedValue()
             itemView.context.theme.resolveAttribute(
-                    R.attr.colorControlHighlight,
-                    typedValue,
-                    true
+                R.attr.colorControlHighlight,
+                typedValue,
+                true
             )
             ContextCompat.getColor(itemView.context, typedValue.resourceId)
         }
         private val surfaceColor by lazy {
             val typedValue = TypedValue()
             itemView.context.theme.resolveAttribute(
-                    R.attr.colorSurface,
-                    typedValue,
-                    true
+                R.attr.colorSurface,
+                typedValue,
+                true
             )
             ContextCompat.getColor(itemView.context, typedValue.resourceId)
         }
