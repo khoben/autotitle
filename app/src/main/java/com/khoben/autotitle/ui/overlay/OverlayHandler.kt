@@ -182,6 +182,7 @@ class OverlayHandler private constructor(
     private fun removeOverlay(overlay: OverlayObject) {
         val idxRemoved = overlayViews.indexOf(overlay)
         overlayViews.remove(overlay)
+        overlayObjectEventListener?.onRemoved(idxRemoved, overlay, overlayViews)
 
         // save origin values before animation
         val oldAlpha = overlay.alpha
@@ -207,8 +208,6 @@ class OverlayHandler private constructor(
                         overlay.alpha = oldAlpha
                         overlay.scaleX = oldScaleX
                         overlay.scaleY = oldScaleY
-
-                        overlayObjectEventListener?.onRemoved(idxRemoved, overlay, overlayViews)
                     }
             )
         }.start()
