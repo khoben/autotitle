@@ -1,5 +1,7 @@
 package com.khoben.autotitle.model.project
 
+import android.content.Context
+import android.net.Uri
 import com.khoben.autotitle.App
 import com.khoben.autotitle.common.FileUtils
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -36,9 +38,9 @@ object RecentProjectsLoader {
      *
      * @param item ThumbProject
      */
-    fun new(item: ThumbProject) {
+    fun new(item: ThumbProject, uri: Uri, context: Context) {
         item.createProjectFolderIfNotExists()
-        item.createThumb()
+        item.createThumb(uri, context)
         temp.add(item)
     }
 

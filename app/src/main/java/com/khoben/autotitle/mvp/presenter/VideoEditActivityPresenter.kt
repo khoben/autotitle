@@ -82,7 +82,9 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
                 videoDuration = mediaController.videoDuration,
                 videoFileSizeBytes = FileUtils.getSizeBytes(appContext, sourceUri!!),
                 videoSourceFilePath = FileUtils.getRealPathFromURI(appContext, sourceUri!!)
-            )
+            ),
+            sourceUri!!,
+            appContext
         )
 
         processVideo(appContext)
