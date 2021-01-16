@@ -225,11 +225,6 @@ class Mp4ComposerEngine {
             }
         }
 
-        final MediaFormat hevcMediaFormat = createVideoFormat(VideoFormatMimeType.HEVC.getFormat(), bitrate, outputResolution);
-        if (mediaCodecList.findEncoderForFormat(hevcMediaFormat) != null) {
-            return hevcMediaFormat;
-        }
-
         final MediaFormat avcMediaFormat = createVideoFormat(VideoFormatMimeType.AVC.getFormat(), bitrate, outputResolution);
         if (mediaCodecList.findEncoderForFormat(avcMediaFormat) != null) {
             return avcMediaFormat;
@@ -239,7 +234,12 @@ class Mp4ComposerEngine {
         if (mediaCodecList.findEncoderForFormat(mp4vesMediaFormat) != null) {
             return mp4vesMediaFormat;
         }
-        // fix for huawei devices (using HEVC codec seems like solve error)
+
+        final MediaFormat hevcMediaFormat = createVideoFormat(VideoFormatMimeType.HEVC.getFormat(), bitrate, outputResolution);
+        if (mediaCodecList.findEncoderForFormat(hevcMediaFormat) != null) {
+            return hevcMediaFormat;
+        }
+        // fix for Huawei devices (using HEVC codec seems like solve error)
         // https://github.com/MasayukiSuda/Mp4Composer-android/issues/74#issuecomment-602737842
         return createVideoFormat(VideoFormatMimeType.HEVC.getFormat(), bitrate, outputResolution);
     }
