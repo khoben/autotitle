@@ -1,11 +1,14 @@
 package com.khoben.autotitle.common
 
 import android.content.ContentResolver
+import android.content.ContentUris
 import android.content.Context
-import android.database.Cursor
+import android.graphics.Bitmap
 import android.media.MediaScannerConnection
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
+import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import androidx.core.content.FileProvider
@@ -16,6 +19,20 @@ import java.io.File
 
 
 object FileUtils {
+
+    fun writeBitmap(path: String, bitmap: Bitmap, format: Bitmap.CompressFormat, quality: Int) {
+        File(path).outputStream().use { out ->
+            bitmap.compress(format, quality, out)
+            out.flush()
+        }
+    }
+
+    /**
+     * Checks if [path] is existing
+     * @param path
+     * @return Boolean
+     */
+    fun checkIfExists(path: String) = File(path).exists()
 
     /**
      * Get filename of file with this Uri
@@ -65,9 +82,9 @@ object FileUtils {
      * @return Filepath
      */
     fun getRandomFilepath(
-            context: Context,
-            extension: String,
-            directory: String = Environment.DIRECTORY_MOVIES
+        context: Context,
+        extension: String,
+        directory: String = Environment.DIRECTORY_MOVIES
     ): String {
         return "${context.getExternalFilesDir(directory)?.absolutePath}/${System.currentTimeMillis()}.$extension"
     }
@@ -80,9 +97,9 @@ object FileUtils {
      * @return Uri
      */
     fun getRandomUri(
-            context: Context,
-            extension: String,
-            directory: String = Environment.DIRECTORY_MOVIES
+        context: Context,
+        extension: String,
+        directory: String = Environment.DIRECTORY_MOVIES
     ): Uri {
         return getUriFromPath(context, getRandomFilepath(context, extension, directory))
     }
@@ -95,10 +112,34 @@ object FileUtils {
      */
     fun getUriFromPath(context: Context, path: String): Uri {
         return FileProvider.getUriForFile(
-                context,
-                "${BuildConfig.APPLICATION_ID}.fileprovider",
-                File(path)
+            context,
+            "${BuildConfig.APPLICATION_ID}.fileprovider",
+            File(path)
         )
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is ExternalStorageProvider.
+     */
+    private fun isExternalStorageDocument(uri: Uri): Boolean {
+        return "com.android.externalstorage.documents" == uri.authority
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is DownloadsProvider.
+     */
+    private fun isDownloadsDocument(uri: Uri): Boolean {
+        return "com.android.providers.downloads.documents" == uri.authority
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is MediaProvider.
+     */
+    private fun isMediaDocument(uri: Uri): Boolean {
+        return "com.android.providers.media.documents" == uri.authority
     }
 
     /**
@@ -108,19 +149,53 @@ object FileUtils {
      * @return String?
      */
     fun getRealPathFromURI(context: Context, uri: Uri): String? {
-        var cursor: Cursor? = null
-        return try {
-            val projection = arrayOf(MediaStore.Images.Media.DATA)
-            cursor = context.contentResolver.query(uri, projection, null, null, null)
-            val columnIndex = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-            cursor.moveToFirst()
-            cursor.getString(columnIndex)
-        } catch (e: java.lang.Exception) {
-            Timber.e(e, "getRealPathFromURI() Exception")
-            null
-        } finally {
-            cursor?.close()
+        var _uri = uri
+        val needToCheckUri = Build.VERSION.SDK_INT >= 19
+        var selection: String? = null
+        var selectionArgs: Array<String>? = null
+        if (needToCheckUri && DocumentsContract.isDocumentUri(context, _uri)) {
+            if (isExternalStorageDocument(_uri)) {
+                val docId = DocumentsContract.getDocumentId(_uri)
+                val split = docId.split(":".toRegex()).toTypedArray()
+                return Environment.getExternalStorageDirectory().toString() + "/" + split[1]
+            } else if (isDownloadsDocument(_uri)) {
+                val id = DocumentsContract.getDocumentId(_uri)
+                if (id.startsWith("raw:")) {
+                    return id.replaceFirst("raw:".toRegex(), "")
+                }
+                _uri = ContentUris.withAppendedId(
+                    Uri.parse("content://downloads/public_downloads"), java.lang.Long.valueOf(id)
+                )
+            } else if (isMediaDocument(_uri)) {
+                val docId = DocumentsContract.getDocumentId(_uri)
+                val split = docId.split(":".toRegex()).toTypedArray()
+                when (split[0]) {
+                    "image" -> _uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                    "video" -> _uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                    "audio" -> _uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+                }
+                selection = "_id=?"
+                selectionArgs = arrayOf(split[1])
+            }
         }
+        if ("content".equals(_uri.scheme, ignoreCase = true)) {
+            val projection = arrayOf(MediaStore.Images.Media.DATA)
+            try {
+                context.contentResolver.query(_uri, projection, selection, selectionArgs, null)
+                    .use { cursor ->
+                        if (cursor != null && cursor.moveToFirst()) {
+                            val columnIndex =
+                                cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                            return cursor.getString(columnIndex)
+                        }
+                    }
+            } catch (e: java.lang.Exception) {
+                Timber.e(e)
+            }
+        } else if ("file".equals(_uri.scheme, ignoreCase = true)) {
+            return _uri.path
+        }
+        return null
     }
 
     /**
@@ -132,8 +207,8 @@ object FileUtils {
         val file = File(path)
         val deleted = file.delete()
         MediaScannerConnection.scanFile(
-                context, arrayOf(file.toString()),
-                arrayOf(file.name), null
+            context, arrayOf(file.toString()),
+            arrayOf(file.name), null
         )
         if (deleted) {
             Timber.d("File $path was deleted")

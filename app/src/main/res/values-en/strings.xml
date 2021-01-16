@@ -20,7 +20,7 @@
     <string name="some_error">Error</string>
     <string name="or_caption">OR</string>
     <string name="welcome_title">AutoTitle</string>
-    <string name="need_load_title">Load a video\nto add captions</string>
+    <string name="need_load_title">Create new project</string>
     <string name="save_captions">Applying captions…</string>
     <string name="save_button_caption">Save</string>
     <string name="empty_overlay_recycler">Double tap to edit caption</string>

@@ -18,6 +18,11 @@
         <!--        <item name="colorOnSecondary">#000000</item>-->
     </style>
 
+    <style name="RoundedImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
     <style name="CustomAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:windowMinWidthMinor">0dp</item>
@@ -44,6 +49,15 @@
         <item name="android:background">#F7F7F7</item>
         <item name="android:fontFamily">sans-serif-monospace</item>
         <item name="android:textAlignment">2</item>
+    </style>
+
+    <style name="RecyclerBottomSheet">
+        <item name="android:textSize">20sp</item>
+        <item name="android:drawablePadding">20dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">15dp</item>
+        <item name="fontFamily">sans-serif-medium</item>
     </style>
 
 </resources>

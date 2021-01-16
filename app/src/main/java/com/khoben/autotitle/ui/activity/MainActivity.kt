@@ -1,26 +1,37 @@
 package com.khoben.autotitle.ui.activity
 
 import android.Manifest
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
 import com.khoben.autotitle.R
 import com.khoben.autotitle.common.OpeningVideoFileState
 import com.khoben.autotitle.databinding.ActivityMainBinding
 import com.khoben.autotitle.extension.activityresult.permission.permissionsDSL
 import com.khoben.autotitle.extension.activityresult.result.getContentDSL
 import com.khoben.autotitle.extension.activityresult.result.takeVideoDSL
+import com.khoben.autotitle.model.project.ThumbProject
 import com.khoben.autotitle.mvp.presenter.MainActivityPresenter
 import com.khoben.autotitle.mvp.view.MainActivityView
 import com.khoben.autotitle.ui.etc.OpenSourceLicensesDialog
+import com.khoben.autotitle.ui.popup.ProjectTitleEditFragment
+import com.khoben.autotitle.ui.recyclerview.ProjectItemOptions
+import com.khoben.autotitle.ui.recyclerview.ProjectViewListAdapter
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
 import timber.log.Timber
 
 
-class MainActivity : MvpAppCompatActivity(), MainActivityView {
+class MainActivity : MvpAppCompatActivity(), MainActivityView,
+    ProjectItemOptions.ItemClickListener,
+    ProjectTitleEditFragment.ItemTitleEditListener {
 
     @InjectPresenter
     lateinit var presenter: MainActivityPresenter
@@ -57,19 +68,58 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView {
     }
 
     private lateinit var binding: ActivityMainBinding
+    private val recyclerViewAdapter = ProjectViewListAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.recentRecycler.adapter = recyclerViewAdapter.apply {
+            registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+                override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+                    super.onItemRangeRemoved(positionStart, itemCount)
+                    if (recyclerViewAdapter.itemCount < 1) {
+                        hideRecentProjectAnim()
+                    }
+                }
+            })
+        }
+
         binding.settingsBtn.setOnClickListener { settingsClick(it) }
         binding.cameraCaptureButton.setOnClickListener { takeVideoClick(it) }
         binding.filestoreLoadButton.setOnClickListener { getContentClick(it) }
     }
 
+    private fun hideRecentProjectAnim() {
+        binding.recentTitle.isVisible = false
+        binding.recentBtnEdit.isVisible = false
+        val start = (binding.guideline1.layoutParams as ConstraintLayout.LayoutParams).guidePercent
+        ValueAnimator.ofFloat(start, 1F).apply {
+            duration = 1000
+            interpolator = AccelerateDecelerateInterpolator()
+            addUpdateListener { valueAnimator ->
+                binding.guideline1.setGuidelinePercent(valueAnimator.animatedValue as Float)
+            }
+        }.start()
+    }
+
     override fun hideRecentProject() {
-//        binding.recentProjects.visibility = View.INVISIBLE
+        binding.recentTitle.isVisible = false
+        binding.recentBtnEdit.isVisible = false
+        binding.guideline1.setGuidelinePercent(1F)
+    }
+
+    override fun submitList(list: List<ThumbProject>) {
+        recyclerViewAdapter.submitList(ArrayList(list))
+    }
+
+    override fun showEditTitleFragment(idx: Int, title: String) {
+        supportFragmentManager.let {
+            ProjectTitleEditFragment.show(idx, title).apply {
+                show(it, "edit_title_fragment")
+            }
+        }
     }
 
     private fun settingsClick(view: View) {
@@ -103,6 +153,28 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView {
                 startActivity(intent)
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        presenter.loadRecentProjects()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        presenter.saveRecentProjects()
+    }
+
+    override fun onEditTitleClick(idx: Int) {
+        presenter.onEditTitleClick(idx)
+    }
+
+    override fun onRemoveClick(idx: Int) {
+        presenter.onRemoveClick(idx)
+    }
+
+    override fun onEditedItem(idx: Int, title: String) {
+        presenter.editItemTitle(idx, title)
     }
 
     companion object {

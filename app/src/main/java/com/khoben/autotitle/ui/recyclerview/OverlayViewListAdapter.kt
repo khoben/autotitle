@@ -8,7 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.khoben.autotitle.R
-import com.khoben.autotitle.databinding.RecyclerViewItemBinding
+import com.khoben.autotitle.databinding.RecyclerViewOverlayItemBinding
 import com.khoben.autotitle.ui.overlay.OverlayDataMapper
 import java.util.*
 
@@ -34,7 +34,7 @@ class OverlayViewListAdapter :
         holder.bind(item)
     }
 
-    class OverlayViewHolder(private val binding: RecyclerViewItemBinding) :
+    class OverlayViewHolder(private val binding: RecyclerViewOverlayItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         var listItemEventListener: RecyclerViewItemEventListener? = null
@@ -73,7 +73,7 @@ class OverlayViewListAdapter :
         companion object {
             fun from(parent: ViewGroup): OverlayViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = RecyclerViewItemBinding.inflate(layoutInflater, parent, false)
+                val binding = RecyclerViewOverlayItemBinding.inflate(layoutInflater, parent, false)
                 return OverlayViewHolder(binding)
             }
         }

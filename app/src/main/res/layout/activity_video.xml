@@ -122,7 +122,7 @@
             android:layout_height="match_parent"
             tools:parentTag="androidx.recyclerview.widget.RecyclerView"
             tools:layoutManager="LinearLayoutManager"
-            tools:listitem="@layout/recycler_view_item"/>
+            tools:listitem="@layout/recycler_view_overlay_item"/>
 
         <include
             android:id="@+id/empty_recycler_view"

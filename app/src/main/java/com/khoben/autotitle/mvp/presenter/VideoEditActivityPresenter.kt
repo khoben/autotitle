@@ -8,9 +8,12 @@ import android.view.ViewGroup
 import com.khoben.autotitle.App
 import com.khoben.autotitle.R
 import com.khoben.autotitle.common.FileUtils
+import com.khoben.autotitle.common.FileUtils.getFileName
 import com.khoben.autotitle.model.MLCaption
 import com.khoben.autotitle.model.PlaybackEvent
 import com.khoben.autotitle.model.PlaybackState
+import com.khoben.autotitle.model.project.RecentProjectsLoader
+import com.khoben.autotitle.model.project.ThumbProject
 import com.khoben.autotitle.mvp.view.VideoEditActivityView
 import com.khoben.autotitle.service.mediaplayer.MediaController
 import com.khoben.autotitle.service.mediaplayer.VideoRender
@@ -67,15 +70,17 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
 
         mediaController.setVideoSource(sourceUri!!)
 
-//        RecentProjectsLoader.store(
-//            ThumbProject(
-//                UUID.randomUUID().toString(),
-//                sourceUri?.getFileName(appContext),
-//                dateCreated = System.currentTimeMillis()
-//            )
-//        )
-//
-//        RecentProjectsLoader.save()
+        RecentProjectsLoader.new(
+            ThumbProject(
+                id = UUID.randomUUID().toString(),
+                title = sourceUri?.getFileName(appContext),
+                dateCreated = System.currentTimeMillis(),
+                dateUpdated = System.currentTimeMillis(),
+                videoDuration = mediaController.videoDuration,
+                videoFileSizeBytes = 10500L,
+                videoSourceFilePath = FileUtils.getRealPathFromURI(appContext, sourceUri!!)
+            )
+        )
 
         processVideo(appContext)
         viewState.initVideoContainerLayoutParams(mediaController.mediaPlayer, videoRenderer)

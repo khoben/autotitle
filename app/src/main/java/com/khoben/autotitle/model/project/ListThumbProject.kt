@@ -1,7 +1,6 @@
 package com.khoben.autotitle.model.project
 
 import com.khoben.autotitle.App
-import com.khoben.autotitle.common.FileUtils
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromByteArray
@@ -26,14 +25,12 @@ data class ListThumbProject(
         }
         val bytes = file.readBytes()
         decode(bytes)
-        return true
+        return list != null && list!!.isNotEmpty()
     }
 
-    fun store() {
+    fun save() {
         Timber.d("Storing recent projects")
-        list?.forEach {
-            FileUtils.createDirIfNotExists("${App.PROJECTS_FOLDER}/${it.id}")
-        }
+        list?.forEach { it.createProjectFolderIfNotExists() }
         val bytes = encode()
         File(FILE_CONTENT).writeBytes(bytes)
     }

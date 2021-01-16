@@ -1,12 +1,22 @@
 package com.khoben.autotitle.ui.recyclerview
 
+import android.graphics.BitmapFactory
+import android.graphics.PorterDuff
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
+import android.os.Build
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.khoben.autotitle.R
+import com.khoben.autotitle.common.FileUtils
 import com.khoben.autotitle.extension.formattedTime
+import com.khoben.autotitle.model.project.ThumbProject
 import com.khoben.autotitle.ui.overlay.OverlayDataMapper
+import timber.log.Timber
 
 @BindingAdapter("overlayFromString")
 fun TextView.setOverlayFromString(item: OverlayDataMapper) {
@@ -33,3 +43,16 @@ fun TextView.setOverlayContentString(item: OverlayDataMapper) {
 fun ImageView.setBadgeColor(item: OverlayDataMapper) {
     background.setTint(item.badgeColor)
 }
+
+@BindingAdapter("thumb")
+fun ImageView.setThumb(item: ThumbProject) {
+    // load bitmap
+    val path = item.getThumbPath()
+    if (FileUtils.checkIfExists(path)) {
+        setImageBitmap(BitmapFactory.decodeFile(path))
+    } else {
+        setImageDrawable(ContextCompat.getDrawable(context, R.drawable.image_placeholder))
+        Timber.e("Trying to load not existing thumb")
+    }
+}
+

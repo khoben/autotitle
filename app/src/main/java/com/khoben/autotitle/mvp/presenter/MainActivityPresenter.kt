@@ -8,6 +8,7 @@ import com.khoben.autotitle.App.Companion.LIMIT_DURATION_MS
 import com.khoben.autotitle.common.OpeningVideoFileState
 import com.khoben.autotitle.model.project.RecentProjectsLoader
 import com.khoben.autotitle.mvp.view.MainActivityView
+import kotlinx.serialization.ExperimentalSerializationApi
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import timber.log.Timber
@@ -22,11 +23,6 @@ class MainActivityPresenter : MvpPresenter<MainActivityView>() {
 
     init {
         App.applicationComponent.inject(this)
-    }
-
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
-        loadRecentProjects()
     }
 
     fun verifyMedia(uri: Uri): OpeningVideoFileState {
@@ -52,10 +48,32 @@ class MainActivityPresenter : MvpPresenter<MainActivityView>() {
         return OpeningVideoFileState.SUCCESS
     }
 
-    private fun loadRecentProjects() {
+    fun saveRecentProjects() {
+        RecentProjectsLoader.save()
+    }
+
+    @ExperimentalSerializationApi
+    fun loadRecentProjects() {
         if (!RecentProjectsLoader.load()) viewState.hideRecentProject()
         else {
-            Timber.d("Recent projects = ${RecentProjectsLoader.listProjects}")
+            Timber.d("Recent projects = ${RecentProjectsLoader.getCurrentProjects()}")
+            viewState.submitList(RecentProjectsLoader.getCurrentProjects())
         }
+    }
+
+    fun onEditTitleClick(idx: Int) {
+        RecentProjectsLoader.getProjectTitle(idx)?.let { title ->
+            viewState.showEditTitleFragment(idx, title)
+        }
+    }
+
+    fun onRemoveClick(idx: Int) {
+        RecentProjectsLoader.removeAt(idx)
+        viewState.submitList(RecentProjectsLoader.getCurrentProjects())
+    }
+
+    fun editItemTitle(idx: Int, title: String) {
+        RecentProjectsLoader.setProjectTitle(idx, title)
+        viewState.submitList(RecentProjectsLoader.getCurrentProjects())
     }
 }
