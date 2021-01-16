@@ -22,8 +22,8 @@ import com.khoben.autotitle.mvp.presenter.MainActivityPresenter
 import com.khoben.autotitle.mvp.view.MainActivityView
 import com.khoben.autotitle.ui.etc.OpenSourceLicensesDialog
 import com.khoben.autotitle.ui.popup.ProjectTitleEditFragment
-import com.khoben.autotitle.ui.recyclerview.ProjectItemOptions
-import com.khoben.autotitle.ui.recyclerview.ProjectViewListAdapter
+import com.khoben.autotitle.ui.recyclerview.projects.ProjectItemOptions
+import com.khoben.autotitle.ui.recyclerview.projects.ProjectViewListAdapter
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
 import timber.log.Timber

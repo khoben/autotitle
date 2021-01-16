@@ -1,4 +1,4 @@
-package com.khoben.autotitle.ui.recyclerview
+package com.khoben.autotitle.ui.recyclerview.overlays
 
 import androidx.recyclerview.widget.DiffUtil
 import com.khoben.autotitle.ui.overlay.OverlayDataMapper

@@ -39,6 +39,10 @@ import com.khoben.autotitle.ui.popup.CustomAlertDialog
 import com.khoben.autotitle.ui.popup.TextEditorDialogFragment
 import com.khoben.autotitle.ui.popup.VideoProcessingProgressDialog
 import com.khoben.autotitle.ui.recyclerview.*
+import com.khoben.autotitle.ui.recyclerview.EmptyRecyclerView
+import com.khoben.autotitle.ui.recyclerview.overlays.OverlayViewListAdapter
+import com.khoben.autotitle.ui.recyclerview.overlays.RecyclerViewItemEventListener
+import com.khoben.autotitle.ui.recyclerview.overlays.SwipeToDeleteCallback
 import com.khoben.autotitle.ui.snackbar.SnackBarHelper
 import me.toptas.fancyshowcase.FancyShowCaseQueue
 import me.toptas.fancyshowcase.FancyShowCaseView
@@ -53,7 +57,7 @@ import java.util.*
 
 class VideoEditActivity : MvpAppCompatActivity(),
         VideoEditActivityView,
-        RecyclerViewItemEventListener,
+    RecyclerViewItemEventListener,
         VideoProcessingProgressDialog.ProgressDialogListener {
 
     @InjectPresenter

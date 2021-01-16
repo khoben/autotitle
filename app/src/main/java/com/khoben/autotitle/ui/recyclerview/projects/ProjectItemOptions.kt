@@ -1,4 +1,4 @@
-package com.khoben.autotitle.ui.recyclerview
+package com.khoben.autotitle.ui.recyclerview.projects
 
 import android.content.Context
 import android.os.Bundle

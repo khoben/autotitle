@@ -1,4 +1,4 @@
-package com.khoben.autotitle.ui.recyclerview
+package com.khoben.autotitle.ui.recyclerview.overlays
 
 import android.content.Context
 import android.graphics.Canvas

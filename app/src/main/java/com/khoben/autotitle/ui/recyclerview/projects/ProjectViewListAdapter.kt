@@ -1,17 +1,12 @@
-package com.khoben.autotitle.ui.recyclerview
+package com.khoben.autotitle.ui.recyclerview.projects
 
 import android.annotation.SuppressLint
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.view.menu.MenuPopupHelper
-import androidx.appcompat.widget.PopupMenu
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.khoben.autotitle.R
 import com.khoben.autotitle.databinding.RecyclerViewProjectItemBinding
 import com.khoben.autotitle.model.project.ThumbProject
-import timber.log.Timber
 
 class ProjectViewListAdapter :
     ListAdapter<ThumbProject,
