@@ -1,17 +1,16 @@
-package com.khoben.autotitle.ui.popup
+package com.khoben.autotitle.ui.popup.projectitem
 
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.DialogFragment
 import com.khoben.autotitle.common.ViewUtils.focusAndShowKeyboard
 import com.khoben.autotitle.databinding.RecyclerEditTitleBinding
 import com.khoben.autotitle.extension.dp
 
-class ProjectTitleEditFragment: DialogFragment() {
+class ProjectTitleEditDialog: DialogFragment() {
     private var binding: RecyclerEditTitleBinding? = null
 
     override fun onCreateView(
@@ -72,8 +71,8 @@ class ProjectTitleEditFragment: DialogFragment() {
         const val EXTRA_TITLE_ITEM = "extra_title_item"
 
         @JvmStatic
-        fun show(idx: Int, title: String): ProjectTitleEditFragment {
-            return ProjectTitleEditFragment().apply {
+        fun show(idx: Int, title: String): ProjectTitleEditDialog {
+            return ProjectTitleEditDialog().apply {
                 arguments = Bundle().apply {
                     putInt(EXTRA_IDX_ITEM, idx)
                     putString(EXTRA_TITLE_ITEM, title)

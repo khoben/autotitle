@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.khoben.autotitle.databinding.RecyclerViewProjectItemBinding
 import com.khoben.autotitle.model.project.ThumbProject
+import com.khoben.autotitle.ui.popup.projectitem.ProjectItemOptionsDialog
 
 class ProjectViewListAdapter :
     ListAdapter<ThumbProject,
@@ -37,7 +38,7 @@ class ProjectViewListAdapter :
 
         private fun showPopupMenu() {
             (itemView.context as AppCompatActivity).supportFragmentManager.let {
-                ProjectItemOptions.show(bindingAdapterPosition).apply {
+                ProjectItemOptionsDialog.show(bindingAdapterPosition).apply {
                     show(it, "recycler_bottom_modal_sheet")
                 }
             }

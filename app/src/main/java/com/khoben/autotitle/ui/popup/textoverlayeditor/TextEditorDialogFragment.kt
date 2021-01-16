@@ -1,6 +1,5 @@
-package com.khoben.autotitle.ui.popup
+package com.khoben.autotitle.ui.popup.textoverlayeditor
 
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -8,7 +7,6 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import androidx.annotation.ColorInt
@@ -62,7 +60,7 @@ class TextEditorDialogFragment : DialogFragment() {
             adapter = activity?.let {
                 ColorPickerAdapter(it).apply {
                     onColorPickerClickListener = object :
-                            ColorPickerAdapter.OnColorPickerClickListener {
+                        ColorPickerAdapter.OnColorPickerClickListener {
                         override fun onColorPickerClickListener(colorCode: Int) {
                             mColorCode = colorCode
                             mAddTextEditText!!.setTextColor(colorCode)

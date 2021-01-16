@@ -36,7 +36,7 @@ import com.khoben.autotitle.ui.overlay.OverlayText
 import com.khoben.autotitle.ui.player.VideoControlsView
 import com.khoben.autotitle.ui.player.VideoSurfaceView
 import com.khoben.autotitle.ui.popup.CustomAlertDialog
-import com.khoben.autotitle.ui.popup.TextEditorDialogFragment
+import com.khoben.autotitle.ui.popup.textoverlayeditor.TextEditorDialogFragment
 import com.khoben.autotitle.ui.popup.VideoProcessingProgressDialog
 import com.khoben.autotitle.ui.recyclerview.*
 import com.khoben.autotitle.ui.recyclerview.EmptyRecyclerView

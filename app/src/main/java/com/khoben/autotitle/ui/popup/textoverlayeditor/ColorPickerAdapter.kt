@@ -1,4 +1,4 @@
-package com.khoben.autotitle.ui.popup
+package com.khoben.autotitle.ui.popup.textoverlayeditor
 
 import android.content.Context
 import android.graphics.Rect

@@ -1,4 +1,4 @@
-package com.khoben.autotitle.ui.recyclerview.projects
+package com.khoben.autotitle.ui.popup.projectitem
 
 import android.content.Context
 import android.os.Bundle
@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.khoben.autotitle.databinding.RecyclerBottomSheetBinding
 
-class ProjectItemOptions: BottomSheetDialogFragment() {
+class ProjectItemOptionsDialog: BottomSheetDialogFragment() {
 
     private var binding: RecyclerBottomSheetBinding? = null
 
@@ -59,8 +59,8 @@ class ProjectItemOptions: BottomSheetDialogFragment() {
         const val EXTRA_IDX_ITEM = "extra_idx_item"
 
         @JvmStatic
-        fun show(idx: Int): ProjectItemOptions {
-            return ProjectItemOptions().apply {
+        fun show(idx: Int): ProjectItemOptionsDialog {
+            return ProjectItemOptionsDialog().apply {
                 arguments = Bundle().apply {
                     putInt(EXTRA_IDX_ITEM, idx)
                 }

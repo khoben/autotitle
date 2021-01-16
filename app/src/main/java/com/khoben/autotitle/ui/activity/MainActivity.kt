@@ -21,8 +21,8 @@ import com.khoben.autotitle.model.project.ThumbProject
 import com.khoben.autotitle.mvp.presenter.MainActivityPresenter
 import com.khoben.autotitle.mvp.view.MainActivityView
 import com.khoben.autotitle.ui.etc.OpenSourceLicensesDialog
-import com.khoben.autotitle.ui.popup.ProjectTitleEditFragment
-import com.khoben.autotitle.ui.recyclerview.projects.ProjectItemOptions
+import com.khoben.autotitle.ui.popup.projectitem.ProjectTitleEditDialog
+import com.khoben.autotitle.ui.popup.projectitem.ProjectItemOptionsDialog
 import com.khoben.autotitle.ui.recyclerview.projects.ProjectViewListAdapter
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
@@ -30,8 +30,8 @@ import timber.log.Timber
 
 
 class MainActivity : MvpAppCompatActivity(), MainActivityView,
-    ProjectItemOptions.ItemClickListener,
-    ProjectTitleEditFragment.ItemTitleEditListener {
+    ProjectItemOptionsDialog.ItemClickListener,
+    ProjectTitleEditDialog.ItemTitleEditListener {
 
     @InjectPresenter
     lateinit var presenter: MainActivityPresenter
@@ -124,7 +124,7 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
 
     override fun showEditTitleFragment(idx: Int, title: String) {
         supportFragmentManager.let {
-            ProjectTitleEditFragment.show(idx, title).apply {
+            ProjectTitleEditDialog.show(idx, title).apply {
                 show(it, "edit_title_fragment")
             }
         }
