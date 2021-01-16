@@ -5,15 +5,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
-        <!--        <item name="android:statusBarColor">?attr/colorSurface</item>-->
         <item name="android:forceDarkAllowed">false</item>
-
-        <!--        <item name="colorPrimaryVariant">#3700B3</item>-->
-        <!--        <item name="colorPrimary">#673AB7</item>-->
-        <!--        <item name="colorPrimaryDark">#512DA8</item>-->
-        <!--        <item name="colorAccent">#FF4081</item>-->
-        <!--        <item name="colorOnPrimary">#FFFFFF</item>-->
-        <!--        <item name="colorOnSecondary">#000000</item>-->
     </style>
 
     <style name="RoundedImageView" parent="">
