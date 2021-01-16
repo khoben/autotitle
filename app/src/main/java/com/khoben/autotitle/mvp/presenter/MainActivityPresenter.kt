@@ -57,6 +57,7 @@ class MainActivityPresenter : MvpPresenter<MainActivityView>() {
         if (!RecentProjectsLoader.load()) viewState.hideRecentProject()
         else {
             Timber.d("Recent projects = ${RecentProjectsLoader.getCurrentProjects()}")
+            viewState.showRecentProject()
             viewState.submitList(RecentProjectsLoader.getCurrentProjects())
         }
     }

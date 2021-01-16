@@ -89,13 +89,15 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
         binding.settingsBtn.setOnClickListener { settingsClick(it) }
         binding.cameraCaptureButton.setOnClickListener { takeVideoClick(it) }
         binding.filestoreLoadButton.setOnClickListener { getContentClick(it) }
+
+        guidelineInitialPercent = (binding.guideline1.layoutParams as ConstraintLayout.LayoutParams).guidePercent
     }
 
+    private var guidelineInitialPercent = -1F
     private fun hideRecentProjectAnim() {
         binding.recentTitle.isVisible = false
         binding.recentBtnEdit.isVisible = false
-        val start = (binding.guideline1.layoutParams as ConstraintLayout.LayoutParams).guidePercent
-        ValueAnimator.ofFloat(start, 1F).apply {
+        ValueAnimator.ofFloat(guidelineInitialPercent, 1F).apply {
             duration = 1000
             interpolator = AccelerateDecelerateInterpolator()
             addUpdateListener { valueAnimator ->
@@ -108,6 +110,12 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
         binding.recentTitle.isVisible = false
         binding.recentBtnEdit.isVisible = false
         binding.guideline1.setGuidelinePercent(1F)
+    }
+
+    override fun showRecentProject() {
+        binding.recentTitle.isVisible = true
+        binding.recentBtnEdit.isVisible = true
+        binding.guideline1.setGuidelinePercent(guidelineInitialPercent)
     }
 
     override fun submitList(list: List<ThumbProject>) {

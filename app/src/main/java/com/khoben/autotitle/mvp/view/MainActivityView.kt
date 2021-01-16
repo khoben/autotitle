@@ -18,4 +18,7 @@ interface MainActivityView : MvpView {
 
     @AddToEndSingle
     fun showEditTitleFragment(idx: Int, title: String)
+
+    @AddToEndSingle
+    fun showRecentProject()
 }
