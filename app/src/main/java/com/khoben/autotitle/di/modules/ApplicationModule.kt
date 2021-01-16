@@ -8,6 +8,7 @@ import com.khoben.autotitle.service.audiotranscriber.AudioTranscriberTest
 import com.khoben.autotitle.service.frameretriever.VideoFrameRetriever
 import com.khoben.autotitle.service.frameretriever.VideoFrameRetrieverImpl
 import com.khoben.autotitle.service.mediaplayer.*
+import com.khoben.autotitle.service.videoloader.VideoLoader
 import com.khoben.autotitle.service.videosaver.Mp4ComposerVP
 import com.khoben.autotitle.service.videosaver.VideoProcessorBase
 import dagger.Module
@@ -61,5 +62,11 @@ class ApplicationModule(private val app: App) {
     @Singleton
     internal fun provideMediaController(): MediaController {
         return MediaController()
+    }
+
+    @Provides
+    @Singleton
+    internal fun provideVideoLoader(): VideoLoader {
+        return VideoLoader()
     }
 }

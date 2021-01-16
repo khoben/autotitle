@@ -52,7 +52,9 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     @Inject
     lateinit var appContext: Context
 
-    private var videoLoader: VideoLoader = VideoLoader()
+    @Inject
+    lateinit var videoLoader: VideoLoader
+
     private var overlayHandler: OverlayHandler? = null
     private var sourceUri: Uri? = null
 
