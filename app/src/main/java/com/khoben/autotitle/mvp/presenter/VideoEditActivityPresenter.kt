@@ -15,6 +15,7 @@ import com.khoben.autotitle.model.PlaybackState
 import com.khoben.autotitle.model.project.RecentProjectsLoader
 import com.khoben.autotitle.model.project.ThumbProject
 import com.khoben.autotitle.mvp.view.VideoEditActivityView
+import com.khoben.autotitle.service.audioextractor.AudioExtractorNoAudioException
 import com.khoben.autotitle.service.mediaplayer.MediaController
 import com.khoben.autotitle.service.mediaplayer.VideoRender
 import com.khoben.autotitle.service.videoloader.VideoLoader
@@ -312,14 +313,26 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
                     val audioTranscribeResult = it.second
                     val framesResult = it.first
                     when {
-                        // Service transcription is not available
+                        // Service transcription error
                         audioTranscribeResult.throwable != null -> {
-                            Timber.e("No captions. Network service error")
-                            viewState.showPopupWindow(
-                                    context.getString(R.string.error_no_captions)
-                                            + "\n"
-                                            + context.getString(R.string.error_no_caption_net_error)
-                            )
+                            when(audioTranscribeResult.throwable) {
+                                is AudioExtractorNoAudioException -> {
+                                    Timber.e("No captions. Source video doesn't have audio track")
+                                    viewState.showPopupWindow(
+                                        context.getString(R.string.error_no_captions)
+                                                + ".\n"
+                                                + context.getString(R.string.error_no_captions_no_audio)
+                                    )
+                                }
+                                else -> {
+                                    Timber.e("No captions. Network service error")
+                                    viewState.showPopupWindow(
+                                        context.getString(R.string.error_no_captions)
+                                                + "\n"
+                                                + context.getString(R.string.error_no_caption_net_error)
+                                    )
+                                }
+                            }
                         }
                         // Empty result
                         audioTranscribeResult.caption == null ||

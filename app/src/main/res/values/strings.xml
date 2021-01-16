@@ -43,4 +43,5 @@
     <string name="here_are_no_captions_you_can_add_it">Here are no captions.</string>
     <string name="snack_bar_undo">Undo</string>
     <string name="snack_bar_item_deleted">Item deleted.</string>
+    <string name="error_no_captions_no_audio">Source video doesn\'t have audio track</string>
 </resources>

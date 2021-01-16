@@ -40,4 +40,5 @@
     <string name="here_are_no_captions_you_can_add_it">Здесь пока пусто.</string>
     <string name="snack_bar_undo">Отмена</string>
     <string name="snack_bar_item_deleted">Объект удален.</string>
+    <string name="error_no_captions_no_audio">Исходное видео без аудиодорожки</string>
 </resources>
