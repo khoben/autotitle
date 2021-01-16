@@ -1,7 +1,5 @@
 <resources>
     <!-- Base application theme. -->
-
-    <!--    static dark theme-->
     <style name="MyTheme" parent="Theme.MaterialComponents.DayNight">
 
         <item name="windowActionBar">false</item>
