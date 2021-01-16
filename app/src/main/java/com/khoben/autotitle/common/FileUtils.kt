@@ -3,6 +3,7 @@ package com.khoben.autotitle.common
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
+import android.content.res.AssetFileDescriptor
 import android.graphics.Bitmap
 import android.media.MediaScannerConnection
 import android.net.Uri
@@ -16,9 +17,46 @@ import com.khoben.autotitle.App
 import com.khoben.autotitle.BuildConfig
 import timber.log.Timber
 import java.io.File
+import java.io.FileNotFoundException
+import java.io.IOException
 
 
 object FileUtils {
+
+    /**
+     * Get size of data abstracted by uri
+     * @param context context to access uri
+     * @param uri uri
+     * @return size in bytes, -1 if unknown
+     */
+    fun getSizeBytes(context: Context, uri: Uri): Long {
+        return if (ContentResolver.SCHEME_CONTENT == uri.scheme) {
+            var fileDescriptor: AssetFileDescriptor? = null
+            try {
+                fileDescriptor = context.contentResolver.openAssetFileDescriptor(uri, "r")
+                val size = fileDescriptor?.parcelFileDescriptor?.statSize ?: 0
+                if (size < 0) -1 else size
+            } catch (e: FileNotFoundException) {
+                Timber.e(e,"Unable to extract length from targetFile: $uri")
+                -1
+            } catch (e: IllegalStateException) {
+                Timber.e(e,"Unable to extract length from targetFile: $uri")
+                -1
+            } finally {
+                if (fileDescriptor != null) {
+                    try {
+                        fileDescriptor.close()
+                    } catch (e: IOException) {
+                        Timber.e(e, "Unable to close file descriptor from targetFile: $uri")
+                    }
+                }
+            }
+        } else if (ContentResolver.SCHEME_FILE == uri.scheme && uri.path != null) {
+            File(uri.path!!).length()
+        } else {
+            -1
+        }
+    }
 
     fun writeBitmap(path: String, bitmap: Bitmap, format: Bitmap.CompressFormat, quality: Int) {
         File(path).outputStream().use { out ->

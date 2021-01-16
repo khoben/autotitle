@@ -80,7 +80,7 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
                 dateCreated = System.currentTimeMillis(),
                 dateUpdated = System.currentTimeMillis(),
                 videoDuration = mediaController.videoDuration,
-                videoFileSizeBytes = 10500L,
+                videoFileSizeBytes = FileUtils.getSizeBytes(appContext, sourceUri!!),
                 videoSourceFilePath = FileUtils.getRealPathFromURI(appContext, sourceUri!!)
             )
         )
