@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/memphis_pattern"
+    android:backgroundTint="@color/patternTintColor"
     tools:context="com.khoben.autotitle.ui.activity.ResultActivity">
 
     <com.google.android.material.appbar.AppBarLayout
