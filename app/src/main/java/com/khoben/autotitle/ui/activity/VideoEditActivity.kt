@@ -24,6 +24,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.khoben.autotitle.App
 import com.khoben.autotitle.R
 import com.khoben.autotitle.databinding.ActivityVideoBinding
+import com.khoben.autotitle.model.project.RecentProjectsLoader
 import com.khoben.autotitle.mvp.presenter.VideoEditActivityPresenter
 import com.khoben.autotitle.mvp.view.VideoEditActivityView
 import com.khoben.autotitle.service.mediaplayer.MediaSurfacePlayer
@@ -240,6 +241,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
         super.onPause()
         presenter.pausePlayback()
         userSettings.edit().putBoolean(USER_SETTINGS_ITEM_MUTED, presenter.getMuteState()).apply()
+        RecentProjectsLoader.save()
     }
 
     override fun onDestroy() {
