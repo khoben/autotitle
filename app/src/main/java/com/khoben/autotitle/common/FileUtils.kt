@@ -24,6 +24,21 @@ import java.io.IOException
 object FileUtils {
 
     /**
+     * @see [File.deleteRecursively]
+     * @param path Folder path
+     */
+    fun removeFileFolderRecursive(path: String) {
+        val folder = File(path)
+        if (!folder.isDirectory) throw RuntimeException("Only folders allowed")
+        val deleted = folder.deleteRecursively()
+        if (deleted) {
+            Timber.d("Folder $path was deleted")
+        } else {
+            Timber.e("Folder $path wasn't deleted")
+        }
+    }
+
+    /**
      * Get size of data abstracted by uri
      * @param context context to access uri
      * @param uri uri

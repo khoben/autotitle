@@ -43,6 +43,7 @@ object RecentProjectsLoader {
     }
 
     fun removeAt(idx: Int) {
+        FileUtils.removeFileFolderRecursive("${App.PROJECTS_FOLDER}/${temp[idx].id}")
         temp.removeAt(idx)
     }
 
