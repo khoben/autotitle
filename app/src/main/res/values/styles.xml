@@ -1,12 +1,11 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="MyTheme" parent="Theme.MaterialComponents.DayNight">
-
+    <style name="MyBaseTheme" parent="Theme.MaterialComponents.DayNight">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-
-        <item name="android:forceDarkAllowed">false</item>
     </style>
+
+    <style name="MyTheme" parent="MyBaseTheme"/>
 
     <style name="RoundedImageView" parent="">
         <item name="cornerFamily">rounded</item>
