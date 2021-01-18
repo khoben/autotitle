@@ -64,11 +64,15 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         mediaController.addSubscription(this)
     }
 
+    fun setDataSourceUri(sourceVideoUri: Uri) {
+        sourceUri = sourceUri?: sourceVideoUri
+    }
+
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
 
         mediaController.setVideoSource(sourceUri!!)
-        viewState.initVideoContainerLayoutParams(mediaController.mediaPlayer, videoRenderer)
+        viewState.initVideoContainerLayoutParams(mediaController.mediaPlayer, videoRenderer, getVideoDetails()!!)
 
         RecentProjectsLoader.new(
             ThumbProject(
@@ -113,10 +117,15 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
             overlayHandler?.overlayObjectEventListener = this
         } else {
             overlayHandler?.setLayout(WeakReference(parentView))
-            // TODO: need to move to better place
-            restoreCurrentPlaybackTime()
         }
         videoControlsView.seekBarListener = this
+    }
+
+    /**
+     * Restores current playback position from media player
+     */
+    fun restoreCurrentPlaybackPosition() {
+        viewState.setControlsToTime(mediaController.currentPosition)
     }
 
     /**
@@ -520,9 +529,5 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
 
     override fun onPlayPauseButtonClicked() {
         togglePlaybackState()
-    }
-
-    private fun restoreCurrentPlaybackTime() {
-        viewState.setControlsToTime(mediaController.currentPosition)
     }
 }

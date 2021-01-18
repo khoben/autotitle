@@ -18,7 +18,6 @@ class MediaExoPlayerSurfaceWrapper(private var context: Context) :
     private var mediaPlayer: SimpleExoPlayer? = null
     private var dataSourceUri: Uri? = null
     private var mediaFileInfo: VideoInfo? = null
-    private var surface: Surface? = null
     private var mediaPlayerCallback: MediaPlayerSurfaceCallback? = null
     private var isPreparing = true
 
@@ -32,6 +31,7 @@ class MediaExoPlayerSurfaceWrapper(private var context: Context) :
 
     override fun setDataSourceUri(uri: Uri) {
         dataSourceUri = uri
+        mediaPlayer!!.setMediaItem(MediaItem.fromUri(dataSourceUri!!))
         val mediaRetriever =
             MediaMetadataRetriever().apply { setDataSource(context, dataSourceUri) }
         val rotation =
@@ -61,13 +61,11 @@ class MediaExoPlayerSurfaceWrapper(private var context: Context) :
     }
 
     override fun setSurface(surface: Surface?) {
-        Timber.d("Surface init")
-        this.surface = surface
+        Timber.d("set surface")
         mediaPlayer!!.setVideoSurface(surface)
     }
 
     override fun prepare() {
-        mediaPlayer!!.setMediaItem(MediaItem.fromUri(dataSourceUri!!))
         isPreparing = true
         mediaPlayer!!.prepare()
     }

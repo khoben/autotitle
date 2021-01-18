@@ -24,6 +24,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.khoben.autotitle.App
 import com.khoben.autotitle.R
 import com.khoben.autotitle.databinding.ActivityVideoBinding
+import com.khoben.autotitle.model.VideoInfo
 import com.khoben.autotitle.model.project.RecentProjectsLoader
 import com.khoben.autotitle.mvp.presenter.VideoEditActivityPresenter
 import com.khoben.autotitle.mvp.view.VideoEditActivityView
@@ -190,12 +191,12 @@ class VideoEditActivity : MvpAppCompatActivity(),
 
     override fun initVideoContainerLayoutParams(
         mediaPlayer: MediaSurfacePlayer,
-        videoRenderer: VideoRender
+        videoRenderer: VideoRender,
+        videoDetails: VideoInfo
     ) {
-        videoSurfaceView.init(videoRenderer, mediaPlayer)
-        val videoDetails = presenter.getVideoDetails()!!
         Timber.d("Video details = $videoDetails")
         videoControlsView.setMediaDuration(videoDetails.duration)
+        videoSurfaceView.init(videoRenderer, mediaPlayer)
         if (videoDetails.rotation == 0 &&
             videoDetails.width > videoDetails.height ||
             videoDetails.rotation == 180 &&
@@ -214,11 +215,14 @@ class VideoEditActivity : MvpAppCompatActivity(),
         }
 
         // adjust overlay size by video surface size
+        // and restores playback position
         videoSurfaceView.post {
             val layoutParams = overlayView.layoutParams
             layoutParams.width = videoSurfaceView.measuredWidth
             layoutParams.height = videoSurfaceView.measuredHeight
             overlayView.layoutParams = layoutParams
+            // restores current playback position
+            presenter.restoreCurrentPlaybackPosition()
         }
     }
 
