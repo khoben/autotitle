@@ -68,7 +68,7 @@ class ResultViewActivityPresenter : MvpPresenter<ResultActivityView>() {
                 .startChooser()
     }
 
-    fun getPlayer() = mediaPlayer.getPlayerImpl(appContext)
+    fun initNewPlayer() = mediaPlayer.initNewPlayer(appContext)
     fun releasePlayer() {
         mediaPlayer.releasePlayer()
     }

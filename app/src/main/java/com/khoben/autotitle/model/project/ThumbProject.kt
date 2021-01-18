@@ -22,6 +22,7 @@ import kotlinx.serialization.Serializable
  * @property dateUpdated Unix timestamp of last update
  * @property videoDuration Duration of video, in ms
  * @property videoFileSizeBytes Video file size, in bytes
+ * @property videoSourceFilePath Source video file path
  */
 @Serializable
 data class ThumbProject(
@@ -34,7 +35,19 @@ data class ThumbProject(
     var videoFileSizeBytes: Long = -1,
     var videoSourceFilePath: String? = null
 ) {
+    /**
+     * Get full path to thumbnail
+     * @return Path
+     */
     fun getThumbPath() = "${App.PROJECTS_FOLDER}/${id}/${sourceVideoThumbPath}"
+
+    /**
+     * Create thumbnail of provided video file with [uri] and [context]
+     *
+     * Store file at [getThumbPath] path
+     * @param uri Uri
+     * @param context Context
+     */
     fun createThumb(uri: Uri, context: Context) {
         AndroidNativeMetadataProvider(context, uri)
             .getFrameAt(0L)?.let { BitmapUtils.cropCenter(it, 512, 384) }
@@ -43,6 +56,9 @@ data class ThumbProject(
             }
     }
 
+    /**
+     * Creates project folder with path '[App.PROJECTS_FOLDER]/[id]' if it not exists
+     */
     fun createProjectFolderIfNotExists() {
         FileUtils.createDirIfNotExists("${App.PROJECTS_FOLDER}/${id}")
     }

@@ -11,12 +11,15 @@ object RecentProjectsLoader {
     @ExperimentalSerializationApi
     private val listProjects = ListThumbProject()
 
+    /**
+     * Runtime projects storage
+     */
     private val temp = mutableListOf<ThumbProject>()
 
     /**
      * Loads from filesystem (path = [App.PROJECTS_FOLDER]) projects info
      *
-     * @return Has been read non empty list of projects
+     * @return Has been read non-empty list of projects
      */
     @ExperimentalSerializationApi
     fun load(): Boolean {
@@ -32,11 +35,11 @@ object RecentProjectsLoader {
     }
 
     /**
-     * Adds new project to list
-     *
-     * Also it creates thumbnail
+     * Creates new project and its thumbnail
      *
      * @param item ThumbProject
+     * @param uri Video source uri
+     * @param context App context
      */
     fun new(item: ThumbProject, uri: Uri, context: Context) {
         item.createProjectFolderIfNotExists()
@@ -44,13 +47,36 @@ object RecentProjectsLoader {
         temp.add(item)
     }
 
+    /**
+     * Removes project from filesystem
+     *
+     * @param idx Index of project
+     */
     fun removeAt(idx: Int) {
         FileUtils.removeFileFolderRecursive("${App.PROJECTS_FOLDER}/${temp[idx].id}")
         temp.removeAt(idx)
     }
 
-    fun getCurrentProjects() = temp
-    fun getCurrentProjectIdx(idx: Int) = temp[idx]
+    /**
+     * Get runtime list of projects
+     *
+     * @return List
+     */
+    fun getRecentProjects() = temp
+
+    /**
+     * Get project by [idx]
+     *
+     * @param idx Project's index
+     * @return ThumbProject
+     */
+    fun getRecentProject(idx: Int) = temp[idx]
+
+    /**
+     * Set project title with [idx]
+     * @param idx Project's index
+     * @param title Title
+     */
     fun setProjectTitle(idx: Int, title: String) {
         temp[idx] = temp[idx].copy(title = title)
     }
@@ -59,7 +85,7 @@ object RecentProjectsLoader {
     }
 
     /**
-     * Saves all recent projects info to filesystem
+     * Saves all projects to filesystem
      */
     @ExperimentalSerializationApi
     fun save() {

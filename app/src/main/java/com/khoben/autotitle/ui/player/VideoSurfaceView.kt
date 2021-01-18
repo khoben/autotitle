@@ -124,7 +124,7 @@ class VideoSurfaceView @JvmOverloads constructor(ctx: Context, attrs: AttributeS
 
     fun onDestroy() {
         if (mediaPlayer != null) {
-            if (mediaPlayer!!.isPlaying()) {
+            if (mediaPlayer!!.isNotPaused()) {
                 mediaPlayer!!.stop()
             }
             mediaPlayer!!.release()

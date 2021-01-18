@@ -61,7 +61,9 @@ class MediaExoPlayerSurfaceWrapper(private var context: Context) :
     }
 
     override fun setSurface(surface: Surface?) {
+        Timber.d("Surface init")
         this.surface = surface
+        mediaPlayer!!.setVideoSurface(surface)
     }
 
     override fun prepare() {
@@ -70,34 +72,29 @@ class MediaExoPlayerSurfaceWrapper(private var context: Context) :
         mediaPlayer!!.prepare()
     }
 
-    override fun initSurface() {
-        Timber.d("Surface init")
-        mediaPlayer!!.setVideoSurface(surface)
-    }
-
     override fun play() {
-        if (!isPlaying()) {
+        if (!isNotPaused()) {
             mediaPlayer!!.play()
             Timber.d("Playing started")
         }
     }
 
     override fun pause() {
-        if (isPlaying()) {
+        if (isNotPaused()) {
             mediaPlayer?.pause()
             Timber.d("Paused")
         }
     }
 
     override fun toggle() {
-        if (isPlaying()) {
+        if (isNotPaused()) {
             pause()
         } else {
             play()
         }
     }
 
-    override fun isPlaying(): Boolean {
+    override fun isNotPaused(): Boolean {
         return mediaPlayer != null &&
                 ((mediaPlayer!!.playWhenReady &&
                         mediaPlayer!!.playbackState == Player.STATE_READY) ||

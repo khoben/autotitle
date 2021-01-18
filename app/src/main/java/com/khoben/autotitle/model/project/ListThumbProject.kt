@@ -16,6 +16,11 @@ data class ListThumbProject(
 ) {
     private val FILE_CONTENT = App.PROJECTS_FILE_SERIALIZED
 
+    /**
+     * Reads projects info from [FILE_CONTENT] file
+     *
+     * @return [FILE_CONTENT] exists
+     */
     fun load(): Boolean {
         Timber.d("Loading recent projects")
         val file = File(FILE_CONTENT)
@@ -28,6 +33,9 @@ data class ListThumbProject(
         return list != null && list!!.isNotEmpty()
     }
 
+    /**
+     * Stores projects list to filesystem
+     */
     fun save() {
         Timber.d("Storing recent projects")
         list?.forEach { it.createProjectFolderIfNotExists() }

@@ -8,6 +8,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.annotation.ColorInt
 import androidx.core.animation.addListener
 import com.khoben.autotitle.App.Companion.FRAME_TIME_MS
 import com.khoben.autotitle.extension.getRect
@@ -20,7 +21,7 @@ import java.util.*
 import kotlin.math.min
 
 class OverlayHandler private constructor(
-        private var context: Context,
+        context: Context,
         private var parentView: WeakReference<ViewGroup>
 ) {
     private val overlayFactory = OverlayFactory(context)
@@ -30,34 +31,78 @@ class OverlayHandler private constructor(
 
     var overlayObjectEventListener: OverlayObjectEventListener? = null
 
-    companion object {
-        val regex = """[,.?!-=+:]""".toRegex()
-    }
-
     interface OverlayObjectEventListener {
+        /**
+         * Editing for [overlay] has been started
+         *
+         * @param overlay OverlayObject
+         */
         fun onEdit(overlay: OverlayObject)
+
+        /**
+         * Editing has been done
+         *
+         * @param overlay List<OverlayObject>
+         */
         fun onEdited(overlay: List<OverlayObject>)
-        fun onUnEditable(overlay: OverlayObject?, overlays: List<OverlayObject>)
-        fun onAdded(overlay: OverlayObject?, overlays: List<OverlayObject>, isEdit: Boolean = true)
+
+        /**
+         * [overlay] has been deselected
+         *
+         * @param overlay Deselected overlay
+         * @param overlays List of overlays
+         */
+        fun onClearOverlaySelection(overlay: OverlayObject?, overlays: List<OverlayObject>)
+
+        /**
+         * New [overlay] has been added
+         *
+         * @param overlay Newly added overlay
+         * @param overlays List of overlays
+         */
+        fun onAdded(overlay: OverlayObject?, overlays: List<OverlayObject>)
+
+        /**
+         * List of overlays has been added
+         *
+         * @param overlays List<OverlayObject>
+         */
         fun onAddedAll(overlays: List<OverlayObject>)
+
+        /**
+         * [overlay] has been selected
+         *
+         * @param overlay Selected overlay
+         * @param overlays List of overlays
+         * @param seekToOverlayStart Indicates if player should seek to [OverlayObject.startTime]
+         */
         fun onSelect(
                 overlay: OverlayObject?,
                 overlays: List<OverlayObject>,
                 seekToOverlayStart: Boolean
         )
 
+        /**
+         * Overlay with index equals to [idxRemoved]
+         * has been removed
+         *
+         * @param idxRemoved Index of removed overlay
+         * @param removedOverlay Removed overlay
+         * @param overlays List of overlays
+         */
         fun onRemoved(
                 idxRemoved: Int,
                 removedOverlay: OverlayObject,
-                overlays: ArrayList<OverlayObject>
+                overlays: List<OverlayObject>
         )
     }
 
-    fun setLayout(
-            context: Context,
-            parentView: WeakReference<ViewGroup>
-    ) {
-        this.context = context
+    /**
+     * Sets parent layout for overlays
+     *
+     * @param parentView Parent layout
+     */
+    fun setLayout(parentView: WeakReference<ViewGroup>) {
         this.parentView = parentView
         // remove previous parent from overlays
         this.overlayViews.forEach {
@@ -67,14 +112,45 @@ class OverlayHandler private constructor(
     }
 
     /**
+     * Get all overlays
+     *
+     * @return ArrayList<OverlayObject>
+     */
+    fun getOverlays() = overlayViews
+
+    /**
+     * Get selected overlay
+     *
+     * @return OverlayObject?
+     */
+    fun getSelectedOverlay() = currentOverlayView
+
+    /**
+     * Get all overlays and selected overlay
+     *
+     * @return Pair<OverlayObject?, ArrayList<OverlayObject>>
+     */
+    fun getOverlaysWithSelected() = Pair(currentOverlayView, overlayViews)
+
+    private val punctuationRegex = """[,.?!-=+:]""".toRegex()
+    /**
      * Filter text from punctuation
+     *
      * @param text Text
      * @return Result string
      */
     private fun filterPunctuation(text: String): String {
-        return regex.replace(text, "").trim()
+        return punctuationRegex.replace(text, "").trim()
     }
 
+    /**
+     * Creates new text overlay ([OverlayText] object)
+     *
+     * @param startTime Start timestamp, in ms
+     * @param endTime End timestamp, in ms
+     * @param text Text
+     * @return OverlayText
+     */
     @SuppressLint("ClickableViewAccessibility")
     private fun createTextOverlay(startTime: Long, endTime: Long, text: String = ""): OverlayText {
         val newOverlay = overlayFactory.get(OverlayType.TEXT) as OverlayText
@@ -85,7 +161,7 @@ class OverlayHandler private constructor(
             // gestures
             this.initMultiTouchListener(parentView.get()!!.getRect(), object : MultiTouchListener.OnGestureControl {
                 override fun onClick() {
-                    selectedOverlay(newOverlay, false)
+                    selectOverlay(newOverlay, false)
                 }
 
                 override fun onLongClick() {
@@ -96,7 +172,7 @@ class OverlayHandler private constructor(
                 }
 
                 override fun onMove() {
-                    selectedOverlay(newOverlay, false)
+                    selectOverlay(newOverlay, false)
                 }
 
                 override fun onControlClicked(which: ControlType) {
@@ -110,12 +186,14 @@ class OverlayHandler private constructor(
         return newOverlay
     }
 
-    private fun setSelectedOverlay(overlay: OverlayObject) {
-        currentOverlayView?.isInEdit = false
-        currentOverlayView = overlay
-        currentOverlayView!!.isInEdit = true
-    }
-
+    /**
+     * Adds new [OverlayText]
+     *
+     * @param startTime Start timestamp, in ms
+     * @param endTime End timestamp, in ms
+     * @param text Text
+     * @param batch Indicates if it adds many objects
+     */
     fun addTextOverlay(startTime: Long, endTime: Long, text: String, batch: Boolean = false) {
         val filteredText = filterPunctuation(text)
         if (filteredText.isEmpty()) {
@@ -131,10 +209,17 @@ class OverlayHandler private constructor(
         overlayViews.add(newOverlay)
         if (!batch) {
             overlayViews.sort()
-            overlayObjectEventListener?.onAdded(newOverlay, overlayViews, true)
+            overlayObjectEventListener?.onAdded(newOverlay, overlayViews)
         }
     }
 
+    /**
+     * Adds new overlay with provided [type]
+     *
+     * @param startTime Start timestamp, in ms
+     * @param videoDuration Video duration, in ms
+     * @param type OverlayType
+     */
     fun addOverlay(startTime: Long, videoDuration: Long, type: OverlayType = OverlayType.TEXT) {
         val newOverlay: OverlayObject?
         if (type == OverlayType.TEXT) {
@@ -152,13 +237,19 @@ class OverlayHandler private constructor(
         }
     }
 
-    fun addTextOverlayAfterSpecificPosition(pos: Int): Long {
+    /**
+     * Adds [OverlayText] after the specified index
+     *
+     * @param idx Overlay index
+     * @return [OverlayObject.startTime]
+     */
+    fun addTextOverlayAfterSpecificPosition(idx: Int): Long {
         val newOverlay =
-                createTextOverlay(overlayViews[pos].endTime,
-                        overlayViews[pos].endTime + FRAME_TIME_MS)
+            createTextOverlay(overlayViews[idx].endTime,
+                overlayViews[idx].endTime + FRAME_TIME_MS)
 
         addOverlayToParent(newOverlay)
-        overlayViews.add(pos + 1, newOverlay)
+        overlayViews.add(idx + 1, newOverlay)
         overlayViews.sort()
 
         setSelectedOverlay(newOverlay)
@@ -167,16 +258,42 @@ class OverlayHandler private constructor(
         return newOverlay.startTime
     }
 
-    fun addOverlayAtSpecificPosition(pos: Int, item: OverlayObject) {
+    /**
+     * Adds [OverlayText] at the specified index
+     *
+     * @param idx Overlay index
+     * @param item OverlayObject
+     */
+    fun addOverlayAtSpecificPosition(idx: Int, item: OverlayObject) {
         addOverlayToParent(item)
-        overlayViews.add(pos, item)
+        overlayViews.add(idx, item)
         overlayViews.sort()
         if (lastDeletedOverlay == item) setSelectedOverlay(item)
         overlayObjectEventListener?.onAdded(currentOverlayView, overlayViews)
     }
 
-    fun removeOverlay(item: Int) {
-        removeOverlay(overlayViews[item])
+    /**
+     * Removes overlay with index equals to [idx]
+     *
+     * @param idx Overlay index
+     */
+    fun removeOverlay(idx: Int) {
+        removeOverlay(overlayViews[idx])
+    }
+
+    /**
+     * Clears selection of [currentOverlayView]
+     */
+    fun clearOverlaySelection() {
+        currentOverlayView?.isInEdit = false
+        currentOverlayView = null
+        overlayObjectEventListener?.onClearOverlaySelection(currentOverlayView, overlayViews)
+    }
+
+    private fun setSelectedOverlay(overlay: OverlayObject) {
+        currentOverlayView?.isInEdit = false
+        currentOverlayView = overlay
+        currentOverlayView!!.isInEdit = true
     }
 
     private fun removeOverlay(overlay: OverlayObject) {
@@ -213,16 +330,6 @@ class OverlayHandler private constructor(
         }.start()
     }
 
-    fun getOverlays() = overlayViews
-    fun getSelectedOverlay() = currentOverlayView
-    fun getOverlaysWithSelected() = Pair(currentOverlayView, overlayViews)
-
-    fun unEditable() {
-        currentOverlayView?.isInEdit = false
-        currentOverlayView = null
-        overlayObjectEventListener?.onUnEditable(currentOverlayView, overlayViews)
-    }
-
     private fun addOverlayToParent(child: View) {
         parentView.get()!!.addView(
                 child,
@@ -234,11 +341,23 @@ class OverlayHandler private constructor(
         )
     }
 
-    fun editOverlay(index: Int) {
-        editOverlay(overlayViews[index])
+    /**
+     * Edits overlay with index equals to [idx]
+     *
+     * @param idx Overlay index
+     */
+    fun editOverlay(idx: Int) {
+        editOverlay(overlayViews[idx])
     }
 
-    fun editedOverlay(overlay: OverlayObject, text: String, color: Int) {
+    /**
+     * Saves edited properties for [overlay]
+     *
+     * @param overlay Edited overlay
+     * @param text Text
+     * @param color Color code
+     */
+    fun editedOverlay(overlay: OverlayObject, text: String, @ColorInt color: Int) {
         if (overlay is OverlayText) {
             overlay.text = text
             overlay.textView!!.setTextColor(color)
@@ -252,11 +371,23 @@ class OverlayHandler private constructor(
         }
     }
 
-    fun selectedOverlayId(pos: Int) {
-        selectedOverlay(overlayViews[pos], true)
+    /**
+     * Makes overlay with index equals to [idx] selected
+     *
+     * @param idx Index of overlay
+     */
+    fun selectOverlayById(idx: Int) {
+        selectOverlay(overlayViews[idx], true)
     }
 
-    fun selectedOverlay(overlay: OverlayObject, seekToOverlayStart: Boolean = false) {
+
+    /**
+     * Makes [overlay] selected
+     *
+     * @param overlay Selected overlay
+     * @param seekToOverlayStart Indicates if should seek to [OverlayObject.startTime]
+     */
+    fun selectOverlay(overlay: OverlayObject, seekToOverlayStart: Boolean = false) {
         // do nothing if selected previously selected overlay
         if (overlay == currentOverlayView && currentOverlayView!!.isInEdit) return
         setSelectedOverlay(overlay)
@@ -264,6 +395,12 @@ class OverlayHandler private constructor(
         overlayObjectEventListener?.onSelect(overlay, overlayViews, seekToOverlayStart)
     }
 
+    /**
+     * Changes [OverlayObject.startTime] and [OverlayObject.endTime] for current selected overlay
+     *
+     * @param startTime Start timestamp, in ms
+     * @param endTime End timestamp, in ms
+     */
     fun changeTimeRangeSelectedOverlay(startTime: Long, endTime: Long) {
         // change time range for current overlay
         if (overlayViews.isEmpty() || currentOverlayView == null) {
@@ -275,6 +412,11 @@ class OverlayHandler private constructor(
         overlayObjectEventListener?.onEdited(overlayViews)
     }
 
+    /**
+     * Changes overlay's visibility by [currentTime]
+     *
+     * @param currentTime Timestamp, in ms
+     */
     fun changeVisibilityOverlayByTime(currentTime: Long) {
         overlayViews.forEach { overlay ->
             if (currentTime in overlay.startTime..overlay.endTime) {
@@ -285,6 +427,10 @@ class OverlayHandler private constructor(
         }
     }
 
+    /**
+     * Hides all overlays, but not for overlays which have [OverlayObject.startTime]
+     * equals to 0ms
+     */
     fun hideAllOverlaysExceptAtStart() {
         overlayViews.forEach {
             if (it.startTime == 0L) {
@@ -293,17 +439,28 @@ class OverlayHandler private constructor(
                 it.visibility = View.INVISIBLE
             }
         }
-        unEditable()
+        clearOverlaySelection()
     }
 
+    /**
+     * Sets [parentView]'s visibility to [View.GONE]
+     */
     fun hideRootView() {
         parentView.get()?.visibility = View.GONE
     }
 
+    /**
+     * Makes [parentView] visible
+     */
     fun showRootView() {
         parentView.get()?.visibility = View.VISIBLE
     }
 
+    /**
+     * Adds list of [overlays]
+     *
+     * @param overlays List<MLCaption>
+     */
     fun addAllOverlay(overlays: List<MLCaption>) {
         overlayViews.clear()
         overlays.forEach { addTextOverlay(it.startTime, it.endTime, it.text, true) }
@@ -311,6 +468,13 @@ class OverlayHandler private constructor(
         overlayObjectEventListener?.onAddedAll(overlayViews)
     }
 
+    /**
+     * Builder class for [OverlayHandler]
+     *
+     * @property context Application context
+     * @property parentView Parent layout for overlays
+     * @constructor
+     */
     data class Builder(
             private var context: Context? = null,
             private var parentView: ViewGroup? = null

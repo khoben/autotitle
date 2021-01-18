@@ -47,14 +47,14 @@ class MediaController : MediaPlayerSurfaceCallback {
         }
     }
 
-    fun toggle() = setPlayState(!mediaPlayer.isPlaying())
+    fun toggle() = setPlayState(!mediaPlayer.isNotPaused())
 
     /**
      * Sets playback state
      * @param playState True -- Play; False -- Pause
      */
     fun setPlayState(playState: Boolean) {
-        if (playState == mediaPlayer.isPlaying()) return
+        if (playState == mediaPlayer.isNotPaused()) return
         when (playState) {
             true -> {
                 mediaPlayer.play()

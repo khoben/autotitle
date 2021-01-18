@@ -54,7 +54,7 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView {
         saveBtn.setOnClickListener {
             saveVideo()
         }
-        binding.epVideoView.player = presenter.getPlayer()
+        binding.epVideoView.player = presenter.initNewPlayer()
         presenter.init(videoPath!!)
     }
 

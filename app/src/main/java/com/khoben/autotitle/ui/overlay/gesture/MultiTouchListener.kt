@@ -11,19 +11,41 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * Created on 18/01/2017.
+ * MultiTouchListener class
  * @author [Burhanuddin Rashid](https://github.com/burhanrashid52)
  */
 class MultiTouchListener(
-        parentRect: Rect,
-        private val controls: List<Pair<ControlType, RectF>>,
-        private val mIsTextPinchZoomable: Boolean
+    /**
+     * Boundary rect
+     */
+    parentRect: Rect,
+    /**
+     * List of item controls
+     */
+    private val controls: List<Pair<ControlType, RectF>>?,
+    /**
+     * Enables pinch to zoom
+     */
+    private val isPinchToZoomEnabled: Boolean = true,
+    /**
+     * Enables rotation
+     */
+    private val isRotateEnabled: Boolean = true,
+    /**
+     * Enables translation
+     */
+    private val isTranslateEnabled: Boolean = true,
+    /**
+     * Enables scaling
+     */
+    private val isScaleEnabled: Boolean = true
 ) :
-        View.OnTouchListener {
-    private val mGestureListener: GestureDetector
-    private val isRotateEnabled = true
-    private val isTranslateEnabled = true
-    private val isScaleEnabled = true
+    View.OnTouchListener {
+
+    private val mScaleGestureDetector = ScaleGestureDetector(ScaleGestureListener())
+    private val mGestureListener = GestureDetector(GestureListener())
+    private val mControlClickDetector = OnControlClickDetector()
+
     private val minimumScale = 0.5f
     private val maximumScale = 10.0f
     private var mActivePointerId = INVALID_POINTER_ID
@@ -31,12 +53,9 @@ class MultiTouchListener(
     private var mPrevY = 0f
     private var mPrevRawX = 0f
     private var mPrevRawY = 0f
-    private val mScaleGestureDetector: ScaleGestureDetector
-    private var outRect: Rect? = null
-    private var mOnGestureControl: OnGestureControl? = null
-    private var mControlClickDetector = OnControlClickDetector()
 
-    private var boundingRect = Rect()
+    private var mOnGestureControl: OnGestureControl? = null
+
     private var parentCenterX = 0F
     private var parentCenterY = 0F
 
@@ -45,6 +64,9 @@ class MultiTouchListener(
     private var parentX = 0F
     private var parentY = 0F
 
+    /**
+     * Describes direction of overlapping with [parentRect]
+     */
     enum class DIRECTION {
         X, Y, BOTH, NONE
     }
@@ -106,8 +128,8 @@ class MultiTouchListener(
                             if (view.y < 0) translationY *= -1
 
                             view.animate()
-                                    .translationX(translationX)
-                                    .translationY(translationY)
+                                .translationX(translationX)
+                                .translationY(translationY)
                         }
                         DIRECTION.NONE -> {
                         }
@@ -116,7 +138,7 @@ class MultiTouchListener(
             }
             MotionEvent.ACTION_POINTER_UP -> {
                 val pointerIndexPointerUp =
-                        action and MotionEvent.ACTION_POINTER_INDEX_MASK shr MotionEvent.ACTION_POINTER_INDEX_SHIFT
+                    action and MotionEvent.ACTION_POINTER_INDEX_MASK shr MotionEvent.ACTION_POINTER_INDEX_SHIFT
                 val pointerId = event.getPointerId(pointerIndexPointerUp)
                 if (pointerId == mActivePointerId) {
                     val newPointerIndex = if (pointerIndexPointerUp == 0) 1 else 0
@@ -129,6 +151,7 @@ class MultiTouchListener(
         return true
     }
 
+    private var boundingRect = Rect()
     private fun isViewVisible(view: View): Pair<Boolean, DIRECTION> {
         view.getHitRect(boundingRect)
         val centerX = boundingRect.exactCenterX()
@@ -153,15 +176,15 @@ class MultiTouchListener(
             mPivotX = detector!!.getFocusX()
             mPivotY = detector.getFocusY()
             mPrevSpanVector.set(detector.getCurrentSpanVector())
-            return mIsTextPinchZoomable
+            return isPinchToZoomEnabled
         }
 
         override fun onScale(view: View?, detector: ScaleGestureDetector?): Boolean {
             val info = TransformInfo()
             info.deltaScale = if (isScaleEnabled) detector!!.getScaleFactor() else 1.0f
             info.deltaAngle = if (isRotateEnabled) Vector2D.getAngle(
-                    mPrevSpanVector,
-                    detector!!.getCurrentSpanVector()
+                mPrevSpanVector,
+                detector!!.getCurrentSpanVector()
             ) else 0.0f
             info.deltaX = if (isTranslateEnabled) detector!!.getFocusX() - mPivotX else 0.0f
             info.deltaY = if (isTranslateEnabled) detector!!.getFocusY() - mPivotY else 0.0f
@@ -170,7 +193,7 @@ class MultiTouchListener(
             info.minimumScale = minimumScale
             info.maximumScale = maximumScale
             move(view!!, info)
-            return !mIsTextPinchZoomable
+            return !isPinchToZoomEnabled
         }
     }
 
@@ -190,6 +213,12 @@ class MultiTouchListener(
         fun onLongClick()
         fun onDoubleTap()
         fun onMove()
+
+        /**
+         * Fires when one of [ControlType] has been clicked
+         *
+         * @param which ControlType
+         */
         fun onControlClicked(which: ControlType)
     }
 
@@ -216,11 +245,12 @@ class MultiTouchListener(
 
     private inner class OnControlClickDetector() {
         fun onTouchEvent(event: MotionEvent) {
+            if (controls == null) return
             if (event.action == MotionEvent.ACTION_UP) {
-                for ((name, rect) in controls) {
+                for ((type, rect) in controls) {
                     if (rect.contains(event.x, event.y)) {
-                        Timber.d("Clicked on $name control")
-                        mOnGestureControl?.onControlClicked(name)
+                        Timber.d("Clicked on ${type.name} control")
+                        mOnGestureControl?.onControlClicked(type)
                         break
                     }
                 }
@@ -276,9 +306,6 @@ class MultiTouchListener(
     }
 
     init {
-        mScaleGestureDetector = ScaleGestureDetector(ScaleGestureListener())
-        mGestureListener = GestureDetector(GestureListener())
-
         parentX = parentRect.left.toFloat()
         parentY = parentRect.top.toFloat()
         parentWidth = parentRect.width().toFloat()
@@ -286,6 +313,5 @@ class MultiTouchListener(
 
         parentCenterX = parentX + parentWidth / 2
         parentCenterY = parentX + parentHeight / 2
-        outRect = Rect(0, 0, 0, 0)
     }
 }

@@ -76,9 +76,7 @@ abstract class OverlayObject(context: Context, attrs: AttributeSet) :
     fun initMultiTouchListener(rect: Rect, listener: MultiTouchListener.OnGestureControl) {
         setOnTouchListener(
                 MultiTouchListener(rect,
-                        listOf(
-                                Pair(ControlType.DELETE_BTN, deleteRect)),
-                        true)
+                        listOf(Pair(ControlType.DELETE_BTN, deleteRect)))
                         .apply { setOnGestureControl(listener) }
         )
     }

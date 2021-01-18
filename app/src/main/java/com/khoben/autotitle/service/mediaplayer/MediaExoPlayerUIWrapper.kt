@@ -23,17 +23,17 @@ class MediaExoPlayerUIWrapper : MediaPlayer {
         private var TAG = MediaExoPlayerUIWrapper::class.java.simpleName
     }
 
-    override fun init(url: String) {
+    override fun init(path: String) {
         val userAgent = Util.getUserAgent(context, context.getString(R.string.app_name))
 
         val mediaSource = ExtractorMediaSource.Factory(DefaultDataSourceFactory(context, userAgent))
                 .setExtractorsFactory(DefaultExtractorsFactory())
-                .createMediaSource(Uri.parse(url))
+                .createMediaSource(Uri.parse(path))
 
         exoPlayer.prepare(mediaSource)
     }
 
-    override fun getPlayerImpl(context: Context): ExoPlayer {
+    override fun initNewPlayer(context: Context): ExoPlayer {
         this.context = context
         initializePlayer()
         initializeMediaSession()

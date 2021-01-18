@@ -56,9 +56,9 @@ class MainActivityPresenter : MvpPresenter<MainActivityView>() {
     fun loadRecentProjects() {
         if (!RecentProjectsLoader.load()) viewState.hideRecentProject()
         else {
-            Timber.d("Recent projects = ${RecentProjectsLoader.getCurrentProjects()}")
+            Timber.d("Recent projects = ${RecentProjectsLoader.getRecentProjects()}")
             viewState.showRecentProject()
-            viewState.submitList(RecentProjectsLoader.getCurrentProjects())
+            viewState.submitList(RecentProjectsLoader.getRecentProjects())
         }
     }
 
@@ -70,11 +70,11 @@ class MainActivityPresenter : MvpPresenter<MainActivityView>() {
 
     fun onRemoveClick(idx: Int) {
         RecentProjectsLoader.removeAt(idx)
-        viewState.submitList(RecentProjectsLoader.getCurrentProjects())
+        viewState.submitList(RecentProjectsLoader.getRecentProjects())
     }
 
     fun editItemTitle(idx: Int, title: String) {
         RecentProjectsLoader.setProjectTitle(idx, title)
-        viewState.submitList(RecentProjectsLoader.getCurrentProjects())
+        viewState.submitList(RecentProjectsLoader.getRecentProjects())
     }
 }

@@ -128,7 +128,9 @@ class VideoEditActivity : MvpAppCompatActivity(),
 
         val sourceVideoUri = intent.getParcelableExtra<Uri>(VIDEO_SOURCE_URI_INTENT)
 
-        // video processing in presenter@onFirstViewAttach
+        /**
+         * video processing starts in [VideoEditActivityPresenter.onFirstViewAttach]
+         */
         presenter.setDataSourceUri(sourceVideoUri!!)
         presenter.initOverlayHandler(overlayView, videoControlsView)
         presenter.setMuteState(
@@ -165,14 +167,14 @@ class VideoEditActivity : MvpAppCompatActivity(),
                         recyclerView,
                         object : RecyclerViewClickListener.ClickListener {
                             override fun onClick(view: View?, position: Int) {
-                                presenter.recyclerSelectOverlay(position)
+                                presenter.selectOverlayByIdx(position)
                             }
 
                             override fun onLongClick(view: View?, position: Int) {
                             }
 
                             override fun onDoubleClick(view: View?, position: Int) {
-                                presenter.editItem(position)
+                                presenter.editOverlayItem(position)
                             }
                         })
         )
@@ -224,7 +226,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
     private fun onViewClicked(view: View) {
         when (view.id) {
             R.id.videolayer -> {
-                presenter.unEditable()
+                presenter.clearOverlaySelection()
             }
             R.id.back_btn -> {
                 onBackPressed()
@@ -432,7 +434,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
     override fun onRemovedOverlay(
             idxRemoved: Int,
             removedOverlay: OverlayObject,
-            overlays: ArrayList<OverlayObject>
+            overlays: List<OverlayObject>
     ) {
         Snackbar.make(
                 findViewById(android.R.id.content),
@@ -583,7 +585,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
                     overlay.textView!!.currentTextColor
             ).setOnTextEditorListener(object : TextEditorDialogFragment.TextEditorEvent {
                 override fun onDone(inputText: String?, colorCode: Int) {
-                    presenter.onEditedOverlayFragment(overlay, inputText, colorCode)
+                    presenter.saveEditedOverlay(overlay, inputText, colorCode)
                 }
             })
         }

@@ -63,7 +63,7 @@ interface VideoEditActivityView : MvpView {
     fun onRemovedOverlay(
             idxRemoved: Int,
             removedOverlay: OverlayObject,
-            overlays: ArrayList<OverlayObject>
+            overlays: List<OverlayObject>
     )
 
     @AddToEnd
