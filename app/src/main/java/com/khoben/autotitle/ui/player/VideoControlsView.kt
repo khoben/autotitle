@@ -12,8 +12,8 @@ import com.khoben.autotitle.ui.player.seekbar.SeekBarListener
 import com.khoben.autotitle.ui.player.seekbar.VideoSeekBarFramesView
 
 class VideoControlsView(context: Context, attrs: AttributeSet) :
-        ConstraintLayout(context, attrs),
-        SeekBarListener {
+    ConstraintLayout(context, attrs),
+    SeekBarListener {
 
     private lateinit var playPauseButton: PlayPauseMaterialButton
     private lateinit var videoSeekBarFramesView: VideoSeekBarFramesView
@@ -79,9 +79,9 @@ class VideoControlsView(context: Context, attrs: AttributeSet) :
      * @param isPlaying Is playing
      */
     fun updatePlayback(
-            overlays: List<OverlayObject>,
-            selectedOverlay: OverlayObject?,
-            isPlaying: Boolean
+        overlays: List<OverlayObject>,
+        selectedOverlay: OverlayObject?,
+        isPlaying: Boolean
     ) {
         playPauseButton.toggle(isPlaying)
         videoSeekBarFramesView.updatePlayback(overlays, selectedOverlay, isPlaying)

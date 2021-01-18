@@ -21,8 +21,8 @@ import com.khoben.autotitle.model.project.ThumbProject
 import com.khoben.autotitle.mvp.presenter.MainActivityPresenter
 import com.khoben.autotitle.mvp.view.MainActivityView
 import com.khoben.autotitle.ui.etc.OpenSourceLicensesDialog
-import com.khoben.autotitle.ui.popup.projectitem.ProjectTitleEditDialog
 import com.khoben.autotitle.ui.popup.projectitem.ProjectItemOptionsDialog
+import com.khoben.autotitle.ui.popup.projectitem.ProjectTitleEditDialog
 import com.khoben.autotitle.ui.recyclerview.projects.ProjectViewListAdapter
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
@@ -90,7 +90,8 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
         binding.cameraCaptureButton.setOnClickListener { takeVideoClick(it) }
         binding.filestoreLoadButton.setOnClickListener { getContentClick(it) }
 
-        guidelineInitialPercent = (binding.guideline1.layoutParams as ConstraintLayout.LayoutParams).guidePercent
+        guidelineInitialPercent =
+            (binding.guideline1.layoutParams as ConstraintLayout.LayoutParams).guidePercent
     }
 
     private var guidelineInitialPercent = -1F

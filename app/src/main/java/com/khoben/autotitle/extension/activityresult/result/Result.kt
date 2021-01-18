@@ -7,8 +7,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.khoben.autotitle.extension.activityresult.CustomTakeVideo
 
 inline fun ComponentActivity.getContent(
-        crossinline onError: (error: Throwable) -> Unit = {},
-        crossinline onSuccess: (uri: Uri) -> Unit = {}
+    crossinline onError: (error: Throwable) -> Unit = {},
+    crossinline onSuccess: (uri: Uri) -> Unit = {}
 ): ActivityResultLauncher<String> {
     return registerForActivityResult(ActivityResultContracts.GetContent()) {
         when {
@@ -19,8 +19,8 @@ inline fun ComponentActivity.getContent(
 }
 
 inline fun ComponentActivity.takeVideo(
-        crossinline onError: (error: Throwable) -> Unit = {},
-        crossinline onSuccess: (uri: Uri) -> Unit = {}
+    crossinline onError: (error: Throwable) -> Unit = {},
+    crossinline onSuccess: (uri: Uri) -> Unit = {}
 ): ActivityResultLauncher<Any?> {
     return registerForActivityResult(CustomTakeVideo()) {
         when {

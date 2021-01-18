@@ -24,12 +24,12 @@ class AudioTranscriberImpl(var context: Context) : AudioTranscriber {
 
     override fun setLangCode(langCode: String) {
         setting =
-                MLRemoteAftSetting.Factory()
-                        .setLanguageCode(langCode)
-                        .enableWordTimeOffset(true)
-                        .enableSentenceTimeOffset(true)
-                        .enablePunctuation(true)
-                        .create()
+            MLRemoteAftSetting.Factory()
+                .setLanguageCode(langCode)
+                .enableWordTimeOffset(true)
+                .enableSentenceTimeOffset(true)
+                .enablePunctuation(true)
+                .create()
     }
 
     override fun start(uri: Uri): Observable<MLCaptionEnvelop> {
@@ -67,11 +67,11 @@ class AudioTranscriberImpl(var context: Context) : AudioTranscriber {
 
     override fun start(path: String): Observable<MLCaptionEnvelop> {
         val fileUri =
-                FileProvider.getUriForFile(
-                        context,
-                        "${BuildConfig.APPLICATION_ID}.fileprovider",
-                        File(path)
-                )
+            FileProvider.getUriForFile(
+                context,
+                "${BuildConfig.APPLICATION_ID}.fileprovider",
+                File(path)
+            )
         return start(fileUri)
     }
 }

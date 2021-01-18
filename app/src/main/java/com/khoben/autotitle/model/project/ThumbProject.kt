@@ -2,10 +2,7 @@ package com.khoben.autotitle.model.project
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.media.ThumbnailUtils
 import android.net.Uri
-import android.provider.MediaStore
 import com.khoben.autotitle.App
 import com.khoben.autotitle.common.BitmapUtils
 import com.khoben.autotitle.common.FileUtils

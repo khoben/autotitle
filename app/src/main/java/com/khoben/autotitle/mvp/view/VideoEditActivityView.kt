@@ -54,16 +54,16 @@ interface VideoEditActivityView : MvpView {
 
     @AddToEnd
     fun updatePlayback(
-            overlays: List<OverlayObject>,
-            selectedOverlay: OverlayObject?,
-            isPlaying: Boolean
+        overlays: List<OverlayObject>,
+        selectedOverlay: OverlayObject?,
+        isPlaying: Boolean
     )
 
     @Skip
     fun onRemovedOverlay(
-            idxRemoved: Int,
-            removedOverlay: OverlayObject,
-            overlays: List<OverlayObject>
+        idxRemoved: Int,
+        removedOverlay: OverlayObject,
+        overlays: List<OverlayObject>
     )
 
     @AddToEnd

@@ -22,7 +22,7 @@ fun View.getRect() = Rect(left, top, right, bottom)
  * @return Bitmap?
  */
 fun View.getBitmap(parent: View, scaleX: Float = 1F, scaleY: Float = 1F) =
-        ViewUtils.getBitmapFromView(this, parent, scaleX, scaleY)
+    ViewUtils.getBitmapFromView(this, parent, scaleX, scaleY)
 
 /**
  * Get absolute position on screen of [View]
@@ -39,5 +39,5 @@ fun View.getRealLocationOnScreen() = ViewUtils.getRealLocationOnScreen(this)
  * @return IntArray [x, y]
  */
 fun View.getPositionInParent(parent: View) =
-        ViewUtils.getPositionInParent(parent as ViewGroup, this)
+    ViewUtils.getPositionInParent(parent as ViewGroup, this)
 

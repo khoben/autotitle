@@ -1,6 +1,5 @@
 package com.khoben.autotitle.extension.activityresult.result
 
-import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 

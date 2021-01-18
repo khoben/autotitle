@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.khoben.autotitle.databinding.RecyclerBottomSheetBinding
 
-class ProjectItemOptionsDialog: BottomSheetDialogFragment() {
+class ProjectItemOptionsDialog : BottomSheetDialogFragment() {
 
     private var binding: RecyclerBottomSheetBinding? = null
 

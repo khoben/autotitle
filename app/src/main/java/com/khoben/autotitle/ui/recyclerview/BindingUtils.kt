@@ -1,14 +1,9 @@
 package com.khoben.autotitle.ui.recyclerview
 
 import android.graphics.BitmapFactory
-import android.graphics.PorterDuff
 import android.graphics.Typeface
-import android.graphics.drawable.Drawable
-import android.os.Build
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.khoben.autotitle.R

@@ -243,7 +243,7 @@ class MultiTouchListener(
         }
     }
 
-    private inner class OnControlClickDetector() {
+    private inner class OnControlClickDetector {
         fun onTouchEvent(event: MotionEvent) {
             if (controls == null) return
             if (event.action == MotionEvent.ACTION_UP) {

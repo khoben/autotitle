@@ -27,8 +27,8 @@ class MediaExoPlayerUIWrapper : MediaPlayer {
         val userAgent = Util.getUserAgent(context, context.getString(R.string.app_name))
 
         val mediaSource = ExtractorMediaSource.Factory(DefaultDataSourceFactory(context, userAgent))
-                .setExtractorsFactory(DefaultExtractorsFactory())
-                .createMediaSource(Uri.parse(path))
+            .setExtractorsFactory(DefaultExtractorsFactory())
+            .createMediaSource(Uri.parse(path))
 
         exoPlayer.prepare(mediaSource)
     }
@@ -64,19 +64,19 @@ class MediaExoPlayerUIWrapper : MediaPlayer {
     private fun initializeMediaSession() {
         mediaSession = MediaSessionCompat(context, TAG)
         mediaSession.setFlags(
-                MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or
-                        MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
+            MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or
+                    MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
         )
         mediaSession.setMediaButtonReceiver(null)
 
         stateBuilder = PlaybackStateCompat.Builder()
-                .setActions(
-                        PlaybackStateCompat.ACTION_PLAY or
-                                PlaybackStateCompat.ACTION_PAUSE or
-                                PlaybackStateCompat.ACTION_PLAY_PAUSE or
-                                PlaybackStateCompat.ACTION_FAST_FORWARD or
-                                PlaybackStateCompat.ACTION_REWIND
-                )
+            .setActions(
+                PlaybackStateCompat.ACTION_PLAY or
+                        PlaybackStateCompat.ACTION_PAUSE or
+                        PlaybackStateCompat.ACTION_PLAY_PAUSE or
+                        PlaybackStateCompat.ACTION_FAST_FORWARD or
+                        PlaybackStateCompat.ACTION_REWIND
+            )
 
         mediaSession.setPlaybackState(stateBuilder.build())
 

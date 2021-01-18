@@ -11,7 +11,7 @@ import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.khoben.autotitle.R
 
 class PlayPauseMaterialButton(context: Context, attrs: AttributeSet?) :
-        FrameLayout(context, attrs) {
+    FrameLayout(context, attrs) {
 
     private val playPauseIcon = ContextCompat.getDrawable(context, R.drawable.play_to_pause_btn)!!
     private val pausePlayIcon = ContextCompat.getDrawable(context, R.drawable.pause_to_play_btn)!!

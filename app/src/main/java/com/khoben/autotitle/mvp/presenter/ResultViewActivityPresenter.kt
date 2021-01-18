@@ -49,7 +49,8 @@ class ResultViewActivityPresenter : MvpPresenter<ResultActivityView>() {
         val values = ContentValues(3)
         values.put(MediaStore.Video.Media.MIME_TYPE, App.VIDEO_MIME_TYPE)
         values.put(MediaStore.Video.Media.DATA, file.absolutePath)
-        val uri = appContext.contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values)
+        val uri =
+            appContext.contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values)
         if (uri != null) {
             alreadySaved = true
             savedPath = uri.path
@@ -62,10 +63,10 @@ class ResultViewActivityPresenter : MvpPresenter<ResultActivityView>() {
     fun share(context: Context) {
         val fileUri = FileUtils.getUriFromPath(appContext, videoPath!!)
         ShareCompat.IntentBuilder.from(context as Activity)
-                .setStream(fileUri)
-                .setType(App.VIDEO_MIME_TYPE)
-                .setChooserTitle(context.getString(R.string.share_video_title))
-                .startChooser()
+            .setStream(fileUri)
+            .setType(App.VIDEO_MIME_TYPE)
+            .setChooserTitle(context.getString(R.string.share_video_title))
+            .startChooser()
     }
 
     fun initNewPlayer() = mediaPlayer.initNewPlayer(appContext)

@@ -32,16 +32,16 @@ class TextEditorDialogFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.window!!.setLayout(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
         )
         dialog?.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.add_text_dialog, container, false)
     }
@@ -94,9 +94,9 @@ class TextEditorDialogFragment : DialogFragment() {
 
         @JvmOverloads
         fun show(
-                appCompatActivity: AppCompatActivity,
-                inputText: String? = "",
-                @ColorInt colorCode: Int = ContextCompat.getColor(appCompatActivity, R.color.white)
+            appCompatActivity: AppCompatActivity,
+            inputText: String? = "",
+            @ColorInt colorCode: Int = ContextCompat.getColor(appCompatActivity, R.color.white)
         ): TextEditorDialogFragment {
             return TextEditorDialogFragment().apply {
                 arguments = Bundle().apply {

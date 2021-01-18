@@ -9,8 +9,8 @@ class OverlayViewDiffCallback : DiffUtil.ItemCallback<OverlayDataMapper>() {
     }
 
     override fun areContentsTheSame(
-            oldItem: OverlayDataMapper,
-            newItem: OverlayDataMapper
+        oldItem: OverlayDataMapper,
+        newItem: OverlayDataMapper
     ): Boolean {
         return oldItem.uuid == newItem.uuid &&
                 oldItem.text == newItem.text &&

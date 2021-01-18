@@ -20,7 +20,7 @@ class App : Application() {
         initFoldersPath()
         if (BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
         MLApplication.getInstance().apiKey =
-                "CgB6e3x9/hsdbdBs4UtMv9w9yHOgLLpQWbfDNjtbW5685ZLdOW5HlpWzDmveL69IjxoeAg8TClmuNnbmvZ9xprrw"
+            "CgB6e3x9/hsdbdBs4UtMv9w9yHOgLLpQWbfDNjtbW5685ZLdOW5HlpWzDmveL69IjxoeAg8TClmuNnbmvZ9xprrw"
         createApplicationComponent()
         NotificationUtils.createNotificationChannel(applicationContext, appName)
     }
@@ -33,9 +33,9 @@ class App : Application() {
 
     private fun createApplicationComponent() {
         applicationComponent = DaggerApplicationComponent.builder()
-                .applicationModule(ApplicationModule(this))
-                .contextModule(ContextModule(context = applicationContext))
-                .build()
+            .applicationModule(ApplicationModule(this))
+            .contextModule(ContextModule(context = applicationContext))
+            .build()
     }
 
     companion object {

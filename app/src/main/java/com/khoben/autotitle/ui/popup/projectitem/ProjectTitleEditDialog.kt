@@ -10,7 +10,7 @@ import com.khoben.autotitle.common.ViewUtils.focusAndShowKeyboard
 import com.khoben.autotitle.databinding.RecyclerEditTitleBinding
 import com.khoben.autotitle.extension.dp
 
-class ProjectTitleEditDialog: DialogFragment() {
+class ProjectTitleEditDialog : DialogFragment() {
     private var binding: RecyclerEditTitleBinding? = null
 
     override fun onCreateView(

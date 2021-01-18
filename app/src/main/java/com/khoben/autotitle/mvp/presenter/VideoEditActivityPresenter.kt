@@ -36,10 +36,10 @@ import javax.inject.Inject
 
 @InjectViewState
 class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
-        OverlayHandler.OverlayObjectEventListener,
-        MediaController.Callback,
-        SeekBarListener,
-        PlayPauseMaterialButton.OnClickListener {
+    OverlayHandler.OverlayObjectEventListener,
+    MediaController.Callback,
+    SeekBarListener,
+    PlayPauseMaterialButton.OnClickListener {
 
     @Inject
     lateinit var videoProcessor: VideoProcessorBase
@@ -107,9 +107,9 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     ) {
         if (overlayHandler == null) {
             overlayHandler = OverlayHandler.Builder()
-                    .ctx(appContext)
-                    .parent(parentView)
-                    .build()
+                .ctx(appContext)
+                .parent(parentView)
+                .build()
             overlayHandler?.overlayObjectEventListener = this
         } else {
             overlayHandler?.setLayout(WeakReference(parentView))
@@ -190,12 +190,12 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         viewState.onVideoSavingStarted()
         videoProcessor.apply {
             setup(
-                    overlayHandler!!.getOverlays(),
-                    sourceUri!!,
-                    outputPath,
-                    appContext,
-                    mediaController.videoDetails!!,
-                    parentViewSize
+                overlayHandler!!.getOverlays(),
+                sourceUri!!,
+                outputPath,
+                appContext,
+                mediaController.videoDetails!!,
+                parentViewSize
             )
             listener = object : VideoProcessorListener {
                 override fun onProgress(progress: Double) {
@@ -277,9 +277,9 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     }
 
     override fun onSelect(
-            overlay: OverlayObject?,
-            overlays: List<OverlayObject>,
-            seekToOverlayStart: Boolean
+        overlay: OverlayObject?,
+        overlays: List<OverlayObject>,
+        seekToOverlayStart: Boolean
     ) {
         if (seekToOverlayStart)
             viewState.setControlsToTime(overlay!!.startTime)
@@ -289,9 +289,9 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     }
 
     override fun onRemoved(
-            idxRemoved: Int,
-            removedOverlay: OverlayObject,
-            overlays: List<OverlayObject>
+        idxRemoved: Int,
+        removedOverlay: OverlayObject,
+        overlays: List<OverlayObject>
     ) {
         viewState.onRemovedOverlay(idxRemoved, removedOverlay, overlays)
         viewState.onOverlaysChangedList(overlays)
@@ -351,49 +351,49 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         val amountFrames = videoDuration / App.FRAME_TIME_MS
         val frameTime = if (amountFrames > 0) videoDuration / amountFrames else App.FRAME_TIME_MS
         videoLoader.init(appContext, sourceUri!!, frameTime)
-                .onError { error ->
-                    Timber.d("Error while loading video $error")
-                    errorProcessVideo(error)
-                }
-                .load {
-                    val audioTranscribeResult = it.second
-                    val framesResult = it.first
-                    when {
-                        // Service transcription error
-                        audioTranscribeResult.throwable != null -> {
-                            when(audioTranscribeResult.throwable) {
-                                is AudioExtractorNoAudioException -> {
-                                    Timber.e("No captions. Source video doesn't have audio track")
-                                    viewState.showPopupWindow(
-                                        appContext.getString(R.string.error_no_captions)
-                                                + ".\n"
-                                                + appContext.getString(R.string.error_no_captions_no_audio)
-                                    )
-                                }
-                                else -> {
-                                    Timber.e("No captions. Network service error")
-                                    viewState.showPopupWindow(
-                                        appContext.getString(R.string.error_no_captions)
-                                                + "\n"
-                                                + appContext.getString(R.string.error_no_caption_net_error)
-                                    )
-                                }
+            .onError { error ->
+                Timber.d("Error while loading video $error")
+                errorProcessVideo(error)
+            }
+            .load {
+                val audioTranscribeResult = it.second
+                val framesResult = it.first
+                when {
+                    // Service transcription error
+                    audioTranscribeResult.throwable != null -> {
+                        when (audioTranscribeResult.throwable) {
+                            is AudioExtractorNoAudioException -> {
+                                Timber.e("No captions. Source video doesn't have audio track")
+                                viewState.showPopupWindow(
+                                    appContext.getString(R.string.error_no_captions)
+                                            + ".\n"
+                                            + appContext.getString(R.string.error_no_captions_no_audio)
+                                )
+                            }
+                            else -> {
+                                Timber.e("No captions. Network service error")
+                                viewState.showPopupWindow(
+                                    appContext.getString(R.string.error_no_captions)
+                                            + "\n"
+                                            + appContext.getString(R.string.error_no_caption_net_error)
+                                )
                             }
                         }
-                        // Empty result
-                        audioTranscribeResult.caption == null ||
-                                audioTranscribeResult.caption.isEmpty() -> {
-                            Timber.d("No captions")
-                            viewState.showPopupWindow(appContext.getString(R.string.error_no_captions))
-                        }
-                        //Success
-                        else -> {
-                            Timber.d("Text = $audioTranscribeResult")
-                            processTranscribe(audioTranscribeResult.caption)
-                        }
                     }
-                    successProcessedVideo(framesResult, frameTime)
+                    // Empty result
+                    audioTranscribeResult.caption == null ||
+                            audioTranscribeResult.caption.isEmpty() -> {
+                        Timber.d("No captions")
+                        viewState.showPopupWindow(appContext.getString(R.string.error_no_captions))
+                    }
+                    //Success
+                    else -> {
+                        Timber.d("Text = $audioTranscribeResult")
+                        processTranscribe(audioTranscribeResult.caption)
+                    }
                 }
+                successProcessedVideo(framesResult, frameTime)
+            }
     }
 
     private fun successProcessedVideo(frames: List<Bitmap>, frameTime: Long) {
@@ -485,15 +485,15 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
             PlaybackState.PLAY -> {
                 val overlays = overlayHandler!!.getOverlaysWithSelected()
                 viewState.updatePlayback(
-                        overlays.second, overlays.first,
-                        isPlaying = true
+                    overlays.second, overlays.first,
+                    isPlaying = true
                 )
             }
             PlaybackState.PAUSED -> {
                 val overlays = overlayHandler!!.getOverlaysWithSelected()
                 viewState.updatePlayback(
-                        overlays.second, overlays.first,
-                        isPlaying = false
+                    overlays.second, overlays.first,
+                    isPlaying = false
                 )
             }
             PlaybackState.STOP -> {

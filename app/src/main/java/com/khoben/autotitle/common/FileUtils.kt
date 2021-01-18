@@ -52,10 +52,10 @@ object FileUtils {
                 val size = fileDescriptor?.parcelFileDescriptor?.statSize ?: 0
                 if (size < 0) -1 else size
             } catch (e: FileNotFoundException) {
-                Timber.e(e,"Unable to extract length from targetFile: $uri")
+                Timber.e(e, "Unable to extract length from targetFile: $uri")
                 -1
             } catch (e: IllegalStateException) {
-                Timber.e(e,"Unable to extract length from targetFile: $uri")
+                Timber.e(e, "Unable to extract length from targetFile: $uri")
                 -1
             } finally {
                 if (fileDescriptor != null) {

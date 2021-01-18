@@ -1,7 +1,8 @@
 package com.khoben.autotitle.ui.recyclerview.projects
 
 import android.annotation.SuppressLint
-import android.view.*
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView

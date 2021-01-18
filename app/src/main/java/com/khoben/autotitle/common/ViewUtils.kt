@@ -24,7 +24,8 @@ object ViewUtils {
                 post {
                     // We still post the call, just in case we are being notified of the windows focus
                     // but InputMethodManager didn't get properly setup yet.
-                    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    val imm =
+                        context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
                 }
             }
@@ -59,10 +60,10 @@ object ViewUtils {
      * @return Bitmap?
      */
     fun getBitmapFromView(
-            view: View,
-            parentView: View,
-            _scaleX: Float,
-            _scaleY: Float
+        view: View,
+        parentView: View,
+        _scaleX: Float,
+        _scaleY: Float
     ): Bitmap? {
 
         val displayedWidth = parentView.measuredWidth
@@ -79,11 +80,11 @@ object ViewUtils {
         val pivotY = newSizeY / 2F
 
         val returnedBitmap =
-                Bitmap.createBitmap(
-                        (newSizeX).toInt(),
-                        (newSizeY).toInt(),
-                        Bitmap.Config.ARGB_8888
-                )
+            Bitmap.createBitmap(
+                (newSizeX).toInt(),
+                (newSizeY).toInt(),
+                Bitmap.Config.ARGB_8888
+            )
         val canvas = Canvas(returnedBitmap)
         canvas.scale(scaleX, scaleY, pivotX, pivotY)
         if (view is TextView) {

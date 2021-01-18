@@ -9,9 +9,9 @@ object DisplayUtils {
      */
     fun dipToPx(dip: Float): Float {
         return TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dip,
-                Resources.getSystem().displayMetrics
+            TypedValue.COMPLEX_UNIT_DIP,
+            dip,
+            Resources.getSystem().displayMetrics
         )
     }
 
@@ -20,9 +20,9 @@ object DisplayUtils {
      */
     fun dipToPx(dip: Int): Int {
         return TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dip.toFloat(),
-                Resources.getSystem().displayMetrics
+            TypedValue.COMPLEX_UNIT_DIP,
+            dip.toFloat(),
+            Resources.getSystem().displayMetrics
         ).toInt()
     }
 }

@@ -10,10 +10,10 @@ import com.khoben.autotitle.ui.overlay.OverlayObject
  * Draws [OverlayObject]'s along theirs time ranges
  */
 class GLViewOverlayFilter(
-        private val overlayList: List<OverlayObject>,
-        private val parentViewSize: Pair<Int, Int>
+    private val overlayList: List<OverlayObject>,
+    private val parentViewSize: Pair<Int, Int>
 ) : GlOverlayFilter(),
-        CurrentVideoProcessTimeListener {
+    CurrentVideoProcessTimeListener {
 
     private val TIMESTAMP_ACCURACY_MS = 25L
 
@@ -34,9 +34,9 @@ class GLViewOverlayFilter(
     private val hitRect = Rect()
 
     private fun getViewBitmap(
-            view: OverlayObject,
-            scaleX: Float,
-            scaleY: Float
+        view: OverlayObject,
+        scaleX: Float,
+        scaleY: Float
     ): Pair<Bitmap, PointF>? {
         return bitmaps.getOrPut(view, {
             // view bitmap
@@ -62,10 +62,10 @@ class GLViewOverlayFilter(
             // we have sorted sequence of overlay by start time
             if (overlay.startTime > currentTimeMs + TIMESTAMP_ACCURACY_MS) break
             if (
-                    currentTimeMs in
-                    overlay.startTime - TIMESTAMP_ACCURACY_MS
-                    ..
-                    overlay.endTime + TIMESTAMP_ACCURACY_MS
+                currentTimeMs in
+                overlay.startTime - TIMESTAMP_ACCURACY_MS
+                ..
+                overlay.endTime + TIMESTAMP_ACCURACY_MS
             ) {
                 val bitmap = getViewBitmap(overlay, scaleX, scaleY) ?: continue
                 canvas.save()
@@ -73,10 +73,10 @@ class GLViewOverlayFilter(
                 canvas.rotate(overlay.rotation, bitmap.second.x, bitmap.second.y)
                 // We need put bitmap at center of [overlay]
                 canvas.drawBitmap(
-                        bitmap.first,
-                        bitmap.second.x - bitmap.first.width / 2F,
-                        bitmap.second.y - bitmap.first.height / 2F,
-                        paint
+                    bitmap.first,
+                    bitmap.second.x - bitmap.first.width / 2F,
+                    bitmap.second.y - bitmap.first.height / 2F,
+                    paint
                 )
                 canvas.restore()
             }

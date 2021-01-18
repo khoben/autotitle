@@ -13,7 +13,7 @@ import java.util.*
 
 
 abstract class OverlayObject(context: Context, attrs: AttributeSet) :
-        FrameLayout(context, attrs), Comparable<OverlayObject> {
+    FrameLayout(context, attrs), Comparable<OverlayObject> {
 
     val uuid: UUID = UUID.randomUUID()
 
@@ -56,14 +56,21 @@ abstract class OverlayObject(context: Context, attrs: AttributeSet) :
         super.onDraw(canvas)
         if (isInEdit) {
             // draw frameborder
-            canvas.drawRect(0F + deleteBtnWidth / 2F,
-                    0F + deleteBtnHeight / 2F,
-                    width.toFloat() - deleteBtnHeight / 2F,
-                    height.toFloat() - deleteBtnHeight / 2F,
-                    helpFramePaint)
+            canvas.drawRect(
+                0F + deleteBtnWidth / 2F,
+                0F + deleteBtnHeight / 2F,
+                width.toFloat() - deleteBtnHeight / 2F,
+                height.toFloat() - deleteBtnHeight / 2F,
+                helpFramePaint
+            )
 
             // draw delete icon
-            deleteRect.set((width - deleteBtnWidth).toFloat(), 0F, width.toFloat(), deleteBtnHeight.toFloat())
+            deleteRect.set(
+                (width - deleteBtnWidth).toFloat(),
+                0F,
+                width.toFloat(),
+                deleteBtnHeight.toFloat()
+            )
             canvas.drawBitmap(deleteBtn, null, deleteRect, null)
         }
     }
@@ -75,9 +82,11 @@ abstract class OverlayObject(context: Context, attrs: AttributeSet) :
      */
     fun initMultiTouchListener(rect: Rect, listener: MultiTouchListener.OnGestureControl) {
         setOnTouchListener(
-                MultiTouchListener(rect,
-                        listOf(Pair(ControlType.DELETE_BTN, deleteRect)))
-                        .apply { setOnGestureControl(listener) }
+            MultiTouchListener(
+                rect,
+                listOf(Pair(ControlType.DELETE_BTN, deleteRect))
+            )
+                .apply { setOnGestureControl(listener) }
         )
     }
 

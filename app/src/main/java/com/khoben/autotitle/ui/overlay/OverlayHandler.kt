@@ -21,8 +21,8 @@ import java.util.*
 import kotlin.math.min
 
 class OverlayHandler private constructor(
-        context: Context,
-        private var parentView: WeakReference<ViewGroup>
+    context: Context,
+    private var parentView: WeakReference<ViewGroup>
 ) {
     private val overlayFactory = OverlayFactory(context)
     private val overlayViews = ArrayList<OverlayObject>()
@@ -77,9 +77,9 @@ class OverlayHandler private constructor(
          * @param seekToOverlayStart Indicates if player should seek to [OverlayObject.startTime]
          */
         fun onSelect(
-                overlay: OverlayObject?,
-                overlays: List<OverlayObject>,
-                seekToOverlayStart: Boolean
+            overlay: OverlayObject?,
+            overlays: List<OverlayObject>,
+            seekToOverlayStart: Boolean
         )
 
         /**
@@ -91,9 +91,9 @@ class OverlayHandler private constructor(
          * @param overlays List of overlays
          */
         fun onRemoved(
-                idxRemoved: Int,
-                removedOverlay: OverlayObject,
-                overlays: List<OverlayObject>
+            idxRemoved: Int,
+            removedOverlay: OverlayObject,
+            overlays: List<OverlayObject>
         )
     }
 
@@ -133,6 +133,7 @@ class OverlayHandler private constructor(
     fun getOverlaysWithSelected() = Pair(currentOverlayView, overlayViews)
 
     private val punctuationRegex = """[,.?!-=+:]""".toRegex()
+
     /**
      * Filter text from punctuation
      *
@@ -159,29 +160,31 @@ class OverlayHandler private constructor(
             this.endTime = endTime
             this.textView!!.text = text
             // gestures
-            this.initMultiTouchListener(parentView.get()!!.getRect(), object : MultiTouchListener.OnGestureControl {
-                override fun onClick() {
-                    selectOverlay(newOverlay, false)
-                }
-
-                override fun onLongClick() {
-                }
-
-                override fun onDoubleTap() {
-                    editOverlay(newOverlay)
-                }
-
-                override fun onMove() {
-                    selectOverlay(newOverlay, false)
-                }
-
-                override fun onControlClicked(which: ControlType) {
-                    if (which == ControlType.DELETE_BTN) {
-                        removeOverlay(newOverlay)
+            this.initMultiTouchListener(
+                parentView.get()!!.getRect(),
+                object : MultiTouchListener.OnGestureControl {
+                    override fun onClick() {
+                        selectOverlay(newOverlay, false)
                     }
-                }
 
-            })
+                    override fun onLongClick() {
+                    }
+
+                    override fun onDoubleTap() {
+                        editOverlay(newOverlay)
+                    }
+
+                    override fun onMove() {
+                        selectOverlay(newOverlay, false)
+                    }
+
+                    override fun onControlClicked(which: ControlType) {
+                        if (which == ControlType.DELETE_BTN) {
+                            removeOverlay(newOverlay)
+                        }
+                    }
+
+                })
         }
         return newOverlay
     }
@@ -245,8 +248,10 @@ class OverlayHandler private constructor(
      */
     fun addTextOverlayAfterSpecificPosition(idx: Int): Long {
         val newOverlay =
-            createTextOverlay(overlayViews[idx].endTime,
-                overlayViews[idx].endTime + FRAME_TIME_MS)
+            createTextOverlay(
+                overlayViews[idx].endTime,
+                overlayViews[idx].endTime + FRAME_TIME_MS
+            )
 
         addOverlayToParent(newOverlay)
         overlayViews.add(idx + 1, newOverlay)
@@ -308,36 +313,36 @@ class OverlayHandler private constructor(
 
         AnimatorSet().apply {
             playTogether(
-                    ObjectAnimator.ofFloat(overlay, "alpha", oldAlpha, 0f),
-                    ObjectAnimator.ofFloat(overlay, "scaleX", oldScaleX, 0f),
-                    ObjectAnimator.ofFloat(overlay, "scaleY", oldScaleY, 0f)
+                ObjectAnimator.ofFloat(overlay, "alpha", oldAlpha, 0f),
+                ObjectAnimator.ofFloat(overlay, "scaleX", oldScaleX, 0f),
+                ObjectAnimator.ofFloat(overlay, "scaleY", oldScaleY, 0f)
             )
             addListener(
-                    onEnd = {
-                        parentView.get()!!.removeView(overlay)
-                        // deselect
-                        if (overlay == currentOverlayView) {
-                            lastDeletedOverlay = currentOverlayView
-                            currentOverlayView?.isInEdit = false
-                            currentOverlayView = null
-                        }
-                        // restore properties after animation
-                        overlay.alpha = oldAlpha
-                        overlay.scaleX = oldScaleX
-                        overlay.scaleY = oldScaleY
+                onEnd = {
+                    parentView.get()!!.removeView(overlay)
+                    // deselect
+                    if (overlay == currentOverlayView) {
+                        lastDeletedOverlay = currentOverlayView
+                        currentOverlayView?.isInEdit = false
+                        currentOverlayView = null
                     }
+                    // restore properties after animation
+                    overlay.alpha = oldAlpha
+                    overlay.scaleX = oldScaleX
+                    overlay.scaleY = oldScaleY
+                }
             )
         }.start()
     }
 
     private fun addOverlayToParent(child: View) {
         parentView.get()!!.addView(
-                child,
-                FrameLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    gravity = Gravity.CENTER
-                }
+            child,
+            FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply {
+                gravity = Gravity.CENTER
+            }
         )
     }
 
@@ -476,8 +481,8 @@ class OverlayHandler private constructor(
      * @constructor
      */
     data class Builder(
-            private var context: Context? = null,
-            private var parentView: ViewGroup? = null
+        private var context: Context? = null,
+        private var parentView: ViewGroup? = null
     ) {
         fun ctx(context: Context) = apply { this.context = context }
         fun parent(view: ViewGroup) = apply { this.parentView = view }

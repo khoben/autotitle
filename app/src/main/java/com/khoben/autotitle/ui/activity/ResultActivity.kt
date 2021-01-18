@@ -83,9 +83,9 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView {
 
     override fun showVideoSavedToast(path: String?) {
         Toast.makeText(
-                this,
-                getString(R.string.saved_path_video, path),
-                Toast.LENGTH_LONG
+            this,
+            getString(R.string.saved_path_video, path),
+            Toast.LENGTH_LONG
         ).show()
     }
 

@@ -11,19 +11,19 @@ interface VideoProcessor {
     fun pause()
     fun resume()
     fun setup(
-            overlays: List<OverlayObject>,
-            sourceUri: Uri,
-            outputPath: String,
-            context: Context,
-            videoInfo: VideoInfo,
-            parentViewSize: Pair<Int, Int>
+        overlays: List<OverlayObject>,
+        sourceUri: Uri,
+        outputPath: String,
+        context: Context,
+        videoInfo: VideoInfo,
+        parentViewSize: Pair<Int, Int>
     )
 
     fun setup(
-            overlays: List<OverlayObject>,
-            sourcePath: String,
-            outputPath: String,
-            videoInfo: VideoInfo,
-            parentViewSize: Pair<Int, Int>
+        overlays: List<OverlayObject>,
+        sourcePath: String,
+        outputPath: String,
+        videoInfo: VideoInfo,
+        parentViewSize: Pair<Int, Int>
     )
 }

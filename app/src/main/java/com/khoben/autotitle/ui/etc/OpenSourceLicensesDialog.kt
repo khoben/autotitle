@@ -17,11 +17,11 @@ class OpenSourceLicensesDialog : DialogFragment() {
             loadUrl("file:///android_asset/licenses.html")
         }
         return AlertDialog.Builder(requireActivity())
-                .setTitle("Open Source Licenses")
-                .setPositiveButton(android.R.string.ok) { dialog, _ -> dialog.dismiss() }
-                .create().apply {
-                    setView(webView, 0, 15.dp(), 0, 0)
-                }
+            .setTitle("Open Source Licenses")
+            .setPositiveButton(android.R.string.ok) { dialog, _ -> dialog.dismiss() }
+            .create().apply {
+                setView(webView, 0, 15.dp(), 0, 0)
+            }
     }
 
 

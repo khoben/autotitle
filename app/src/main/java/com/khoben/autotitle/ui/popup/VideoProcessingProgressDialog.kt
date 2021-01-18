@@ -33,26 +33,26 @@ class VideoProcessingProgressDialog(val context: WeakReference<Context>) {
 
     fun show(hint: String = "") {
         mainView = inflater.inflate(R.layout.popup_window_video_process_layout, null)
-                .apply {
-                    loadingTextView = findViewById<TextView>(R.id.loading_text).apply {
-                        text = hint
-                    }
-                    confirmationLayout = findViewById(R.id.confirmation)
-                    curPercentTextView = findViewById(R.id.percentage)
-
-                    cancelButton = findViewById<Button>(R.id.cancel_btn).apply {
-                        setOnClickListener { onCancelBtnClicked() }
-                    }
-
-                    findViewById<Button>(R.id.confirm).setOnClickListener {
-                        onConfirmCancelBtnClicked()
-                    }
-
-                    findViewById<Button>(R.id.nope).setOnClickListener {
-                        onNopeCancelBtnClicked()
-                    }
-
+            .apply {
+                loadingTextView = findViewById<TextView>(R.id.loading_text).apply {
+                    text = hint
                 }
+                confirmationLayout = findViewById(R.id.confirmation)
+                curPercentTextView = findViewById(R.id.percentage)
+
+                cancelButton = findViewById<Button>(R.id.cancel_btn).apply {
+                    setOnClickListener { onCancelBtnClicked() }
+                }
+
+                findViewById<Button>(R.id.confirm).setOnClickListener {
+                    onConfirmCancelBtnClicked()
+                }
+
+                findViewById<Button>(R.id.nope).setOnClickListener {
+                    onNopeCancelBtnClicked()
+                }
+
+            }
         dialog = MaterialAlertDialogBuilder(context.get()!!, R.style.CustomAlertDialog).apply {
             setCancelable(false)
             setView(mainView!!)

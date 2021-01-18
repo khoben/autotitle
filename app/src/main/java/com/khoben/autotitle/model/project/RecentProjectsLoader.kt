@@ -80,6 +80,7 @@ object RecentProjectsLoader {
     fun setProjectTitle(idx: Int, title: String) {
         temp[idx] = temp[idx].copy(title = title)
     }
+
     fun getProjectTitle(idx: Int): String? {
         return temp[idx].title
     }
