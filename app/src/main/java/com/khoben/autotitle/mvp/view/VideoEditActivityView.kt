@@ -1,14 +1,12 @@
 package com.khoben.autotitle.mvp.view
 
-import android.graphics.Bitmap
+import com.khoben.autotitle.model.VideoInfo
 import com.khoben.autotitle.service.mediaplayer.MediaSurfacePlayer
 import com.khoben.autotitle.service.mediaplayer.VideoRender
 import com.khoben.autotitle.ui.overlay.OverlayObject
+import com.khoben.autotitle.ui.player.seekbar.FramesHolder
 import moxy.MvpView
-import moxy.viewstate.strategy.alias.AddToEnd
-import moxy.viewstate.strategy.alias.OneExecution
-import moxy.viewstate.strategy.alias.SingleState
-import moxy.viewstate.strategy.alias.Skip
+import moxy.viewstate.strategy.alias.*
 import java.util.*
 
 interface VideoEditActivityView : MvpView {
@@ -16,8 +14,11 @@ interface VideoEditActivityView : MvpView {
     @Skip
     fun setLoadingViewVisibility(visible: Boolean)
 
-    @AddToEnd
-    fun onVideoProcessed(thumbnails: List<Bitmap>, frameTime: Long)
+    @AddToEndSingle
+    fun onVideoProcessed()
+
+    @AddToEndSingle
+    fun loadFrames(frameResult: FramesHolder)
 
     @SingleState
     fun onErrorVideoProcessing(e: Throwable)
@@ -28,10 +29,14 @@ interface VideoEditActivityView : MvpView {
     @OneExecution
     fun setControlsToTime(time: Long)
 
-    @AddToEnd
-    fun initVideoContainerLayoutParams(mediaPlayer: MediaSurfacePlayer, videoRenderer: VideoRender)
+    @AddToEndSingle
+    fun initVideoContainerLayoutParams(
+        mediaPlayer: MediaSurfacePlayer,
+        videoRenderer: VideoRender,
+        videoDetails: VideoInfo
+    )
 
-    @AddToEnd
+    @AddToEndSingle
     fun onOverlaysChangedList(overlays: List<OverlayObject>)
 
     @Skip

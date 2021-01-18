@@ -8,12 +8,14 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.khoben.autotitle.R
 import com.khoben.autotitle.extension.formattedTime
 import com.khoben.autotitle.ui.overlay.OverlayObject
+import com.khoben.autotitle.ui.player.seekbar.FramesHolder
 import com.khoben.autotitle.ui.player.seekbar.SeekBarListener
 import com.khoben.autotitle.ui.player.seekbar.VideoSeekBarFramesView
 
 class VideoControlsView(context: Context, attrs: AttributeSet) :
     ConstraintLayout(context, attrs),
-    SeekBarListener {
+    SeekBarListener
+{
 
     private lateinit var playPauseButton: PlayPauseMaterialButton
     private lateinit var videoSeekBarFramesView: VideoSeekBarFramesView
@@ -59,6 +61,10 @@ class VideoControlsView(context: Context, attrs: AttributeSet) :
 
     fun addFramesToSeekBar(bitmaps: List<Bitmap>, frameTime: Long) {
         videoSeekBarFramesView.addFramesToSeekBar(bitmaps, frameTime)
+    }
+
+    fun loadFrames(data: FramesHolder) {
+        videoSeekBarFramesView.onFramesLoad(data)
     }
 
     /**

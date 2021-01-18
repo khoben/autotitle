@@ -2,7 +2,6 @@ package com.khoben.autotitle.mvp.presenter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
 import android.net.Uri
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
@@ -19,7 +18,7 @@ import com.khoben.autotitle.mvp.view.VideoEditActivityView
 import com.khoben.autotitle.service.audioextractor.AudioExtractorNoAudioException
 import com.khoben.autotitle.service.mediaplayer.MediaController
 import com.khoben.autotitle.service.mediaplayer.VideoRender
-import com.khoben.autotitle.service.videoloader.VideoLoader
+import com.khoben.autotitle.service.videoloader.VideoLoaderContract
 import com.khoben.autotitle.service.videosaver.VideoProcessorBase
 import com.khoben.autotitle.service.videosaver.VideoProcessorListener
 import com.khoben.autotitle.ui.overlay.OverlayHandler
@@ -54,7 +53,7 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     lateinit var appContext: Context
 
     @Inject
-    lateinit var videoLoader: VideoLoader
+    lateinit var videoLoader: VideoLoaderContract
 
     private var overlayHandler: OverlayHandler? = null
     private var sourceUri: Uri? = null
@@ -91,13 +90,76 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     }
 
     /**
-     * Sets video file uri
-     *
-     * @param uri Video file uri
+     * Run video processing with frames extraction and speech-to-text conversion
      */
-    fun setDataSourceUri(uri: Uri) {
-        if (sourceUri != null) return
-        sourceUri = uri
+    @SuppressLint("CheckResult")
+    fun processVideo() {
+        viewState.setLoadingViewVisibility(true)
+        val videoDuration = mediaController.videoDuration
+        val amountFrames = videoDuration / App.FRAME_TIME_MS
+        val frameTime = if (amountFrames > 0) videoDuration / amountFrames else App.FRAME_TIME_MS
+        runVideoLoader(frameTime)
+    }
+
+    private fun runVideoLoader(frameTime: Long) {
+        videoLoader.init(appContext, sourceUri!!, frameTime)
+            .loadCaptions({ captionResult ->
+                // if caption loaded then success
+                successProcessedVideo()
+                when {
+                    // Empty result
+                    captionResult.caption == null ||
+                            captionResult.caption.isEmpty() -> {
+                        Timber.d("No captions")
+                        viewState.showPopupWindow(appContext.getString(R.string.error_no_captions))
+                    }
+                    //Success
+                    else -> {
+                        Timber.d("Text = $captionResult")
+                        processTranscribe(captionResult.caption)
+                    }
+                }
+            }, { captionError ->
+                viewState.setLoadingViewVisibility(false)
+                // Service transcription error
+                when (captionError) {
+                    is AudioExtractorNoAudioException -> {
+                        Timber.e("No captions. Source video doesn't have audio track")
+                        viewState.showPopupWindow(
+                            appContext.getString(R.string.error_no_captions)
+                                    + ".\n"
+                                    + appContext.getString(R.string.error_no_captions_no_audio)
+                        )
+                    }
+                    else -> {
+                        Timber.e("No captions. Network service error")
+                        viewState.showPopupWindow(
+                            appContext.getString(R.string.error_no_captions)
+                                    + "\n"
+                                    + appContext.getString(R.string.error_no_caption_net_error)
+                        )
+                    }
+
+                }
+                Timber.e("Error while loading video $captionError")
+            })
+            .loadFrames({ frameResult ->
+                viewState.loadFrames(frameResult)
+            }, { frameError ->
+                Timber.e("Error while loading video $frameError")
+                errorProcessVideo(frameError)
+            })
+    }
+
+    private fun successProcessedVideo() {
+        Timber.d("Success video load")
+        viewState.onVideoProcessed()
+        viewState.updatePlayback(overlayHandler!!.getOverlays(), null, false)
+    }
+
+    private fun errorProcessVideo(e: Throwable) {
+        Timber.e("Error video processing")
+        viewState.onErrorVideoProcessing(e)
     }
 
     /**
@@ -348,72 +410,6 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     fun saveEditedOverlay(overlay: OverlayObject, text: String?, @ColorInt colorCode: Int) {
         if (text == null) return
         overlayHandler!!.editedOverlay(overlay, text, colorCode)
-    }
-
-    /**
-     * Run video processing with frames extraction and speech-to-text conversion
-     */
-    @SuppressLint("CheckResult")
-    fun processVideo() {
-        viewState.setLoadingViewVisibility(true)
-        val videoDuration = mediaController.videoDuration
-        val amountFrames = videoDuration / App.FRAME_TIME_MS
-        val frameTime = if (amountFrames > 0) videoDuration / amountFrames else App.FRAME_TIME_MS
-        videoLoader.init(appContext, sourceUri!!, frameTime)
-            .onError { error ->
-                Timber.d("Error while loading video $error")
-                errorProcessVideo(error)
-            }
-            .load {
-                val audioTranscribeResult = it.second
-                val framesResult = it.first
-                when {
-                    // Service transcription error
-                    audioTranscribeResult.throwable != null -> {
-                        when (audioTranscribeResult.throwable) {
-                            is AudioExtractorNoAudioException -> {
-                                Timber.e("No captions. Source video doesn't have audio track")
-                                viewState.showPopupWindow(
-                                    appContext.getString(R.string.error_no_captions)
-                                            + ".\n"
-                                            + appContext.getString(R.string.error_no_captions_no_audio)
-                                )
-                            }
-                            else -> {
-                                Timber.e("No captions. Network service error")
-                                viewState.showPopupWindow(
-                                    appContext.getString(R.string.error_no_captions)
-                                            + "\n"
-                                            + appContext.getString(R.string.error_no_caption_net_error)
-                                )
-                            }
-                        }
-                    }
-                    // Empty result
-                    audioTranscribeResult.caption == null ||
-                            audioTranscribeResult.caption.isEmpty() -> {
-                        Timber.d("No captions")
-                        viewState.showPopupWindow(appContext.getString(R.string.error_no_captions))
-                    }
-                    //Success
-                    else -> {
-                        Timber.d("Text = $audioTranscribeResult")
-                        processTranscribe(audioTranscribeResult.caption)
-                    }
-                }
-                successProcessedVideo(framesResult, frameTime)
-            }
-    }
-
-    private fun successProcessedVideo(frames: List<Bitmap>, frameTime: Long) {
-        Timber.d("Success video load")
-        viewState.onVideoProcessed(frames, frameTime)
-        viewState.updatePlayback(overlayHandler!!.getOverlays(), null, false)
-    }
-
-    private fun errorProcessVideo(e: Throwable) {
-        Timber.e("Error video processing")
-        viewState.onErrorVideoProcessing(e)
     }
 
     /**

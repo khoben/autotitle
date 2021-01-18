@@ -1,7 +1,7 @@
 package com.khoben.autotitle.service.frameretriever
 
-import android.graphics.Bitmap
 import android.net.Uri
+import com.khoben.autotitle.ui.player.seekbar.FramesHolder
 import io.reactivex.rxjava3.core.Observable
 
 interface VideoFrameRetriever {
@@ -10,11 +10,11 @@ interface VideoFrameRetriever {
         providerType: ProviderType = ProviderType.NATIVE_ANDROID
     ): VideoFrameRetriever
 
-    fun load(frameTime: Long, w: Int, h: Int, callback: (List<Bitmap>) -> Unit)
-    fun load(frameTime: Long, callback: (List<Bitmap>) -> Unit)
+    fun load(frameTime: Long, w: Int, h: Int, callback: (FramesHolder) -> Unit)
+    fun load(frameTime: Long, callback: (FramesHolder) -> Unit)
     fun onError(errorListener: (Throwable) -> Unit): VideoFrameRetriever
     fun cancel()
 
-    fun retrieveFrames(frameTime: Long): Observable<List<Bitmap>>
-    fun retrieveFrames(frameTime: Long, w: Int, h: Int): Observable<List<Bitmap>>
+    fun retrieveFrames(frameTime: Long): Observable<FramesHolder>
+    fun retrieveFrames(frameTime: Long, w: Int, h: Int): Observable<FramesHolder>
 }

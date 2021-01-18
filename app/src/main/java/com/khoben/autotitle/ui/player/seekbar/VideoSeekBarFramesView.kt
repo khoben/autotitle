@@ -12,12 +12,14 @@ import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.core.view.get
 import com.iammert.rangeview.library.DraggingState
 import com.iammert.rangeview.library.RangeView
 import com.khoben.autotitle.App
 import com.khoben.autotitle.App.Companion.FRAMES_PER_SCREEN
 import com.khoben.autotitle.R
 import com.khoben.autotitle.extension.dp
+import com.khoben.autotitle.extension.formattedTime
 import com.khoben.autotitle.ui.overlay.OverlayObject
 import com.khoben.autotitle.ui.overlay.OverlayText
 import timber.log.Timber
@@ -90,6 +92,92 @@ class VideoSeekBarFramesView(
     }
 
     /**
+     * Async adding frames to seekbar
+     *
+     * @param frames FramesHolder
+     */
+    fun onFramesLoad(frames: FramesHolder) {
+        Timber.d("$frames")
+        when(frames.status) {
+            FrameStatus.PRELOAD -> {
+                if (frames.emptyFramesCount != null && frames.frameTime != null) {
+                    preloadFrames(frames.emptyFramesCount!!, frames.frameTime)
+                }
+            }
+            FrameStatus.LOAD_SINGLE -> {
+                frames.singleFrame?.let { loadSingleFrame(it) }
+            }
+            FrameStatus.COMPLETED -> {
+                frames.listFrames?.let { loadAllFrames(it) }
+            }
+        }
+    }
+
+    private fun preloadFrames(amountFrames: Long, frameTime: Long) {
+        imageList!!.removeAllViews()
+        this.frameTimeInMs = frameTime
+        val singleFrameWidthPx = screenWidth / FRAMES_PER_SCREEN
+        repeat(amountFrames.toInt()) {
+            imageList!!.addView(
+                FrameImageView(context).apply {
+                    layoutParams =
+                        LayoutParams(singleFrameWidthPx, App.SEEKBAR_HEIGHT_DP_PIXELS)
+                    scaleType = ImageView.ScaleType.CENTER_CROP
+                    // keep original colors in dark mode
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                        isForceDarkAllowed = false
+                }
+            )
+        }
+        // update layout size
+        measure(0, 0)
+
+        // adds range view selectors to layout
+        if (rangeView == null) {
+            addRangeView((singleFrameWidthPx * amountFrames).toInt(), App.SEEKBAR_HEIGHT_DP_PIXELS)
+        }
+    }
+
+    private var curLoadedSingleFrame = 0
+    private fun loadSingleFrame(frame: Bitmap) {
+        if (curLoadedSingleFrame >= imageList!!.childCount) return
+        val frameContainer = imageList!![curLoadedSingleFrame]
+        if (frameContainer is FrameImageView) {
+            frameContainer.setImageBitmap(frame)
+            frameContainer.postInvalidate()
+            curLoadedSingleFrame++
+        } else {
+            throw RuntimeException("For frames line allowed only FrameImageView as child")
+        }
+    }
+
+    private fun loadAllFrames(frames: List<Bitmap>) {
+        if (imageList!!.childCount != 0) return
+        val singleFrameWidthPx = screenWidth / FRAMES_PER_SCREEN
+        frames.forEach { bitmap ->
+            imageList!!.addView(
+                FrameImageView(context).apply {
+                    layoutParams =
+                        LayoutParams(singleFrameWidthPx, App.SEEKBAR_HEIGHT_DP_PIXELS)
+                    scaleType = ImageView.ScaleType.CENTER_CROP
+                    // keep original colors in dark mode
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                        isForceDarkAllowed = false
+                    setImageBitmap(bitmap)
+                }
+            )
+        }
+
+        // update layout size
+        measure(0, 0)
+
+        if (rangeView == null) {
+            // adds range view selectors to layout
+            addRangeView(singleFrameWidthPx * frames.size, App.SEEKBAR_HEIGHT_DP_PIXELS)
+        }
+    }
+
+    /**
      * Adds frames to seekbar
      * @param bitmaps
      * @param frameTime
@@ -104,29 +192,6 @@ class VideoSeekBarFramesView(
     }
 
     private fun addFramesToSeekBar(bitmaps: List<Bitmap?>) {
-        val singleFrameWidthPx = screenWidth / FRAMES_PER_SCREEN
-        bitmaps.forEach { bitmap ->
-            imageList!!.addView(
-                ImageView(context).apply {
-                    layoutParams =
-                        LayoutParams(singleFrameWidthPx, App.SEEKBAR_HEIGHT_DP_PIXELS)
-                    scaleType = ImageView.ScaleType.CENTER_CROP
-                    // keep original colors in dark mode
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-                        isForceDarkAllowed = false
-                    setImageBitmap(bitmap)
-                }
-            )
-        }
-
-        // calc seekbar width
-        measure(0, 0)
-
-        if (rangeView == null) {
-            // adds range view selectors to layout
-            addRangeView(singleFrameWidthPx * bitmaps.size, App.SEEKBAR_HEIGHT_DP_PIXELS)
-        }
-
     }
 
     private fun addRangeView(w: Int, h: Int) {

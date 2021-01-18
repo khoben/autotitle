@@ -36,6 +36,7 @@ import com.khoben.autotitle.ui.overlay.OverlayObject
 import com.khoben.autotitle.ui.overlay.OverlayText
 import com.khoben.autotitle.ui.player.VideoControlsView
 import com.khoben.autotitle.ui.player.VideoSurfaceView
+import com.khoben.autotitle.ui.player.seekbar.FramesHolder
 import com.khoben.autotitle.ui.popup.CustomAlertDialog
 import com.khoben.autotitle.ui.popup.VideoProcessingProgressDialog
 import com.khoben.autotitle.ui.popup.textoverlayeditor.TextEditorDialogFragment
@@ -299,13 +300,9 @@ class VideoEditActivity : MvpAppCompatActivity(),
         alertDialog.show(content)
     }
 
-    override fun onVideoProcessed(
-        thumbnails: List<Bitmap>,
-        frameTime: Long
-    ) {
+    override fun onVideoProcessed() {
         runOnUiThread {
             Timber.d("Video processed")
-            videoControlsView.addFramesToSeekBar(thumbnails, frameTime)
 
             if (!userSettings.getBoolean(USER_SETTINGS_ITEM_GUIDE_SHOWN, false)) {
                 val handler = Handler(Looper.getMainLooper())
@@ -327,6 +324,10 @@ class VideoEditActivity : MvpAppCompatActivity(),
             }
             setLoadingViewVisibility(false)
         }
+    }
+
+    override fun loadFrames(frameResult: FramesHolder) {
+        videoControlsView.loadFrames(frameResult)
     }
 
     private fun initGuide() {

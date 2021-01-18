@@ -3,20 +3,23 @@ package com.khoben.autotitle.service.frameretriever
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import com.khoben.autotitle.ui.player.seekbar.FrameStatus
+import com.khoben.autotitle.ui.player.seekbar.FramesHolder
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import timber.log.Timber
 
-class VideoFrameRetrieverImpl(
+open class VideoFrameRetrieverImpl(
     private val context: Context
 ) : VideoFrameRetriever {
 
-    private var videoMetadataProvider: VideoMetaDataProvider? = null
-    private var videoDuration: Long? = null
+    protected var videoMetadataProvider: VideoMetaDataProvider? = null
+    protected var videoDuration: Long? = null
 
     private var frameRetrieverDisposable: Disposable? = null
-    private var callback: ((List<Bitmap>) -> Unit)? = null
+    private var callback: ((FramesHolder) -> Unit)? = null
     private var errorListener: ((Throwable) -> Unit)? = null
 
     override fun onError(errorListener: (Throwable) -> Unit): VideoFrameRetrieverImpl {
@@ -24,7 +27,7 @@ class VideoFrameRetrieverImpl(
         return this
     }
 
-    override fun load(frameTime: Long, callback: (List<Bitmap>) -> Unit) {
+    override fun load(frameTime: Long, callback: (FramesHolder) -> Unit) {
         this.callback = callback
         callObservable(retrieveFrames(frameTime))
     }
@@ -39,12 +42,12 @@ class VideoFrameRetrieverImpl(
         return this
     }
 
-    override fun load(frameTime: Long, w: Int, h: Int, callback: (List<Bitmap>) -> Unit) {
+    override fun load(frameTime: Long, w: Int, h: Int, callback: (FramesHolder) -> Unit) {
         this.callback = callback
         callObservable(retrieveFrames(frameTime, w, h))
     }
 
-    private fun callObservable(o: Observable<List<Bitmap>>) {
+    private fun callObservable(o: Observable<FramesHolder>) {
         frameRetrieverDisposable = o.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -62,7 +65,7 @@ class VideoFrameRetrieverImpl(
         errorListener = null
     }
 
-    override fun retrieveFrames(frameTime: Long): Observable<List<Bitmap>> {
+    override fun retrieveFrames(frameTime: Long): Observable<FramesHolder> {
         return Observable.create { emitter ->
             val returnList = arrayListOf<Bitmap>()
             for (i in 0..videoDuration!! step frameTime) {
@@ -74,12 +77,12 @@ class VideoFrameRetrieverImpl(
                 }
                 bitmap?.let { returnList.add(it) }
             }
-            emitter.onNext(returnList)
+            emitter.onNext(FramesHolder(status = FrameStatus.COMPLETED, listFrames =  returnList))
             emitter.onComplete()
         }
     }
 
-    override fun retrieveFrames(frameTime: Long, w: Int, h: Int): Observable<List<Bitmap>> {
+    override fun retrieveFrames(frameTime: Long, w: Int, h: Int): Observable<FramesHolder> {
         return Observable.create { emitter ->
             val returnList = arrayListOf<Bitmap>()
             for (i in 0..videoDuration!! step frameTime) {
@@ -91,7 +94,7 @@ class VideoFrameRetrieverImpl(
                 }
                 bitmap?.let { returnList.add(it) }
             }
-            emitter.onNext(returnList)
+            emitter.onNext(FramesHolder(status = FrameStatus.COMPLETED, listFrames = returnList))
             emitter.onComplete()
         }
     }
