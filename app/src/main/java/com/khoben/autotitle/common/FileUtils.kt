@@ -29,7 +29,11 @@ object FileUtils {
      */
     fun removeFileFolderRecursive(path: String) {
         val folder = File(path)
-        if (!folder.isDirectory) throw RuntimeException("Only folders allowed")
+        if (!folder.exists()) {
+            Timber.e("Removing not existing folder")
+            return
+        } else if (!folder.isDirectory)
+            throw RuntimeException("Only folders allowed")
         val deleted = folder.deleteRecursively()
         if (deleted) {
             Timber.d("Folder $path was deleted")
