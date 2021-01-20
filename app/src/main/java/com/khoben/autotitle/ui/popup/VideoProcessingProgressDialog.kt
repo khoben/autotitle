@@ -7,7 +7,6 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.isVisible
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.khoben.autotitle.R
 import java.lang.ref.WeakReference
@@ -25,6 +24,7 @@ class VideoProcessingProgressDialog(val context: WeakReference<Context>) {
     private var savedHintText = ""
 
     var listener: ProgressDialogListener? = null
+
     interface ProgressDialogListener {
         fun cancelBtnClicked()
         fun confirmCancelBtnClicked()
@@ -44,15 +44,13 @@ class VideoProcessingProgressDialog(val context: WeakReference<Context>) {
                     setOnClickListener { onCancelBtnClicked() }
                 }
 
-                findViewById<Button>(R.id.confirm).
-                    setOnClickListener {
-                        onConfirmCancelBtnClicked()
-                    }
+                findViewById<Button>(R.id.confirm).setOnClickListener {
+                    onConfirmCancelBtnClicked()
+                }
 
-                findViewById<Button>(R.id.nope).
-                    setOnClickListener {
-                        onNopeCancelBtnClicked()
-                    }
+                findViewById<Button>(R.id.nope).setOnClickListener {
+                    onNopeCancelBtnClicked()
+                }
 
             }
         dialog = MaterialAlertDialogBuilder(context.get()!!, R.style.CustomAlertDialog).apply {

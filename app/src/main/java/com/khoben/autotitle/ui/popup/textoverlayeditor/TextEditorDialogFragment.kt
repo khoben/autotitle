@@ -1,6 +1,5 @@
-package com.khoben.autotitle.ui.popup
+package com.khoben.autotitle.ui.popup.textoverlayeditor
 
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -8,7 +7,6 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import androidx.annotation.ColorInt
@@ -18,14 +16,14 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.khoben.autotitle.R
+import com.khoben.autotitle.common.ViewUtils.focusAndShowKeyboard
 
 
 class TextEditorDialogFragment : DialogFragment() {
-    private var mInputMethodManager: InputMethodManager? = null
     private var mTextEditorEvent: TextEditorEvent? = null
 
-    var mAddTextEditText: EditText? = null
-    var mColorCode = 0
+    private var mAddTextEditText: EditText? = null
+    private var mColorCode = 0
 
     interface TextEditorEvent {
         fun onDone(inputText: String?, colorCode: Int)
@@ -56,9 +54,6 @@ class TextEditorDialogFragment : DialogFragment() {
         mColorCode = requireArguments().getInt(EXTRA_COLOR_CODE)
         mAddTextEditText!!.setTextColor(mColorCode)
 
-        mInputMethodManager =
-            requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-
         view.findViewById<RecyclerView>(R.id.add_text_color_picker_recycler_view).apply {
             layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
             setHasFixedSize(true)
@@ -76,13 +71,11 @@ class TextEditorDialogFragment : DialogFragment() {
         }
 
         // show keyboard
-        mInputMethodManager!!.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
-        mAddTextEditText!!.requestFocus()
+        mAddTextEditText!!.focusAndShowKeyboard()
 
         //Make a callback on activity when user is done with text editing
-        view.findViewById<Button>(R.id.add_text_done_tv).setOnClickListener { v ->
-            mInputMethodManager!!.hideSoftInputFromWindow(v.windowToken, 0)
-            dismiss()
+        view.findViewById<Button>(R.id.add_text_done_tv).setOnClickListener {
+            dismissAllowingStateLoss()
             val inputText = mAddTextEditText!!.text.toString()
             if (!TextUtils.isEmpty(inputText)) {
                 mTextEditorEvent?.onDone(inputText, mColorCode)

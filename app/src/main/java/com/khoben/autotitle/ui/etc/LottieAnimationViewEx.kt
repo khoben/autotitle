@@ -11,15 +11,20 @@ class LottieAnimationViewEx(context: Context, attrs: AttributeSet?) :
         context.theme.obtainStyledAttributes(
             attrs,
             R.styleable.LottieAnimationViewEx,
-            0, 0).apply {
+            0, 0
+        ).apply {
             try {
                 val xmlMaxFrame = getInteger(R.styleable.LottieAnimationViewEx_lottie_maxFrame, 0)
                 val xmlMinFrame = getInteger(R.styleable.LottieAnimationViewEx_lottie_minFrame, 0)
+                val xmlRotation = getFloat(R.styleable.LottieAnimationViewEx_lottie_rotation, 0F)
                 if (xmlMaxFrame > 0) {
                     setMaxFrame(xmlMaxFrame)
                 }
                 if (xmlMinFrame > 0) {
                     setMinFrame(xmlMinFrame)
+                }
+                if (xmlRotation != 0F) {
+                    rotation = xmlRotation
                 }
             } finally {
                 recycle()

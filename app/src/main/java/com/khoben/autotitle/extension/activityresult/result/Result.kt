@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import com.khoben.autotitle.extension.activityresult.CustomTakeVideo
 
 inline fun ComponentActivity.getContent(
     crossinline onError: (error: Throwable) -> Unit = {},
@@ -19,9 +20,12 @@ inline fun ComponentActivity.getContent(
 
 inline fun ComponentActivity.takeVideo(
     crossinline onError: (error: Throwable) -> Unit = {},
-    crossinline onSuccess: (message: String) -> Unit = {}
-): ActivityResultLauncher<Uri> {
-    return registerForActivityResult(ActivityResultContracts.TakeVideo()) {
-        onSuccess.invoke("Video was taken")
+    crossinline onSuccess: (uri: Uri) -> Unit = {}
+): ActivityResultLauncher<Any?> {
+    return registerForActivityResult(CustomTakeVideo()) {
+        when {
+            it != null -> onSuccess.invoke(it)
+            else -> onError.invoke(Error("Error while loading content"))
+        }
     }
 }

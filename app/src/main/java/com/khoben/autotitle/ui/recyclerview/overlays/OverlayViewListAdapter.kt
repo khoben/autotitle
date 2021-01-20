@@ -1,4 +1,4 @@
-package com.khoben.autotitle.ui.recyclerview
+package com.khoben.autotitle.ui.recyclerview.overlays
 
 import android.annotation.SuppressLint
 import android.util.TypedValue
@@ -8,57 +8,14 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.khoben.autotitle.R
-import com.khoben.autotitle.databinding.RecyclerViewItemBinding
+import com.khoben.autotitle.databinding.RecyclerViewOverlayItemBinding
 import com.khoben.autotitle.ui.overlay.OverlayDataMapper
 import java.util.*
 
 class OverlayViewListAdapter :
-    ListAdapter<OverlayDataMapper, OverlayViewListAdapter.OverlayViewHolder>(
-        OverlayViewDiffCallback()
-    ), RecyclerViewItemEventListener {
-
-    private var selectedItemUUID: UUID? = null
-    private var lastSelectedItemUUID: UUID? = null
-    private var selectedItemPos = -1
-    private var lastItemSelectedPos = -1
-
-    /**
-     * Remove item selection
-     */
-    fun unSelect() {
-        notifyItemChanged(selectedItemPos)
-        lastItemSelectedPos = -1
-        selectedItemUUID = null
-        lastSelectedItemUUID = null
-        selectedItemPos = -1
-    }
-
-    /**
-     * Select the recyclerview item
-     *
-     * If [uuid] is not null then use it as ID, therefore use ID
-     * from [getItem]
-     *
-     * @param pos Position
-     * @param uuid ID of selected item
-     */
-    fun setSelected(pos: Int, uuid: UUID? = null) {
-        selectedItemUUID = uuid ?: getItem(pos).uuid
-        selectedItemPos = pos
-        lastItemSelectedPos = if (lastItemSelectedPos == -1) {
-            lastSelectedItemUUID = selectedItemUUID
-            selectedItemPos
-        }
-        else {
-            // deselect last selected item
-            notifyItemChanged(currentList.indexOfFirst { it.uuid == lastSelectedItemUUID })
-            // save for future deselection
-            lastSelectedItemUUID = selectedItemUUID
-            selectedItemPos
-        }
-        // select
-        notifyItemChanged(selectedItemPos)
-    }
+    ListAdapter<OverlayDataMapper,
+            OverlayViewListAdapter.OverlayViewHolder>(OverlayViewDiffCallback()),
+    RecyclerViewItemEventListener {
 
     var listItemEventListener: RecyclerViewItemEventListener? = null
     override fun onClickedAddBelow(item: Int) {
@@ -73,14 +30,11 @@ class OverlayViewListAdapter :
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: OverlayViewHolder, position: Int) {
         val item = getItem(position)
-        if (item.uuid == selectedItemUUID) {
-            selectedItemPos = position
-        }
-        holder.setSelected(item.uuid == selectedItemUUID)
+        holder.setSelected(item.isSelected)
         holder.bind(item)
     }
 
-    class OverlayViewHolder(private val binding: RecyclerViewItemBinding) :
+    class OverlayViewHolder(private val binding: RecyclerViewOverlayItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         var listItemEventListener: RecyclerViewItemEventListener? = null
@@ -119,7 +73,7 @@ class OverlayViewListAdapter :
         companion object {
             fun from(parent: ViewGroup): OverlayViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = RecyclerViewItemBinding.inflate(layoutInflater, parent, false)
+                val binding = RecyclerViewOverlayItemBinding.inflate(layoutInflater, parent, false)
                 return OverlayViewHolder(binding)
             }
         }

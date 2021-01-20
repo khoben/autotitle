@@ -134,7 +134,6 @@ class SimpleVideoRender : VideoRender(),
             } catch (t: IOException) {
                 Timber.e("Error while MediaPlayer preparing")
             }
-            mediaPlayer!!.initSurface()
         }
         synchronized(this) { updateSurface = false }
     }

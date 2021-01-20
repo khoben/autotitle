@@ -9,7 +9,8 @@ import timber.log.Timber
 import kotlin.math.min
 
 
-class VideoSurfaceView : GLSurfaceView {
+class VideoSurfaceView @JvmOverloads constructor(ctx: Context, attrs: AttributeSet? = null) :
+    GLSurfaceView(ctx, attrs) {
 
     private var render: VideoRender? = null
     private var mediaPlayer: MediaSurfacePlayer? = null
@@ -20,9 +21,6 @@ class VideoSurfaceView : GLSurfaceView {
     init {
         setEGLContextClientVersion(2)
     }
-
-    constructor(ctx: Context) : super(ctx, null)
-    constructor(ctx: Context, attrs: AttributeSet) : super(ctx, attrs)
 
     fun init(render: VideoRender, mediaPlayer: MediaSurfacePlayer) {
         render.setMediaPlayer(mediaPlayer)
@@ -126,7 +124,7 @@ class VideoSurfaceView : GLSurfaceView {
 
     fun onDestroy() {
         if (mediaPlayer != null) {
-            if (mediaPlayer!!.isPlaying()) {
+            if (mediaPlayer!!.isNotPaused()) {
                 mediaPlayer!!.stop()
             }
             mediaPlayer!!.release()

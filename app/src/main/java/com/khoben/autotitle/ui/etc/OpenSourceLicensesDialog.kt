@@ -5,8 +5,6 @@ import android.app.Dialog
 import android.os.Bundle
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.marginTop
-import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.DialogFragment
 import com.khoben.autotitle.extension.dp
 

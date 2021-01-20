@@ -2,10 +2,8 @@ package com.khoben.autotitle.service.mediaplayer
 
 import android.net.Uri
 import com.khoben.autotitle.App
-import com.khoben.autotitle.model.PAUSED
-import com.khoben.autotitle.model.PLAY
 import com.khoben.autotitle.model.PlaybackEvent
-import com.khoben.autotitle.model.REWIND
+import com.khoben.autotitle.model.PlaybackState
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -49,29 +47,29 @@ class MediaController : MediaPlayerSurfaceCallback {
         }
     }
 
-    fun toggle() = setPlayState(!mediaPlayer.isPlaying())
+    fun toggle() = setPlayState(!mediaPlayer.isNotPaused())
 
     /**
      * Sets playback state
      * @param playState True -- Play; False -- Pause
      */
     fun setPlayState(playState: Boolean) {
-        if (playState == mediaPlayer.isPlaying()) return
+        if (playState == mediaPlayer.isNotPaused()) return
         when (playState) {
             true -> {
                 mediaPlayer.play()
-                handleEvent(PlaybackEvent(PLAY))
+                handleEvent(PlaybackEvent(PlaybackState.PLAY))
             }
             false -> {
                 mediaPlayer.pause()
-                handleEvent(PlaybackEvent(PAUSED))
+                handleEvent(PlaybackEvent(PlaybackState.PAUSED))
             }
         }
     }
 
     fun seekTo(timestamp: Long) {
         mediaPlayer.seekTo(timestamp)
-        handleEvent(PlaybackEvent(REWIND, timestamp))
+        handleEvent(PlaybackEvent(PlaybackState.SEEK, timestamp))
     }
 
     fun addSubscription(sub: Callback) {

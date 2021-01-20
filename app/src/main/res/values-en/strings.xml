@@ -20,7 +20,7 @@
     <string name="some_error">Error</string>
     <string name="or_caption">OR</string>
     <string name="welcome_title">AutoTitle</string>
-    <string name="need_load_title">Load a video\nto add captions</string>
+    <string name="need_load_title">Create new project</string>
     <string name="save_captions">Applying captions…</string>
     <string name="save_button_caption">Save</string>
     <string name="empty_overlay_recycler">Double tap to edit caption</string>
@@ -40,4 +40,5 @@
     <string name="here_are_no_captions_you_can_add_it">Here are no captions.</string>
     <string name="snack_bar_undo">Undo</string>
     <string name="snack_bar_item_deleted">Item deleted.</string>
+    <string name="error_no_captions_no_audio">Source video doesn\'t have audio track</string>
 </resources>

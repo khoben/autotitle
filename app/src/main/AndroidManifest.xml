@@ -32,6 +32,7 @@
 
         <activity
             android:name="com.khoben.autotitle.ui.activity.MainActivity"
+            android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait">
 
             <intent-filter>
@@ -42,6 +43,7 @@
         </activity>
         <activity
             android:name="com.khoben.autotitle.ui.activity.VideoEditActivity"
+            android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.khoben.autotitle.ui.activity.ResultActivity"

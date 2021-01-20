@@ -1,12 +1,11 @@
 package com.khoben.autotitle.extension.activityresult.result
 
-import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 
 inline fun ComponentActivity.takeVideoDSL(
     builderResult: ResultBuilder.() -> Unit
-): ActivityResultLauncher<Uri> {
+): ActivityResultLauncher<Any?> {
     val builder = ResultBuilder()
     builder.builderResult()
     return takeVideo(

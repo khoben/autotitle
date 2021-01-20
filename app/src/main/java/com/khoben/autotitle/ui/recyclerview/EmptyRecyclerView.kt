@@ -8,7 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import timber.log.Timber
 
 
-class EmptyRecyclerView : RecyclerView {
+class EmptyRecyclerView @JvmOverloads constructor(
+    context: Context, attrs: AttributeSet? = null,
+    defStyle: Int = 0
+) : RecyclerView(context, attrs, defStyle) {
 
     private var emptyView: View? = null
 
@@ -27,13 +30,6 @@ class EmptyRecyclerView : RecyclerView {
             checkIfEmpty()
         }
     }
-
-    constructor(context: Context) : super(context)
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-    constructor(
-        context: Context, attrs: AttributeSet?,
-        defStyle: Int
-    ) : super(context, attrs, defStyle)
 
     fun checkIfEmpty() {
         if (adapter != null) {

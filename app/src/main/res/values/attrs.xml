@@ -3,5 +3,6 @@
     <declare-styleable name="LottieAnimationViewEx">
         <attr format="integer" name="lottie_minFrame"/>
         <attr format="integer" name="lottie_maxFrame"/>
+        <attr format="float" name="lottie_rotation"/>
     </declare-styleable>
 </resources>

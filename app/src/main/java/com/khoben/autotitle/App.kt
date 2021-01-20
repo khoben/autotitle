@@ -41,15 +41,16 @@ class App : Application() {
     companion object {
         @JvmStatic
         lateinit var applicationComponent: ApplicationComponent
+
         @JvmStatic
         lateinit var appContext: Context
         const val appName = "AutoTitle"
         const val FRAMES_PER_SCREEN = 8
-        const val SEEKBAR_HEIGHT_DP = 60F
         val SEEKBAR_HEIGHT_DP_PIXELS = 60.dp()
         const val FRAME_TIME_MS = 1000L
-        const val LIMIT_DURATION_MS = 60 * 1000L
-        const val TIME_FORMAT_MS = "m:ss.S"
+        const val LIMIT_DURATION_MS = 3 * 60 * 1000L
+        const val PLAYBACK_TIME_FORMAT_MS = "m:ss.S"
+        const val DATETIME_TIME_FORMAT = "dd-MM-yyyy HH:mm"
         const val VIDEO_EXTENSION = "mp4"
         const val AUDIO_EXTENSION = "aac"
         const val VIDEO_MIME_TYPE = "video/mp4"

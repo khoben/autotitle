@@ -3,10 +3,8 @@ package com.khoben.autotitle.common.openglfilter
 import android.graphics.*
 import android.view.View
 import com.daasuu.mp4compose.filter.GlOverlayFilter
-import com.khoben.autotitle.extension.getBitmap
 import com.khoben.autotitle.service.videosaver.CurrentVideoProcessTimeListener
 import com.khoben.autotitle.ui.overlay.OverlayObject
-import com.khoben.autotitle.ui.overlay.OverlayText
 
 /**
  * Draws [OverlayObject]'s along theirs time ranges
@@ -41,18 +39,18 @@ class GLViewOverlayFilter(
         scaleY: Float
     ): Pair<Bitmap, PointF>? {
         return bitmaps.getOrPut(view, {
-            if (view is OverlayText) {
-                val bitmap = view.textView?.getBitmap(view, scaleX, scaleY) ?: return null
+            // view bitmap
+            val bitmap = view.getBitmap(scaleX, scaleY) ?: return null
 
-                view.getHitRect(hitRect)
-                val centerX = hitRect.exactCenterX()
-                val centerY = hitRect.exactCenterY()
+            // getting center point
+            view.getHitRect(hitRect)
+            val centerX = hitRect.exactCenterX()
+            val centerY = hitRect.exactCenterY()
 
-                val x = centerX * scaleX
-                val y = centerY * scaleY
-                return Pair(bitmap, PointF(x, y))
-            }
-            return null
+            val x = centerX * scaleX
+            val y = centerY * scaleY
+            return Pair(bitmap, PointF(x, y))
+
         })
     }
 

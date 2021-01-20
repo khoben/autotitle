@@ -1,4 +1,4 @@
-package com.khoben.autotitle.ui.recyclerview
+package com.khoben.autotitle.ui.recyclerview.overlays
 
 import androidx.recyclerview.widget.DiffUtil
 import com.khoben.autotitle.ui.overlay.OverlayDataMapper
@@ -15,6 +15,7 @@ class OverlayViewDiffCallback : DiffUtil.ItemCallback<OverlayDataMapper>() {
         return oldItem.uuid == newItem.uuid &&
                 oldItem.text == newItem.text &&
                 oldItem.startTime == newItem.startTime &&
-                oldItem.endTime == newItem.endTime
+                oldItem.endTime == newItem.endTime &&
+                oldItem.isSelected == newItem.isSelected
     }
 }

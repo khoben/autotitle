@@ -20,7 +20,7 @@
     <string name="some_error">Ошибка</string>
     <string name="or_caption">ИЛИ</string>
     <string name="welcome_title">AutoTitle</string>
-    <string name="need_load_title">Загрузите видео\nдля добавления субтитров</string>
+    <string name="need_load_title">Создать проект</string>
     <string name="save_captions">Обработка</string>
     <string name="save_button_caption">Сохранить</string>
     <string name="empty_overlay_recycler">Нажмите два раза для редактирования</string>
@@ -40,4 +40,5 @@
     <string name="here_are_no_captions_you_can_add_it">Здесь пока пусто.</string>
     <string name="snack_bar_undo">Отмена</string>
     <string name="snack_bar_item_deleted">Объект удален.</string>
+    <string name="error_no_captions_no_audio">Исходное видео без аудиодорожки</string>
 </resources>

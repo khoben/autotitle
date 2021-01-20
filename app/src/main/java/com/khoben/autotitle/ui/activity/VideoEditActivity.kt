@@ -24,6 +24,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.khoben.autotitle.App
 import com.khoben.autotitle.R
 import com.khoben.autotitle.databinding.ActivityVideoBinding
+import com.khoben.autotitle.model.VideoInfo
+import com.khoben.autotitle.model.project.RecentProjectsLoader
 import com.khoben.autotitle.mvp.presenter.VideoEditActivityPresenter
 import com.khoben.autotitle.mvp.view.VideoEditActivityView
 import com.khoben.autotitle.service.mediaplayer.MediaSurfacePlayer
@@ -34,10 +36,14 @@ import com.khoben.autotitle.ui.overlay.OverlayObject
 import com.khoben.autotitle.ui.overlay.OverlayText
 import com.khoben.autotitle.ui.player.VideoControlsView
 import com.khoben.autotitle.ui.player.VideoSurfaceView
+import com.khoben.autotitle.ui.player.seekbar.FramesHolder
 import com.khoben.autotitle.ui.popup.CustomAlertDialog
 import com.khoben.autotitle.ui.popup.VideoProcessingProgressDialog
-import com.khoben.autotitle.ui.popup.TextEditorDialogFragment
+import com.khoben.autotitle.ui.popup.textoverlayeditor.TextEditorDialogFragment
 import com.khoben.autotitle.ui.recyclerview.*
+import com.khoben.autotitle.ui.recyclerview.overlays.OverlayViewListAdapter
+import com.khoben.autotitle.ui.recyclerview.overlays.RecyclerViewItemEventListener
+import com.khoben.autotitle.ui.recyclerview.overlays.SwipeToDeleteCallback
 import com.khoben.autotitle.ui.snackbar.SnackBarHelper
 import me.toptas.fancyshowcase.FancyShowCaseQueue
 import me.toptas.fancyshowcase.FancyShowCaseView
@@ -53,8 +59,7 @@ import java.util.*
 class VideoEditActivity : MvpAppCompatActivity(),
     VideoEditActivityView,
     RecyclerViewItemEventListener,
-    VideoProcessingProgressDialog.ProgressDialogListener
-{
+    VideoProcessingProgressDialog.ProgressDialogListener {
 
     @InjectPresenter
     lateinit var presenter: VideoEditActivityPresenter
@@ -93,7 +98,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
 
         lottieAnimationLoadingView = binding.lottieLoadingView.root.apply {
             // ignore all touches on loading screen
-            setOnTouchListener {_, _ -> true }
+            setOnTouchListener { _, _ -> true }
         }
         videoControlsView = binding.videoSeekbarLayout.videoSeekbarView
         videoSurfaceView = binding.videolayer.videoPreview
@@ -122,7 +127,9 @@ class VideoEditActivity : MvpAppCompatActivity(),
 
         val sourceVideoUri = intent.getParcelableExtra<Uri>(VIDEO_SOURCE_URI_INTENT)
 
-        // video processing in presenter@onFirstViewAttach
+        /**
+         * video processing starts in [VideoEditActivityPresenter.onFirstViewAttach]
+         */
         presenter.setDataSourceUri(sourceVideoUri!!)
         presenter.initOverlayHandler(overlayView, videoControlsView)
         presenter.setMuteState(
@@ -159,14 +166,14 @@ class VideoEditActivity : MvpAppCompatActivity(),
                 recyclerView,
                 object : RecyclerViewClickListener.ClickListener {
                     override fun onClick(view: View?, position: Int) {
-                        presenter.recyclerSelectOverlay(position)
+                        presenter.selectOverlayByIdx(position)
                     }
 
                     override fun onLongClick(view: View?, position: Int) {
                     }
 
                     override fun onDoubleClick(view: View?, position: Int) {
-                        presenter.editItem(position)
+                        presenter.editOverlayItem(position)
                     }
                 })
         )
@@ -183,12 +190,12 @@ class VideoEditActivity : MvpAppCompatActivity(),
 
     override fun initVideoContainerLayoutParams(
         mediaPlayer: MediaSurfacePlayer,
-        videoRenderer: VideoRender
+        videoRenderer: VideoRender,
+        videoDetails: VideoInfo
     ) {
-        videoSurfaceView.init(videoRenderer, mediaPlayer)
-        val videoDetails = presenter.getVideoDetails()!!
         Timber.d("Video details = $videoDetails")
         videoControlsView.setMediaDuration(videoDetails.duration)
+        videoSurfaceView.init(videoRenderer, mediaPlayer)
         if (videoDetails.rotation == 0 &&
             videoDetails.width > videoDetails.height ||
             videoDetails.rotation == 180 &&
@@ -207,18 +214,21 @@ class VideoEditActivity : MvpAppCompatActivity(),
         }
 
         // adjust overlay size by video surface size
+        // and restores playback position
         videoSurfaceView.post {
             val layoutParams = overlayView.layoutParams
             layoutParams.width = videoSurfaceView.measuredWidth
             layoutParams.height = videoSurfaceView.measuredHeight
             overlayView.layoutParams = layoutParams
+            // restores current playback position
+            presenter.restoreCurrentPlaybackPosition()
         }
     }
 
     private fun onViewClicked(view: View) {
         when (view.id) {
             R.id.videolayer -> {
-                presenter.unEditable()
+                presenter.clearOverlaySelection()
             }
             R.id.back_btn -> {
                 onBackPressed()
@@ -239,6 +249,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
         super.onPause()
         presenter.pausePlayback()
         userSettings.edit().putBoolean(USER_SETTINGS_ITEM_MUTED, presenter.getMuteState()).apply()
+        RecentProjectsLoader.save()
     }
 
     override fun onDestroy() {
@@ -287,13 +298,9 @@ class VideoEditActivity : MvpAppCompatActivity(),
         alertDialog.show(content)
     }
 
-    override fun onVideoProcessed(
-        thumbnails: List<Bitmap>,
-        frameTime: Long
-    ) {
+    override fun onVideoProcessed() {
         runOnUiThread {
             Timber.d("Video processed")
-            videoControlsView.addFramesToSeekBar(thumbnails, frameTime)
 
             if (!userSettings.getBoolean(USER_SETTINGS_ITEM_GUIDE_SHOWN, false)) {
                 val handler = Handler(Looper.getMainLooper())
@@ -315,6 +322,10 @@ class VideoEditActivity : MvpAppCompatActivity(),
             }
             setLoadingViewVisibility(false)
         }
+    }
+
+    override fun loadFrames(frameResult: FramesHolder) {
+        videoControlsView.loadFrames(frameResult)
     }
 
     private fun initGuide() {
@@ -425,7 +436,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
     override fun onRemovedOverlay(
         idxRemoved: Int,
         removedOverlay: OverlayObject,
-        overlays: ArrayList<OverlayObject>
+        overlays: List<OverlayObject>
     ) {
         Snackbar.make(
             findViewById(android.R.id.content),
@@ -455,35 +466,30 @@ class VideoEditActivity : MvpAppCompatActivity(),
 
     override fun highlightListViewItem(index: Int, uuid: UUID?) {
         recyclerView.layoutManager?.scrollToPosition(index)
-        overlayViewListAdapter.setSelected(index, uuid)
         showGuideHowDeselectItemOnce()
-    }
-
-    override fun unSelectRecycler() {
-        overlayViewListAdapter.unSelect()
     }
 
     override fun onOverlaysChangedList(overlays: List<OverlayObject>) {
         // update recycler view
         runOnUiThread {
             overlayViewListAdapter.submitList(overlays.map {
-                val data: OverlayDataMapper
                 if (it is OverlayText) {
-                    data = OverlayDataMapper(
+                    OverlayDataMapper(
                         startTime = it.startTime,
                         endTime = it.endTime,
-                        uuid = it.uuid!!,
+                        uuid = it.uuid,
                         text = it.text!!,
-                        badgeColor = it.badgeColor
+                        badgeColor = it.badgeColor,
+                        isSelected = it.isInEdit
                     )
                 } else {
-                    data = OverlayDataMapper(
+                    OverlayDataMapper(
                         startTime = it.startTime,
                         endTime = it.endTime,
-                        uuid = it.uuid!!
+                        uuid = it.uuid,
+                        isSelected = it.isInEdit
                     )
                 }
-                data
             })
         }
     }
@@ -520,7 +526,12 @@ class VideoEditActivity : MvpAppCompatActivity(),
     override fun onVideoSavingProgress(progress: Double) {
         val percent = (progress * 100).toInt()
         runOnUiThread {
-            videoProcessingProgressDialog.updatePercentage(getString(R.string.percent_text, percent.toString()))
+            videoProcessingProgressDialog.updatePercentage(
+                getString(
+                    R.string.percent_text,
+                    percent.toString()
+                )
+            )
         }
     }
 
@@ -581,7 +592,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
                 overlay.textView!!.currentTextColor
             ).setOnTextEditorListener(object : TextEditorDialogFragment.TextEditorEvent {
                 override fun onDone(inputText: String?, colorCode: Int) {
-                    presenter.onEditedOverlayFragment(overlay, inputText, colorCode)
+                    presenter.saveEditedOverlay(overlay, inputText, colorCode)
                 }
             })
         }

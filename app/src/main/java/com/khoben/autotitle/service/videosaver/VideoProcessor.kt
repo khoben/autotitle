@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.Uri
 import com.khoben.autotitle.model.VideoInfo
 import com.khoben.autotitle.ui.overlay.OverlayObject
-import com.khoben.autotitle.ui.overlay.OverlayText
 
 interface VideoProcessor {
     fun start()
