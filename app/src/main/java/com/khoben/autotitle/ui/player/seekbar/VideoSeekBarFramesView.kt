@@ -456,11 +456,13 @@ class VideoSeekBarFramesView(
                 val toX = view.x + event.x - onTouchEventMotionStartX
                 //   min  <= x <=  max
                 view.x = max(minScrollWidth.toFloat(), min(toX, maxScrollWidth.toFloat()))
-                seekTo(xCoordinateToTimestamp(view.x))
+                // sync time while seeking without real seek (just updating UI)
+                syncPlaybackTime(xCoordinateToTimestamp(view.x))
             }
             MotionEvent.ACTION_UP -> {
                 // seek at the end of ACTION_MOVE
 //                seekTo(xCoordinateToTimestamp(view.x))
+                seekTo(xCoordinateToTimestamp(view.x))
             }
         }
     }
