@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="SheetSelection">
+        <attr name="sheetSelectionTheme" format="reference" />
+        <attr name="sheetSelection_titleStyle" format="reference" />
+        <attr name="sheetSelection_itemStyle" format="reference" />
+        <attr name="sheetSelection_indicatorStyle" format="reference" />
+        <attr name="sheetSelection_indicatorColor" format="color" />
+    </declare-styleable>
+</resources>

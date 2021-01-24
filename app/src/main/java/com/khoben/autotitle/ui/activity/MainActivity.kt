@@ -156,7 +156,7 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
                 Toast.makeText(this, getString(R.string.check_limit), Toast.LENGTH_SHORT).show()
             }
             OpeningVideoFileState.SUCCESS -> {
-                val intent = Intent(this, VideoEditActivity::class.java).apply {
+                val intent = Intent(this, PreloadActivity::class.java).apply {
                     putExtra(VIDEO_SOURCE_URI_INTENT, uri)
                 }
                 startActivity(intent)
