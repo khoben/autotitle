@@ -14,22 +14,13 @@ class FrameImageView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : AppCompatImageView(context, attrs, defStyleAttr) {
     private val placeHolderColor = Color.LTGRAY
-    private var drawPlaceHolder = true
+    private val transparentColor = Color.TRANSPARENT
 
     override fun onDraw(canvas: Canvas?) {
         if (drawable == null) {
             setBackgroundColor(placeHolderColor)
-            return
-        }
-        // check if bitmap is null or recycled then draw placeholder
-        if (drawable is BitmapDrawable) {
-            if ((drawable as BitmapDrawable).bitmap == null || (drawable as BitmapDrawable).bitmap.isRecycled) {
-                if (!drawPlaceHolder) {
-                    setBackgroundColor(placeHolderColor)
-                    drawPlaceHolder = true
-                }
-                return
-            }
+        } else {
+            setBackgroundColor(transparentColor)
         }
         super.onDraw(canvas)
     }
