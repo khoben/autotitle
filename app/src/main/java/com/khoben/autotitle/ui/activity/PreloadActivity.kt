@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.core.content.edit
+import com.khoben.autotitle.App.Companion.VIDEO_SOURCE_URI_INTENT
 import com.khoben.autotitle.databinding.ActivityPreloadVideoBinding
 import com.khoben.autotitle.model.LanguageItem
 import com.khoben.autotitle.mvp.presenter.PreloadActivityPresenter
@@ -30,7 +31,7 @@ class PreloadActivity : MvpAppCompatActivity(), PreloadActivityView {
         super.onCreate(savedInstanceState)
         binding = ActivityPreloadVideoBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val sourceVideoUri = intent.getParcelableExtra<Uri>(MainActivity.VIDEO_SOURCE_URI_INTENT)
+        val sourceVideoUri = intent.getParcelableExtra<Uri>(VIDEO_SOURCE_URI_INTENT)
         binding.videoPreloadView.player = presenter.initNewPlayer()
         presenter.init(sourceVideoUri!!)
         binding.startVideoCaption.setOnClickListener { startVideoCaption(sourceVideoUri) }
@@ -59,7 +60,7 @@ class PreloadActivity : MvpAppCompatActivity(), PreloadActivityView {
     private fun startVideoCaption(uri: Uri) {
         finish()
         startActivity(Intent(this, VideoEditActivity::class.java).apply {
-            putExtra(MainActivity.VIDEO_SOURCE_URI_INTENT, uri)
+            putExtra(VIDEO_SOURCE_URI_INTENT, uri)
         })
     }
 

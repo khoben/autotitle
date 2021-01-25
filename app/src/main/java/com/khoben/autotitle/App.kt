@@ -54,6 +54,7 @@ class App : Application() {
         const val VIDEO_EXTENSION = "mp4"
         const val AUDIO_EXTENSION = "aac"
         const val VIDEO_MIME_TYPE = "video/mp4"
+        const val VIDEO_SOURCE_URI_INTENT = "com.khoben.autotitle.VIDEO_SOURCE"
         val THUMB_SIZE = Pair(100, 100)
         const val GUIDE_SHOW_DELAY: Long = 2000L
         const val DEFAULT_MUTE_STATE = false
