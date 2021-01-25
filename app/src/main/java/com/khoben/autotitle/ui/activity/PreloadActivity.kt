@@ -6,10 +6,16 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.core.content.edit
 import com.khoben.autotitle.App.Companion.VIDEO_SOURCE_URI_INTENT
+import com.khoben.autotitle.R
 import com.khoben.autotitle.databinding.ActivityPreloadVideoBinding
 import com.khoben.autotitle.model.LanguageItem
 import com.khoben.autotitle.mvp.presenter.PreloadActivityPresenter
 import com.khoben.autotitle.mvp.view.PreloadActivityView
+import com.khoben.autotitle.repository.LocalAssetLanguageRepository
+import com.khoben.autotitle.viewmodel.LanguageRepositoryViewModelFactory
+import com.khoben.autotitle.viewmodel.LanguageSelectorViewModel
+import com.minibugdev.sheetselection.SheetSelection
+import com.minibugdev.sheetselection.SheetSelectionItem
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
 
@@ -17,6 +23,15 @@ import moxy.presenter.InjectPresenter
 class PreloadActivity : MvpAppCompatActivity(), PreloadActivityView {
     @InjectPresenter
     lateinit var presenter: PreloadActivityPresenter
+
+    private val languageSelectionModel: LanguageSelectorViewModel by viewModels {
+        LanguageRepositoryViewModelFactory(
+            LocalAssetLanguageRepository.getInstance()
+        )
+    }
+
+    private var selectedIndex: Int? = null
+    private var languageItems: List<LanguageItem>? = null
 
     private lateinit var binding: ActivityPreloadVideoBinding
 
@@ -35,13 +50,31 @@ class PreloadActivity : MvpAppCompatActivity(), PreloadActivityView {
         binding.videoPreloadView.player = presenter.initNewPlayer()
         presenter.init(sourceVideoUri!!)
         binding.startVideoCaption.setOnClickListener { startVideoCaption(sourceVideoUri) }
-        binding.selectLanguage.init("Language",
-            listOf(
-                LanguageItem("1", "Russian (Русский)"),
-                LanguageItem("2", "English"),
-                LanguageItem("3", "Chinese (中文)"),
-            )
-        )
+        binding.selectLanguage.setLabel(getString(R.string.language_selection_title))
+
+        languageSelectionModel.getSelectedItem().observe(this, {
+            selectedIndex = it
+            if (languageItems != null && selectedIndex != null) {
+                binding.selectLanguage.setSelectedValue(languageItems!![selectedIndex!!].value)
+            }
+        })
+        languageSelectionModel.getItems().observe(this, {
+            languageItems = it
+            // set last selected item on first load
+            if (languageItems != null && selectedIndex != null) {
+                binding.selectLanguage.setSelectedValue(languageItems!![selectedIndex!!].value)
+            }
+        })
+
+        binding.selectLanguage.setOnClickListener {
+            languageItems?.let {
+                showBottomSheetSelection(
+                    items = it,
+                    selectedIndex = selectedIndex
+                )
+            }
+        }
+
         binding.switchAutodetect.setOnCheckedChangeListener { _, isChecked ->
             binding.selectLanguage.toggleCollapseExpand(isChecked)
         }
@@ -50,10 +83,35 @@ class PreloadActivity : MvpAppCompatActivity(), PreloadActivityView {
         checkUserLastPrefs()
     }
 
+    private fun showBottomSheetSelection(
+        items: List<LanguageItem>,
+        selectedIndex: Int? = null
+    ) {
+        SheetSelection.Builder(this)
+            .title(getString(R.string.language_selection_title))
+            .items(items.map { SheetSelectionItem(it.key, it.value, it.icon) })
+            .showDraggedIndicator(true)
+            .also { builder ->
+                selectedIndex?.let {
+                    builder.selectedPosition(it)
+                }
+            }
+            .searchEnabled(true)
+            .searchNotFoundText(getString(R.string.language_selection_search_nothing))
+            .onItemClickListener { _, position ->
+                languageSelectionModel.setSelected(position)
+            }.show()
+    }
+
     private fun checkUserLastPrefs() {
         val selection = userLastSelection.getBoolean(USER_LAST_SELECTION_AUTO, false)
         binding.switchAutodetect.isChecked = selection
         binding.selectLanguage.setVisibility(selection)
+        userLastSelection.getInt(USER_LAST_SELECTION_LANGUAGE, -1).also {
+            if (it > -1) {
+                languageSelectionModel.setSelected(it)
+            }
+        }
     }
 
 
@@ -76,6 +134,7 @@ class PreloadActivity : MvpAppCompatActivity(), PreloadActivityView {
                 USER_LAST_SELECTION_AUTO,
                 binding.switchAutodetect.isChecked
             )
+            selectedIndex?.let { putInt(USER_LAST_SELECTION_LANGUAGE, it) }
         }
         super.onPause()
     }

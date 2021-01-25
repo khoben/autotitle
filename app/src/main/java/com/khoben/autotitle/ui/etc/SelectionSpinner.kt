@@ -9,10 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import androidx.core.animation.addListener
+import com.khoben.autotitle.R
 import com.khoben.autotitle.databinding.DropdownLayoutBinding
-import com.khoben.autotitle.model.LanguageItem
-import com.minibugdev.sheetselection.SheetSelection
-import com.minibugdev.sheetselection.SheetSelectionItem
 
 
 class SelectionSpinner @JvmOverloads constructor(
@@ -24,40 +22,18 @@ class SelectionSpinner @JvmOverloads constructor(
     private val binding: DropdownLayoutBinding =
         DropdownLayoutBinding.inflate(LayoutInflater.from(context), this, true)
 
-    private var sheetSelection: SheetSelection.Builder? = null
-
     init {
-        setOnClickListener {
-            showBottomSheetSelection()
+        if (binding.txtDropdownValue.text.isNullOrBlank()) {
+            binding.txtDropdownValue.text = context.getString(R.string.language_selection_notselected)
         }
     }
 
-    private fun showBottomSheetSelection() {
-        sheetSelection?.show()
-    }
 
-    fun init(label: String, items: List<LanguageItem>? = null) {
+    fun setLabel(label: String) {
         binding.txtDropdownLabel.text = label
-        if (!items.isNullOrEmpty()) {
-
-            sheetSelection = SheetSelection.Builder(context)
-                .title("Language")
-                .items(items.map {
-                    SheetSelectionItem(it.key, it.value, it.icon)
-                })
-                .showDraggedIndicator(true)
-                .searchEnabled(true)
-                .searchNotFoundText("Nothing!!")
-                .onItemClickListener { item, position ->
-                    setSelectedText(item.value)
-                    sheetSelection?.selectedPosition(position)
-                }
-
-            setSelectedText(items[0].value)
-        }
     }
 
-    private fun setSelectedText(text: String) {
+    fun setSelectedValue(text: String) {
         binding.txtDropdownValue.text = text.split(' ')[0]
     }
 
