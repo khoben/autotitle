@@ -18,9 +18,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.dialog_sheet_selection.*
 
 
-class SheetSelection private constructor() : BottomSheetDialogFragment() {
+class SheetSelection: BottomSheetDialogFragment() {
 
-    var onItemClickListener: OnItemSelectedListener? = null
+    private var selectedItem: SheetSelectionItem? = null
 
     private val adapter by lazy {
         SheetSelectionAdapter(
@@ -206,6 +206,8 @@ class SheetSelection private constructor() : BottomSheetDialogFragment() {
     }
 
     companion object {
+        var onItemClickListener: OnItemSelectedListener? = null
+
         const val NO_SELECT = -1
 
         private const val ARGS_THEME = "SheetSelection:ARGS_THEME"
