@@ -21,13 +21,14 @@ import kotlinx.android.synthetic.main.dialog_sheet_selection.*
 class SheetSelection: BottomSheetDialogFragment() {
 
     private var selectedItem: SheetSelectionItem? = null
+    private var items: List<SheetSelectionItem>? = null
+    private var searchNotFoundText: String? = null
 
     private val adapter by lazy {
         SheetSelectionAdapter(
-            source = arguments?.getParcelableArrayList(ARGS_ITEMS) ?: emptyList(),
-            selectedItem = arguments?.getParcelable(ARG_SELECTED_ITEM),
-            searchNotFoundText = arguments?.getString(ARGS_SEARCH_NOT_FOUND_TEXT)
-                ?: "Search not found.",
+            source = items!!,
+            selectedItem = selectedItem,
+            searchNotFoundText = searchNotFoundText ?: "Search not found.",
             onItemSelectedListener = onItemSelectedListener
         )
     }
@@ -74,6 +75,13 @@ class SheetSelection: BottomSheetDialogFragment() {
                 searchView.setOnCloseListener(onSearchCloseListener)
                 searchView.setOnQueryTextListener(onSearchQueryTextListener)
             }
+
+            items = args.getParcelableArrayList(ARGS_ITEMS)
+            val selectedPosition = args.getInt(ARGS_SELECTED_POSITION)
+            if (selectedPosition >= 0 && items != null && items!!.size > selectedPosition) {
+                selectedItem = items?.get(selectedPosition)
+            }
+            searchNotFoundText = args.getString(ARGS_SEARCH_NOT_FOUND_TEXT)
 
             recyclerViewSelectionItems.setHasFixedSize(true)
             recyclerViewSelectionItems.adapter = adapter
@@ -132,7 +140,6 @@ class SheetSelection: BottomSheetDialogFragment() {
         private var themeId: Int = R.style.Theme_SheetSelection
         private var title: String? = null
         private var items: List<SheetSelectionItem> = emptyList()
-        private var selectedItem: SheetSelectionItem? = null
         private var selectedPosition: Int = NO_SELECT
         private var showDraggedIndicator: Boolean = false
         private var searchEnabled: Boolean = false
@@ -149,9 +156,6 @@ class SheetSelection: BottomSheetDialogFragment() {
 
         fun selectedPosition(position: Int) = apply {
             this.selectedPosition = position
-            if (!this.items.isNullOrEmpty()) {
-                this.selectedItem = this.items[position]
-            }
         }
 
         fun items(items: List<SheetSelectionItem>) = apply {
@@ -186,16 +190,15 @@ class SheetSelection: BottomSheetDialogFragment() {
         fun build() = SheetSelection().apply {
             arguments = Bundle()
                 .apply {
-                    putInt(ARGS_THEME, themeId)
-                    putString(ARGS_TITLE, title)
-                    putParcelableArrayList(ARGS_ITEMS, ArrayList(items))
-                    putInt(ARGS_SELECTED_POSITION, selectedPosition)
-                    putBoolean(ARGS_SHOW_DRAGGED_INDICATOR, showDraggedIndicator)
-                    putBoolean(ARGS_SEARCH_ENABLED, searchEnabled)
-                    putString(ARGS_SEARCH_NOT_FOUND_TEXT, searchNotFoundText)
-                    putParcelable(ARG_SELECTED_ITEM, selectedItem)
+                    putInt(ARGS_THEME, this@Builder.themeId)
+                    putString(ARGS_TITLE, this@Builder.title)
+                    putParcelableArrayList(ARGS_ITEMS, ArrayList(this@Builder.items))
+                    putInt(ARGS_SELECTED_POSITION, this@Builder.selectedPosition)
+                    putBoolean(ARGS_SHOW_DRAGGED_INDICATOR, this@Builder.showDraggedIndicator)
+                    putBoolean(ARGS_SEARCH_ENABLED, this@Builder.searchEnabled)
+                    putString(ARGS_SEARCH_NOT_FOUND_TEXT, this@Builder.searchNotFoundText)
                 }
-            onItemClickListener = listener
+            onItemClickListener = this@Builder.listener
         }
 
         fun show() {
@@ -212,7 +215,6 @@ class SheetSelection: BottomSheetDialogFragment() {
 
         private const val ARGS_THEME = "SheetSelection:ARGS_THEME"
         private const val ARGS_TITLE = "SheetSelection:ARGS_TITLE"
-        private const val ARG_SELECTED_ITEM = "SheetSelection:ARG_SELECTED_ITEM"
         private const val ARGS_ITEMS = "SheetSelection:ARGS_ITEMS"
         private const val ARGS_SEARCH_NOT_FOUND_TEXT = "SheetSelection:ARGS_SEARCH_NOT_FOUND_TEXT"
         private const val ARGS_SELECTED_POSITION = "SheetSelection:ARGS_SELECTED_POSITION"
