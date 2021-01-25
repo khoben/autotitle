@@ -40,14 +40,16 @@
         android:layout_centerInParent="true"
         android:layout_marginTop="10dp"
         android:singleLine="true"
+        android:layout_gravity="center"
         android:textAppearance="?textAppearanceBody1"
         tools:ignore="ObsoleteLayoutParam"
         tools:text="@string/save_captions" />
 
     <FrameLayout
         android:layout_marginTop="10dp"
+        android:layout_gravity="center"
         android:layout_height="match_parent"
-        android:layout_width="match_parent">
+        android:layout_width="wrap_content">
         <LinearLayout
             android:id="@+id/confirmation"
             android:layout_gravity="center"
@@ -60,10 +62,10 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"
                 android:minHeight="0dp"
                 android:minWidth="0dp"
-                android:text="yes"
+                android:text="@string/yes_caption"
                 app:strokeColor="?colorPrimary"
                 />
             <Button
@@ -73,7 +75,7 @@
                 android:layout_width="wrap_content"
                 android:minHeight="0dp"
                 android:minWidth="0dp"
-                android:text="no"
+                android:text="@string/no_caption"
                 app:strokeColor="?colorPrimary"
                 />
         </LinearLayout>
@@ -86,7 +88,7 @@
             android:layout_gravity="center"
             android:minHeight="0dp"
             android:minWidth="0dp"
-            android:text="cancel"
+            android:text="@string/cancel_caption"
             app:strokeColor="?colorPrimary"
             tools:visibility="invisible"
             />

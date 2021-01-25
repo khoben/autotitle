@@ -77,7 +77,7 @@ class VideoProcessingProgressDialog(val context: WeakReference<Context>) {
 
         loadingTextView?.apply {
             savedHintText = text.toString()
-            text = "Confirm cancellation"
+            text = context.getString(R.string.confirm_cancellation_title)
         }
 
         cancelButton?.visibility = View.INVISIBLE

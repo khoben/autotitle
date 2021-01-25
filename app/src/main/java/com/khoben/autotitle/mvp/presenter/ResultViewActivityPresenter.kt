@@ -55,7 +55,10 @@ class ResultViewActivityPresenter : MvpPresenter<ResultActivityView>() {
             alreadySaved = true
             savedPath = uri.path
             viewState.showVideoSavedToast(savedPath)
-            NotificationUtils.show(appContext, text = "Saved with path:\n$savedPath")
+            NotificationUtils.show(
+                appContext,
+                text = appContext.getString(R.string.result_screen_button_title_saved) + "\n$savedPath"
+            )
             viewState.alreadySaved()
         }
     }
