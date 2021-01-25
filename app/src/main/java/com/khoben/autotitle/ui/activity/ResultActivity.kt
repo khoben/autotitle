@@ -90,7 +90,7 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView {
     }
 
     override fun alreadySaved() {
-        saveBtn.text = "Saved"
+        saveBtn.text = getString(R.string.result_screen_button_title_saved)
         saveBtn.setBackgroundColor(ContextCompat.getColor(this, R.color.green_color_picker))
         saveBtn.icon = ContextCompat.getDrawable(this, R.drawable.check_circle_icon_24dp)
     }

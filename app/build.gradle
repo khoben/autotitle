@@ -120,6 +120,9 @@ dependencies {
     // Frame grabber
     implementation project(path: ':framegrab')
 
+    // Bottom sheet selection
+    implementation project(path: ':sheetselection')
+
     // Leak detector
     // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
 

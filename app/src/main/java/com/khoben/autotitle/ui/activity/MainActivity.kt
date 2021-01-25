@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.khoben.autotitle.App.Companion.VIDEO_SOURCE_URI_INTENT
 import com.khoben.autotitle.R
 import com.khoben.autotitle.common.OpeningVideoFileState
 import com.khoben.autotitle.databinding.ActivityMainBinding
@@ -156,7 +157,7 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
                 Toast.makeText(this, getString(R.string.check_limit), Toast.LENGTH_SHORT).show()
             }
             OpeningVideoFileState.SUCCESS -> {
-                val intent = Intent(this, VideoEditActivity::class.java).apply {
+                val intent = Intent(this, PreloadActivity::class.java).apply {
                     putExtra(VIDEO_SOURCE_URI_INTENT, uri)
                 }
                 startActivity(intent)
@@ -188,6 +189,5 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
 
     companion object {
         private const val VIDEO_FILE_SELECT_TYPE = "video/*"
-        const val VIDEO_SOURCE_URI_INTENT = "com.khoben.autotitle.VIDEO_SOURCE"
     }
 }

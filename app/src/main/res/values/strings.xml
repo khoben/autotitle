@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">AutoTitle</string>
+    <string name="language_config_path">language_config.json</string>
     <string name="load_button_title">Select</string>
     <string name="record_button_title">Record</string>
     <string name="OK" translatable="false">OK</string>
@@ -44,4 +45,17 @@
     <string name="snack_bar_undo">Undo</string>
     <string name="snack_bar_item_deleted">Item deleted.</string>
     <string name="error_no_captions_no_audio">Source video doesn\'t have audio track</string>
+    <string name="language_selection_notselected">Tap to select</string>
+    <string name="language_selection_title">Language</string>
+    <string name="language_selection_search_nothing">Nothing</string>
+    <string name="language_selection_please_select">Please choose the language</string>
+    <string name="language_selection_start_video">Start</string>
+    <string name="language_selection_switch_title">Auto-detect captions</string>
+    <string name="preload_screen_title">Language</string>
+    <string name="postvideo_screen_title"><![CDATA[Save & Share]]></string>
+    <string name="main_screen_recent_title">Recent projects</string>
+    <string name="main_screen_recent_projects_edit_title">Edit</string>
+    <string name="result_screen_button_title_saved">Saved</string>
+    <string name="confirm_cancellation_title">Confirm cancellation</string>
+    <string name="cancel_caption">Cancel</string>
 </resources>

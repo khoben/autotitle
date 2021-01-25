@@ -12,6 +12,7 @@ import com.khoben.autotitle.common.FileUtils.getFileName
 import com.khoben.autotitle.model.MLCaption
 import com.khoben.autotitle.model.PlaybackEvent
 import com.khoben.autotitle.model.PlaybackState
+import com.khoben.autotitle.model.VideoLoadMode
 import com.khoben.autotitle.model.project.RecentProjectsLoader
 import com.khoben.autotitle.model.project.ThumbProject
 import com.khoben.autotitle.mvp.view.VideoEditActivityView
@@ -23,7 +24,6 @@ import com.khoben.autotitle.service.videosaver.VideoProcessorBase
 import com.khoben.autotitle.service.videosaver.VideoProcessorListener
 import com.khoben.autotitle.ui.overlay.OverlayHandler
 import com.khoben.autotitle.ui.overlay.OverlayObject
-import com.khoben.autotitle.ui.player.PlayPauseMaterialButton
 import com.khoben.autotitle.ui.player.VideoControlsView
 import com.khoben.autotitle.ui.player.seekbar.SeekBarListener
 import moxy.InjectViewState
@@ -56,21 +56,27 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
 
     private var overlayHandler: OverlayHandler? = null
     private var sourceUri: Uri? = null
+    private var videoLoadMode: VideoLoadMode? = null
 
     init {
         App.applicationComponent.inject(this)
         mediaController.addSubscription(this)
     }
 
-    fun setDataSourceUri(sourceVideoUri: Uri) {
-        sourceUri = sourceUri?: sourceVideoUri
+    fun initVideoSource(sourceVideoUri: Uri, videoLoadingMode: VideoLoadMode) {
+        sourceUri = sourceUri ?: sourceVideoUri
+        videoLoadMode = videoLoadMode ?: videoLoadingMode
     }
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
 
         mediaController.setVideoSource(sourceUri!!)
-        viewState.initVideoContainerLayoutParams(mediaController.mediaPlayer, videoRenderer, getVideoDetails()!!)
+        viewState.initVideoContainerLayoutParams(
+            mediaController.mediaPlayer,
+            videoRenderer,
+            getVideoDetails()!!
+        )
 
         RecentProjectsLoader.new(
             ThumbProject(
@@ -93,7 +99,6 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
      */
     @SuppressLint("CheckResult")
     fun processVideo() {
-        viewState.setLoadingViewVisibility(true)
         val videoDuration = mediaController.videoDuration
         val amountFrames = videoDuration / App.FRAME_TIME_MS
         val frameTime = if (amountFrames > 0) videoDuration / amountFrames else App.FRAME_TIME_MS
@@ -101,8 +106,20 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     }
 
     private fun runVideoLoader(frameTime: Long) {
-        videoLoader.init(appContext, sourceUri!!, frameTime)
-            .loadCaptions({ captionResult ->
+        val videoLoaderInstance = videoLoader.init(appContext, sourceUri!!, frameTime)
+
+        // Load frame-line
+        videoLoaderInstance.loadFrames({ frameResult ->
+            viewState.loadFrames(frameResult)
+        }, { frameError ->
+            Timber.e("Error while loading video $frameError")
+            errorProcessVideo(frameError)
+        })
+
+        // Load captions
+        if (videoLoadMode == VideoLoadMode.AUTO_DETECT) {
+            viewState.setLoadingViewVisibility(true)
+            videoLoaderInstance.loadCaptions({ captionResult ->
                 // if caption loaded then success
                 successProcessedVideo()
                 when {
@@ -142,12 +159,9 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
                 }
                 Timber.e("Error while loading video $captionError")
             })
-            .loadFrames({ frameResult ->
-                viewState.loadFrames(frameResult)
-            }, { frameError ->
-                Timber.e("Error while loading video $frameError")
-                errorProcessVideo(frameError)
-            })
+        } else if (videoLoadMode == VideoLoadMode.LOAD_RECENT) {
+            // TODO: LOAD RECENT
+        }
     }
 
     private fun successProcessedVideo() {

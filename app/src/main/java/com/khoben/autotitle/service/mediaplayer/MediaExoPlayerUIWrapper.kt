@@ -33,6 +33,16 @@ class MediaExoPlayerUIWrapper : MediaPlayer {
         exoPlayer.prepare(mediaSource)
     }
 
+    override fun init(context: Context, uri: Uri) {
+        val userAgent = Util.getUserAgent(context, context.getString(R.string.app_name))
+
+        val mediaSource = ExtractorMediaSource.Factory(DefaultDataSourceFactory(context, userAgent))
+            .setExtractorsFactory(DefaultExtractorsFactory())
+            .createMediaSource(uri)
+
+        exoPlayer.prepare(mediaSource)
+    }
+
     override fun initNewPlayer(context: Context): ExoPlayer {
         this.context = context
         initializePlayer()

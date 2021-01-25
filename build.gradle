@@ -10,7 +10,7 @@ buildscript {
         maven { url 'https://oss.sonatype.org/content/repositories/public' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.1'
+        classpath 'com.android.tools.build:gradle:4.1.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
         classpath 'com.huawei.agconnect:agcp:1.4.2.301'

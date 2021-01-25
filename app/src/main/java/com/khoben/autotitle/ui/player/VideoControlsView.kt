@@ -14,8 +14,7 @@ import com.khoben.autotitle.ui.player.seekbar.VideoSeekBarFramesView
 
 class VideoControlsView(context: Context, attrs: AttributeSet) :
     ConstraintLayout(context, attrs),
-    SeekBarListener
-{
+    SeekBarListener {
 
     private lateinit var playPauseButton: PlayPauseMaterialButton
     private lateinit var videoSeekBarFramesView: VideoSeekBarFramesView

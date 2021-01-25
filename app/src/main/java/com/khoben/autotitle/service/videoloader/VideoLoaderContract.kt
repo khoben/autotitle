@@ -2,16 +2,10 @@ package com.khoben.autotitle.service.videoloader
 
 import android.content.Context
 import android.net.Uri
-import com.khoben.autotitle.App
 import com.khoben.autotitle.model.MLCaptionEnvelop
-import com.khoben.autotitle.service.audioextractor.AudioExtractor
-import com.khoben.autotitle.service.audiotranscriber.AudioTranscriber
 import com.khoben.autotitle.service.frameretriever.ProviderType
-import com.khoben.autotitle.service.frameretriever.VideoFrameRetriever
 import com.khoben.autotitle.ui.player.seekbar.FramesHolder
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.Disposable
-import javax.inject.Inject
 
 abstract class VideoLoaderContract {
     protected var audio: Observable<MLCaptionEnvelop>? = null
@@ -29,9 +23,15 @@ abstract class VideoLoaderContract {
         providerType: ProviderType = ProviderType.MEDIA_CODEC
     ): VideoLoaderContract
 
-    abstract fun loadCaptions(callback: (MLCaptionEnvelop) -> Unit, onError: (Throwable) -> Unit): VideoLoaderContract
+    abstract fun loadCaptions(
+        callback: (MLCaptionEnvelop) -> Unit,
+        onError: (Throwable) -> Unit
+    ): VideoLoaderContract
 
-    abstract fun loadFrames(callback: (FramesHolder) -> Unit, onError: (Throwable) -> Unit): VideoLoaderContract
+    abstract fun loadFrames(
+        callback: (FramesHolder) -> Unit,
+        onError: (Throwable) -> Unit
+    ): VideoLoaderContract
 
     abstract fun cancel()
 }

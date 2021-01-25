@@ -21,7 +21,7 @@
     <string name="or_caption">ИЛИ</string>
     <string name="welcome_title">AutoTitle</string>
     <string name="need_load_title">Создать проект</string>
-    <string name="save_captions">Обработка</string>
+    <string name="save_captions">Обработка видео…</string>
     <string name="save_button_caption">Сохранить</string>
     <string name="empty_overlay_recycler">Нажмите два раза для редактирования</string>
     <string name="check_limit">Извините, видео более 60 сек не поддерживается</string>
@@ -41,4 +41,18 @@
     <string name="snack_bar_undo">Отмена</string>
     <string name="snack_bar_item_deleted">Объект удален.</string>
     <string name="error_no_captions_no_audio">Исходное видео без аудиодорожки</string>
+    <string name="language_config_path">language_config_ru.json</string>
+    <string name="language_selection_notselected">Не выбран</string>
+    <string name="language_selection_title">Язык</string>
+    <string name="language_selection_search_nothing">Пусто</string>
+    <string name="language_selection_please_select">Выберите язык</string>
+    <string name="language_selection_start_video">Запустить</string>
+    <string name="language_selection_switch_title">Автоопределение субтитров</string>
+    <string name="preload_screen_title">Язык</string>
+    <string name="postvideo_screen_title">Поделиться</string>
+    <string name="main_screen_recent_title">Недавние</string>
+    <string name="main_screen_recent_projects_edit_title">Редакт.</string>
+    <string name="result_screen_button_title_saved">Сохранено</string>
+    <string name="confirm_cancellation_title">Подтвердите отмену</string>
+    <string name="cancel_caption">Отмена</string>
 </resources>

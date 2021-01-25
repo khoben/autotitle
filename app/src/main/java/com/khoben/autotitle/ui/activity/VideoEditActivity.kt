@@ -3,7 +3,6 @@ package com.khoben.autotitle.ui.activity
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -22,15 +21,17 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
 import com.google.android.material.snackbar.Snackbar
 import com.khoben.autotitle.App
+import com.khoben.autotitle.App.Companion.VIDEO_LOAD_MODE
+import com.khoben.autotitle.App.Companion.VIDEO_SOURCE_URI_INTENT
 import com.khoben.autotitle.R
 import com.khoben.autotitle.databinding.ActivityVideoBinding
 import com.khoben.autotitle.model.VideoInfo
+import com.khoben.autotitle.model.VideoLoadMode
 import com.khoben.autotitle.model.project.RecentProjectsLoader
 import com.khoben.autotitle.mvp.presenter.VideoEditActivityPresenter
 import com.khoben.autotitle.mvp.view.VideoEditActivityView
 import com.khoben.autotitle.service.mediaplayer.MediaSurfacePlayer
 import com.khoben.autotitle.service.mediaplayer.VideoRender
-import com.khoben.autotitle.ui.activity.MainActivity.Companion.VIDEO_SOURCE_URI_INTENT
 import com.khoben.autotitle.ui.overlay.OverlayDataMapper
 import com.khoben.autotitle.ui.overlay.OverlayObject
 import com.khoben.autotitle.ui.overlay.OverlayText
@@ -126,11 +127,12 @@ class VideoEditActivity : MvpAppCompatActivity(),
         setupRecyclerView(emptyRecyclerView = binding.emptyRecyclerView.root)
 
         val sourceVideoUri = intent.getParcelableExtra<Uri>(VIDEO_SOURCE_URI_INTENT)
+        val videoLoadingMode = intent.getSerializableExtra(VIDEO_LOAD_MODE) as VideoLoadMode
 
         /**
          * video processing starts in [VideoEditActivityPresenter.onFirstViewAttach]
          */
-        presenter.setDataSourceUri(sourceVideoUri!!)
+        presenter.initVideoSource(sourceVideoUri!!, videoLoadingMode)
         presenter.initOverlayHandler(overlayView, videoControlsView)
         presenter.setMuteState(
             userSettings.getBoolean(

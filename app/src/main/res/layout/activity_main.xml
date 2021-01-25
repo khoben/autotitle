@@ -130,7 +130,7 @@
         android:id="@+id/recent_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Recent projects"
+        android:text="@string/main_screen_recent_title"
         android:textAppearance="?textAppearanceHeadline1"
         android:textColor="?colorOnSurface"
         android:textSize="24sp"
@@ -143,67 +143,12 @@
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="EDIT"
+        android:text="@string/main_screen_recent_projects_edit_title"
         app:icon="@drawable/edit_icon_24dp"
         app:iconGravity="textStart"
         app:layout_constraintBaseline_toBaselineOf="@+id/recent_title"
         app:layout_constraintBottom_toTopOf="@+id/guideline1"
         app:layout_constraintEnd_toStartOf="@+id/guideline2" />
-
-
-    <!--    <HorizontalScrollView-->
-    <!--        android:id="@+id/recent_scroll_view"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="0dp"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toBottomOf="@+id/guideline1">-->
-
-    <!--        <LinearLayout-->
-    <!--            android:layout_width="wrap_content"-->
-    <!--            android:layout_height="match_parent"-->
-    <!--            android:gravity="center_vertical"-->
-    <!--            android:orientation="horizontal">-->
-
-    <!--            <com.google.android.material.card.MaterialCardView-->
-    <!--                android:layout_width="match_parent"-->
-    <!--                android:layout_height="match_parent"-->
-    <!--                app:cardElevation="8dp"-->
-    <!--                app:cardUseCompatPadding="true">-->
-
-    <!--                <androidx.constraintlayout.widget.ConstraintLayout-->
-    <!--                    android:layout_width="wrap_content"-->
-    <!--                    android:layout_height="wrap_content"-->
-    <!--                    tools:ignore="UseCompoundDrawables">-->
-
-    <!--                    <TextView-->
-    <!--                        android:id="@+id/textView"-->
-    <!--                        android:layout_width="wrap_content"-->
-    <!--                        android:layout_height="wrap_content"-->
-    <!--                        android:padding="5dp"-->
-    <!--                        android:text="03.03.1997 20:33"-->
-    <!--                        android:textSize="12sp"-->
-    <!--                        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--                        app:layout_constraintHorizontal_bias="0.5"-->
-    <!--                        app:layout_constraintStart_toStartOf="parent"-->
-    <!--                        app:layout_constraintTop_toTopOf="parent" />-->
-
-    <!--                    <ImageView-->
-    <!--                        android:layout_width="match_parent"-->
-    <!--                        android:layout_height="match_parent"-->
-    <!--                        android:src="@drawable/appgallery"-->
-    <!--                        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--                        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--                        app:layout_constraintStart_toStartOf="parent"-->
-    <!--                        app:layout_constraintTop_toBottomOf="@+id/textView"-->
-    <!--                        tools:ignore="ContentDescription" />-->
-    <!--                </androidx.constraintlayout.widget.ConstraintLayout>-->
-    <!--            </com.google.android.material.card.MaterialCardView>-->
-
-
-    <!--        </LinearLayout>-->
-    <!--    </HorizontalScrollView>-->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recent_recycler"

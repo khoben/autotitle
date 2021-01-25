@@ -19,7 +19,6 @@ import com.khoben.autotitle.App
 import com.khoben.autotitle.App.Companion.FRAMES_PER_SCREEN
 import com.khoben.autotitle.R
 import com.khoben.autotitle.extension.dp
-import com.khoben.autotitle.extension.formattedTime
 import com.khoben.autotitle.ui.overlay.OverlayObject
 import com.khoben.autotitle.ui.overlay.OverlayText
 import timber.log.Timber
@@ -98,7 +97,7 @@ class VideoSeekBarFramesView(
      */
     fun onFramesLoad(frames: FramesHolder) {
         Timber.d("$frames")
-        when(frames.status) {
+        when (frames.status) {
             FrameStatus.PRELOAD -> {
                 if (frames.emptyFramesCount != null && frames.frameTime != null) {
                     preloadFrames(frames.emptyFramesCount!!, frames.frameTime)

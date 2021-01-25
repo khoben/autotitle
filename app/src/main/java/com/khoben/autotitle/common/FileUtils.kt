@@ -13,15 +13,35 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import androidx.core.content.FileProvider
+import com.google.gson.GsonBuilder
 import com.khoben.autotitle.App
 import com.khoben.autotitle.BuildConfig
 import timber.log.Timber
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
+import java.io.InputStream
+import java.lang.reflect.Type
 
 
 object FileUtils {
+
+    inline fun <reified T> getObjectFromJson(
+        jsonString: String,
+        typeToken: Type
+    ): T {
+        return GsonBuilder().create().fromJson(jsonString, typeToken)
+    }
+
+    fun inputStreamToString(inputStream: InputStream): String {
+        return try {
+            val bytes = ByteArray(inputStream.available())
+            inputStream.read(bytes, 0, bytes.size)
+            String(bytes)
+        } catch (e: IOException) {
+            ""
+        }
+    }
 
     /**
      * @see [File.deleteRecursively]

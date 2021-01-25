@@ -1,3 +1,4 @@
+include ':sheetselection'
 include ':framegrab'
 include ':mp4compose'
 include ':rangeview'
