@@ -26,7 +26,8 @@ class SelectionSpinner @JvmOverloads constructor(
 
     init {
         if (binding.txtDropdownValue.text.isNullOrBlank()) {
-            binding.txtDropdownValue.text = context.getString(R.string.language_selection_notselected)
+            binding.txtDropdownValue.text =
+                context.getString(R.string.language_selection_notselected)
         }
     }
 

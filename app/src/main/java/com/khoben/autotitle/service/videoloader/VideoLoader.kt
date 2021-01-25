@@ -65,7 +65,10 @@ class VideoLoader : VideoLoaderContract() {
             }
     }
 
-    override fun loadCaptions(callback: (MLCaptionEnvelop) -> Unit, onError: (Throwable) -> Unit): VideoLoader {
+    override fun loadCaptions(
+        callback: (MLCaptionEnvelop) -> Unit,
+        onError: (Throwable) -> Unit
+    ): VideoLoader {
         audio!!.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ result ->
@@ -78,7 +81,10 @@ class VideoLoader : VideoLoaderContract() {
         return this
     }
 
-    override fun loadFrames(callback: (FramesHolder) -> Unit, onError: (Throwable) -> Unit): VideoLoader {
+    override fun loadFrames(
+        callback: (FramesHolder) -> Unit,
+        onError: (Throwable) -> Unit
+    ): VideoLoader {
         frames!!.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ result ->

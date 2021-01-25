@@ -11,7 +11,10 @@ class LocalAssetLanguageRepository : LanguageRepository() {
     override fun load(): List<LanguageItem> {
         val assetFileName = App.appContext.getString(R.string.language_config_path)
         val jsonString = FileUtils.inputStreamToString(App.appContext.assets.open(assetFileName))
-        return FileUtils.getObjectFromJson(jsonString, object : TypeToken<List<LanguageItem>>() {}.type)
+        return FileUtils.getObjectFromJson(
+            jsonString,
+            object : TypeToken<List<LanguageItem>>() {}.type
+        )
     }
 
     companion object {

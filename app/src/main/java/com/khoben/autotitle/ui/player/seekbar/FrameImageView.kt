@@ -3,9 +3,7 @@ package com.khoben.autotitle.ui.player.seekbar
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
 import android.util.AttributeSet
-import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 
 class FrameImageView @JvmOverloads constructor(

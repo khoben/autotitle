@@ -9,7 +9,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import timber.log.Timber
 
 open class VideoFrameRetrieverImpl(
     private val context: Context
@@ -77,7 +76,7 @@ open class VideoFrameRetrieverImpl(
                 }
                 bitmap?.let { returnList.add(it) }
             }
-            emitter.onNext(FramesHolder(status = FrameStatus.COMPLETED, listFrames =  returnList))
+            emitter.onNext(FramesHolder(status = FrameStatus.COMPLETED, listFrames = returnList))
             emitter.onComplete()
         }
     }

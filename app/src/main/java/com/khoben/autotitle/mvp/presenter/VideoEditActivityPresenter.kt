@@ -24,7 +24,6 @@ import com.khoben.autotitle.service.videosaver.VideoProcessorBase
 import com.khoben.autotitle.service.videosaver.VideoProcessorListener
 import com.khoben.autotitle.ui.overlay.OverlayHandler
 import com.khoben.autotitle.ui.overlay.OverlayObject
-import com.khoben.autotitle.ui.player.PlayPauseMaterialButton
 import com.khoben.autotitle.ui.player.VideoControlsView
 import com.khoben.autotitle.ui.player.seekbar.SeekBarListener
 import moxy.InjectViewState
@@ -65,7 +64,7 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     }
 
     fun initVideoSource(sourceVideoUri: Uri, videoLoadingMode: VideoLoadMode) {
-        sourceUri = sourceUri?: sourceVideoUri
+        sourceUri = sourceUri ?: sourceVideoUri
         videoLoadMode = videoLoadMode ?: videoLoadingMode
     }
 
@@ -73,7 +72,11 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         super.onFirstViewAttach()
 
         mediaController.setVideoSource(sourceUri!!)
-        viewState.initVideoContainerLayoutParams(mediaController.mediaPlayer, videoRenderer, getVideoDetails()!!)
+        viewState.initVideoContainerLayoutParams(
+            mediaController.mediaPlayer,
+            videoRenderer,
+            getVideoDetails()!!
+        )
 
         RecentProjectsLoader.new(
             ThumbProject(

@@ -8,7 +8,7 @@ import com.khoben.autotitle.service.mediaplayer.MediaPlayer
 import moxy.MvpPresenter
 import javax.inject.Inject
 
-class PreloadActivityPresenter: MvpPresenter<PreloadActivityView>() {
+class PreloadActivityPresenter : MvpPresenter<PreloadActivityView>() {
 
     @Inject
     lateinit var mediaPlayer: MediaPlayer
