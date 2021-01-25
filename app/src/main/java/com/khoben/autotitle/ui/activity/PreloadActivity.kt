@@ -4,11 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.content.edit
+import com.khoben.autotitle.App.Companion.VIDEO_LOAD_MODE
 import com.khoben.autotitle.App.Companion.VIDEO_SOURCE_URI_INTENT
 import com.khoben.autotitle.R
 import com.khoben.autotitle.databinding.ActivityPreloadVideoBinding
 import com.khoben.autotitle.model.LanguageItem
+import com.khoben.autotitle.model.VideoLoadMode
 import com.khoben.autotitle.mvp.presenter.PreloadActivityPresenter
 import com.khoben.autotitle.mvp.view.PreloadActivityView
 import com.khoben.autotitle.repository.LocalAssetLanguageRepository
@@ -116,9 +120,23 @@ class PreloadActivity : MvpAppCompatActivity(), PreloadActivityView {
 
 
     private fun startVideoCaption(uri: Uri) {
+        val mode =
+            if (binding.switchAutodetect.isChecked) VideoLoadMode.AUTO_DETECT
+            else VideoLoadMode.NO_DETECT
+        // language not selected
+        if (selectedIndex == null && mode == VideoLoadMode.AUTO_DETECT) {
+            binding.selectLanguage.errorLanguageSelection()
+            Toast.makeText(
+                this,
+                getString(R.string.language_selection_please_select),
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
         finish()
         startActivity(Intent(this, VideoEditActivity::class.java).apply {
             putExtra(VIDEO_SOURCE_URI_INTENT, uri)
+            putExtra(VIDEO_LOAD_MODE, mode)
         })
     }
 

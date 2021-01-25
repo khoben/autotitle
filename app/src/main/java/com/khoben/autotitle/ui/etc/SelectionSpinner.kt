@@ -7,6 +7,8 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import android.view.animation.CycleInterpolator
+import android.view.animation.TranslateAnimation
 import android.widget.FrameLayout
 import androidx.core.animation.addListener
 import com.khoben.autotitle.R
@@ -90,4 +92,16 @@ class SelectionSpinner @JvmOverloads constructor(
         val visibility = if (state) View.VISIBLE else View.INVISIBLE
         binding.root.visibility = visibility
     }
+
+    fun errorLanguageSelection() {
+        startAnimation(shakeError())
+    }
+
+    private fun shakeError(): TranslateAnimation {
+        val shake = TranslateAnimation(0F, 10F, 0F, 0F)
+        shake.duration = 500
+        shake.interpolator = CycleInterpolator(7F)
+        return shake
+    }
+
 }

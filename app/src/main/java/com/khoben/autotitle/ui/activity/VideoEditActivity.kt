@@ -22,10 +22,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
 import com.google.android.material.snackbar.Snackbar
 import com.khoben.autotitle.App
+import com.khoben.autotitle.App.Companion.VIDEO_LOAD_MODE
 import com.khoben.autotitle.App.Companion.VIDEO_SOURCE_URI_INTENT
 import com.khoben.autotitle.R
 import com.khoben.autotitle.databinding.ActivityVideoBinding
 import com.khoben.autotitle.model.VideoInfo
+import com.khoben.autotitle.model.VideoLoadMode
 import com.khoben.autotitle.model.project.RecentProjectsLoader
 import com.khoben.autotitle.mvp.presenter.VideoEditActivityPresenter
 import com.khoben.autotitle.mvp.view.VideoEditActivityView
@@ -126,11 +128,12 @@ class VideoEditActivity : MvpAppCompatActivity(),
         setupRecyclerView(emptyRecyclerView = binding.emptyRecyclerView.root)
 
         val sourceVideoUri = intent.getParcelableExtra<Uri>(VIDEO_SOURCE_URI_INTENT)
+        val videoLoadingMode = intent.getSerializableExtra(VIDEO_LOAD_MODE) as VideoLoadMode
 
         /**
          * video processing starts in [VideoEditActivityPresenter.onFirstViewAttach]
          */
-        presenter.setDataSourceUri(sourceVideoUri!!)
+        presenter.initVideoSource(sourceVideoUri!!, videoLoadingMode)
         presenter.initOverlayHandler(overlayView, videoControlsView)
         presenter.setMuteState(
             userSettings.getBoolean(
