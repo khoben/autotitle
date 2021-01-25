@@ -13,6 +13,9 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.core.view.get
+import androidx.dynamicanimation.animation.DynamicAnimation
+import androidx.dynamicanimation.animation.FlingAnimation
+import androidx.dynamicanimation.animation.FloatValueHolder
 import com.iammert.rangeview.library.DraggingState
 import com.iammert.rangeview.library.RangeView
 import com.khoben.autotitle.App
@@ -23,8 +26,7 @@ import com.khoben.autotitle.ui.overlay.OverlayObject
 import com.khoben.autotitle.ui.overlay.OverlayText
 import timber.log.Timber
 import java.util.*
-import kotlin.math.max
-import kotlin.math.min
+import kotlin.math.abs
 
 
 class VideoSeekBarFramesView(
@@ -440,43 +442,120 @@ class VideoSeekBarFramesView(
         }
     )
 
+    private val FRICTION = 0.75F
+    private val VELOCITY_UNITS = 3000
+    private val VELOCITY_MAX = 10000F
+    private val VELOCITY_MIN = 1000F
+    private var direction = 0
+    private var xVelocity = 0f
+    private var velocityTracker: VelocityTracker? = null
+    private var xFling: FlingAnimation? = null
+    private var actionDownX = 0f
+
     private fun seekTouchEvent(view: View, event: MotionEvent) {
         // detect long press
         gestureDetector.onTouchEvent(event)
         // we are moving rangeView with long pressed state
         if (rangeView?.getLongPressState() == true && rangeView?.visibility == View.VISIBLE) return
+
         when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                onTouchEventMotionStartX = event.x
-                seekBarListener?.seekBarOnTouch()
-            }
-            MotionEvent.ACTION_MOVE -> {
-                // x diff
-                val toX = view.x + event.x - onTouchEventMotionStartX
-                //   min  <= x <=  max
-                view.x = max(minScrollWidth.toFloat(), min(toX, maxScrollWidth.toFloat()))
-                // sync time while seeking without real seek (just updating UI)
-                syncPlaybackTime(xCoordinateToTimestamp(view.x))
-            }
-            MotionEvent.ACTION_UP -> {
-                // seek at the end of ACTION_MOVE
-//                seekTo(xCoordinateToTimestamp(view.x))
-                seekTo(xCoordinateToTimestamp(view.x))
-            }
+            MotionEvent.ACTION_DOWN -> onActionDown(event)
+            MotionEvent.ACTION_MOVE -> onActionMove(event)
+            MotionEvent.ACTION_UP -> onActionUp(event)
+            MotionEvent.ACTION_CANCEL -> onActionCancel()
         }
+    }
+
+    private fun onActionDown(event: MotionEvent) {
+        // stop animation
+        xFling?.cancel()
+        xFling = null
+
+        if (velocityTracker == null) {
+            velocityTracker = VelocityTracker.obtain()
+        } else {
+            velocityTracker?.clear()
+        }
+
+        velocityTracker?.addMovement(event)
+        xVelocity = 0F
+        actionDownX = event.rawX
+        seekBarListener?.seekBarOnTouch()
+    }
+
+    private fun onActionMove(event: MotionEvent) {
+        val deltaX = event.rawX - actionDownX
+        if (deltaX < 0) {
+            // left
+            direction = -1
+        } else {
+            // right
+            direction = 1
+        }
+        velocityTracker?.let {
+            velocityTracker?.addMovement(event)
+            it.computeCurrentVelocity(VELOCITY_UNITS, VELOCITY_MAX)
+            val V = it.getXVelocity(event.getPointerId(event.actionIndex))
+            xVelocity =
+                if (direction == -1 && V < 0 || direction == 1 && V > 0)
+                    -1 * V
+                else
+                    V
+        }
+        updatePosition(movableFrameLineContainer.x + deltaX)
+        actionDownX = event.rawX
+    }
+
+    private fun onActionUp(event: MotionEvent) {
+        velocityTracker?.recycle()
+        velocityTracker = null
+        if (abs(xVelocity) > VELOCITY_MIN) {
+            startXAnimation()
+        }
+    }
+
+    private fun onActionCancel() {
+        velocityTracker?.recycle()
+        velocityTracker = null
+    }
+
+    private fun startXAnimation() {
+        xFling = FlingAnimation(FloatValueHolder(movableFrameLineContainer.x))
+            .setStartVelocity(-xVelocity)
+            .setMaxValue(maxScrollWidth.toFloat())
+            .setMinValue(minScrollWidth.toFloat())
+            .setMinimumVisibleChange(DynamicAnimation.MIN_VISIBLE_CHANGE_PIXELS)
+            .setFriction(FRICTION)
+            .apply {
+                addUpdateListener(xAnimationUpdate)
+                addEndListener(xAnimationEnd)
+                start()
+            }
+    }
+
+    private val xAnimationUpdate = DynamicAnimation.OnAnimationUpdateListener { _, newX, _ ->
+        updatePosition(newX)
+    }
+
+    private fun updatePosition(newX: Float) {
+        val validX = (newX).coerceIn(minScrollWidth.toFloat(), maxScrollWidth.toFloat())
+        movableFrameLineContainer.x = validX
+        syncPlaybackTime(xCoordinateToTimestamp(movableFrameLineContainer.x))
+    }
+
+    private val xAnimationEnd = DynamicAnimation.OnAnimationEndListener { _, _, _, _ ->
+        seekTo(xCoordinateToTimestamp(movableFrameLineContainer.x))
     }
 
     private fun moveViewToCenterOfScreen(view: View) {
         view.layout(screenWidth / 2, 0, screenWidth / 2 + measuredWidth, measuredHeight)
     }
 
-    private var onTouchEventMotionStartX = 0f
-
     @SuppressLint("ClickableViewAccessibility")
     private fun initView(context: Context, attrs: AttributeSet?) {
 
         /***************Frame line*******************/
-        movableFrameLineContainer = FrameLayout(context).apply {
+        movableFrameLineContainer = object : FrameLayout(context) {}.apply {
             setOnTouchListener { view, event ->
                 seekTouchEvent(view, event)
                 true
