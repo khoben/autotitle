@@ -442,15 +442,16 @@ class VideoSeekBarFramesView(
         }
     )
 
-    private val FRICTION = 0.75F
-    private val VELOCITY_UNITS = 3000
-    private val VELOCITY_MAX = 10000F
-    private val VELOCITY_MIN = 1000F
-    private var direction = 0
+    private val FRICTION = 1.1F
+    private val VELOCITY_UNITS = 1000
+    private val VELOCITY_MAX = 3000
+    private val VELOCITY_MIN = 500
+    private var direction = 0f
+    private var downX = 0f
     private var xVelocity = 0f
     private var velocityTracker: VelocityTracker? = null
     private var xFling: FlingAnimation? = null
-    private var actionDownX = 0f
+    private var lastActionX = 0f
 
     private fun seekTouchEvent(view: View, event: MotionEvent) {
         // detect long press
@@ -467,61 +468,67 @@ class VideoSeekBarFramesView(
     }
 
     private fun onActionDown(event: MotionEvent) {
+        Timber.d("DOWN")
         // stop animation
         xFling?.cancel()
         xFling = null
+        xVelocity = 0F
 
         if (velocityTracker == null) {
             velocityTracker = VelocityTracker.obtain()
         } else {
             velocityTracker?.clear()
         }
-
-        velocityTracker?.addMovement(event)
-        xVelocity = 0F
-        actionDownX = event.rawX
+        downX = event.rawX
+        lastActionX = event.x
         seekBarListener?.seekBarOnTouch()
+        event.offsetLocation(event.rawX - downX, 0F)
+        velocityTracker?.addMovement(event)
     }
 
     private fun onActionMove(event: MotionEvent) {
-        val deltaX = event.rawX - actionDownX
-        if (deltaX < 0) {
-            // left
-            direction = -1
-        } else {
-            // right
-            direction = 1
-        }
-        velocityTracker?.let {
-            velocityTracker?.addMovement(event)
-            it.computeCurrentVelocity(VELOCITY_UNITS, VELOCITY_MAX)
-            val V = it.getXVelocity(event.getPointerId(event.actionIndex))
-            xVelocity =
-                if (direction == -1 && V < 0 || direction == 1 && V > 0)
-                    -1 * V
-                else
-                    V
-        }
+        Timber.d("MOVE")
+        val deltaX = event.x - lastActionX
         updatePosition(movableFrameLineContainer.x + deltaX)
-        actionDownX = event.rawX
+        event.offsetLocation(event.rawX - downX, 0F)
+        velocityTracker?.addMovement(event)
     }
 
     private fun onActionUp(event: MotionEvent) {
+        Timber.d("UP")
+        velocityTracker?.let {
+            event.offsetLocation(event.rawX - downX, 0F)
+            velocityTracker?.addMovement(event)
+            it.computeCurrentVelocity(VELOCITY_UNITS, VELOCITY_MAX.toFloat())
+            xVelocity = it.xVelocity
+            direction = event.rawX - downX
+            Timber.d("Direction = $direction velocity = $xVelocity")
+            // Limit velocity by xDiff
+            if (abs(xVelocity) > abs(10 * direction)) {
+                xVelocity = 10 * direction
+            }
+        }
+
         velocityTracker?.recycle()
         velocityTracker = null
         if (abs(xVelocity) > VELOCITY_MIN) {
             startXAnimation()
+        } else {
+            seekTo(xCoordinateToTimestamp(movableFrameLineContainer.x))
         }
+        xVelocity = 0F
     }
 
     private fun onActionCancel() {
+        Timber.d("CANCEL")
+        xVelocity = 0F
         velocityTracker?.recycle()
         velocityTracker = null
     }
 
     private fun startXAnimation() {
         xFling = FlingAnimation(FloatValueHolder(movableFrameLineContainer.x))
-            .setStartVelocity(-xVelocity)
+            .setStartVelocity(xVelocity)
             .setMaxValue(maxScrollWidth.toFloat())
             .setMinValue(minScrollWidth.toFloat())
             .setMinimumVisibleChange(DynamicAnimation.MIN_VISIBLE_CHANGE_PIXELS)
@@ -548,7 +555,7 @@ class VideoSeekBarFramesView(
     }
 
     private fun moveViewToCenterOfScreen(view: View) {
-        view.layout(screenWidth / 2, 0, screenWidth / 2 + measuredWidth, measuredHeight)
+//        view.layout(screenWidth / 2, 0, screenWidth / 2 + measuredWidth, measuredHeight)
     }
 
     @SuppressLint("ClickableViewAccessibility")
