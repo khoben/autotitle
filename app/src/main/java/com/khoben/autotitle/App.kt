@@ -14,15 +14,28 @@ import timber.log.Timber
 
 class App : Application() {
 
+    private val appPref by lazy {
+        getSharedPreferences(
+            APP_PREFERENCES,
+            Context.MODE_PRIVATE
+        )
+    }
+
     override fun onCreate() {
         super.onCreate()
         appContext = applicationContext
         initFoldersPath()
+        initPreferences()
         if (BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
         MLApplication.getInstance().apiKey =
             "CgB6e3x9/hsdbdBs4UtMv9w9yHOgLLpQWbfDNjtbW5685ZLdOW5HlpWzDmveL69IjxoeAg8TClmuNnbmvZ9xprrw"
         createApplicationComponent()
         NotificationUtils.createNotificationChannel(applicationContext, appName)
+    }
+
+    private fun initPreferences() {
+        SEEKBAR_FLING_SMOOTH_ANIMATION =
+            appPref.getBoolean(SEEKBAR_FLING_SMOOTH_ANIMATION_PREF, SEEKBAR_FLING_SMOOTH_ANIMATION)
     }
 
     private fun initFoldersPath() {
@@ -39,6 +52,7 @@ class App : Application() {
     }
 
     companion object {
+
         @JvmStatic
         lateinit var applicationComponent: ApplicationComponent
 
@@ -62,5 +76,10 @@ class App : Application() {
         lateinit var APP_MAIN_FOLDER: String
         lateinit var PROJECTS_FOLDER: String
         lateinit var PROJECTS_FILE_SERIALIZED: String
+
+        // Preferences settings
+        private val APP_PREFERENCES = "APP_PREFERENCES"
+        private val SEEKBAR_FLING_SMOOTH_ANIMATION_PREF = "SEEKBAR_FLING_SMOOTH_ANIMATION"
+        var SEEKBAR_FLING_SMOOTH_ANIMATION = true
     }
 }
