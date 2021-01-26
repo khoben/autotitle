@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="General">
+        <DropDownPreference
+            app:key="app_language"
+            app:title="Language"
+            app:useSimpleSummaryProvider="true"/>
+        <DropDownPreference
+            app:key="app_theme"
+            app:title="Theme"
+            app:useSimpleSummaryProvider="true"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Editing">
+        <SwitchPreferenceCompat
+            app:key="copy_source_video"
+            app:title="Copy video source"
+            app:summary="Enable copying video source to project folder"/>
+        <SwitchPreferenceCompat
+            app:key="show_notification_onsave"
+            app:title="Show notifications"
+            app:summary="Enable video saving path notifications"/>
+        <SwitchPreferenceCompat
+            app:key="smooth_seek_animation"
+            app:title="Enable seek animation"
+            app:summary="Show smooth seek playback animation"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Help">
+        <Preference
+            app:key="opensource_licenses"
+            app:title="Open source licenses" />
+        <Preference
+            app:key="feedback"
+            app:summary="Report technical issues or suggest new features"
+            app:title="Send feedback" />
+    </PreferenceCategory>
+
+    <Preference
+        app:key="about_app"
+        android:layout="@layout/about_app_preference_layout"
+        />
+
+</PreferenceScreen>

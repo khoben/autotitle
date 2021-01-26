@@ -49,6 +49,7 @@
             android:name="com.khoben.autotitle.ui.activity.ResultActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".ui.activity.PreloadActivity" />
+        <activity android:name=".ui.activity.SettingsActivity" />
     </application>
 
 </manifest>

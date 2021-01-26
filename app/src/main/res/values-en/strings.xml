@@ -55,4 +55,5 @@
     <string name="result_screen_button_title_saved">Saved</string>
     <string name="confirm_cancellation_title">Confirm cancellation</string>
     <string name="cancel_caption">Cancel</string>
+    <string name="settings_title">Settings</string>
 </resources>

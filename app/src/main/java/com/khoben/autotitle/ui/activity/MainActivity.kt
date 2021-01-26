@@ -133,7 +133,7 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
     }
 
     private fun settingsClick(view: View) {
-        OpenSourceLicensesDialog().showLicenses(this)
+        startActivity(Intent(this, SettingsActivity::class.java))
     }
 
     private fun takeVideoClick(view: View) {
