@@ -270,7 +270,7 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         pausePlayback()
         // make visible all overlays
         overlayHandler!!.showRootView()
-        val outputPath = FileUtils.getRandomFilepath(appContext, App.VIDEO_EXTENSION)
+        val outputPath = FileUtils.getOutputVideoFilePath(appContext)
         viewState.onVideoSavingStarted()
         videoProcessor.apply {
             setup(

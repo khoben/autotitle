@@ -49,7 +49,7 @@ class VideoLoader : VideoLoaderContract() {
 
         this.frames = videoFrameRetriever.init(uri, providerType)
             .retrieveFrames(frameTime, App.THUMB_SIZE.first, App.THUMB_SIZE.second)
-        this.tempAudioPath = FileUtils.getRandomFilepath(context, App.AUDIO_EXTENSION)
+        this.tempAudioPath = FileUtils.getInternalRandomFilepath()
         this.audio = extractAudio(context, tempAudioPath!!)
 
         return this

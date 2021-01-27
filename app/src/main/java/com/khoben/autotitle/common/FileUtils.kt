@@ -2,6 +2,7 @@ package com.khoben.autotitle.common
 
 import android.content.ContentResolver
 import android.content.ContentUris
+import android.content.ContentValues
 import android.content.Context
 import android.content.res.AssetFileDescriptor
 import android.graphics.Bitmap
@@ -12,20 +13,27 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import androidx.annotation.IntRange
+import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import com.google.gson.GsonBuilder
 import com.khoben.autotitle.App
 import com.khoben.autotitle.BuildConfig
+import com.khoben.autotitle.R
 import timber.log.Timber
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.IOException
-import java.io.InputStream
+import java.io.*
 import java.lang.reflect.Type
 
 
 object FileUtils {
 
+    /**
+     * Deserializes JSON string to specified object type
+     *
+     * @param jsonString JSON string
+     * @param typeToken Type of object
+     * @return Object
+     */
     inline fun <reified T> getObjectFromJson(
         jsonString: String,
         typeToken: Type
@@ -33,6 +41,12 @@ object FileUtils {
         return GsonBuilder().create().fromJson(jsonString, typeToken)
     }
 
+    /**
+     * Reads [inputStream] and returns it as String
+     *
+     * @param inputStream InputStream
+     * @return String
+     */
     fun inputStreamToString(inputStream: InputStream): String {
         return try {
             val bytes = ByteArray(inputStream.available())
@@ -97,7 +111,20 @@ object FileUtils {
         }
     }
 
-    fun writeBitmap(path: String, bitmap: Bitmap, format: Bitmap.CompressFormat, quality: Int) {
+    /**
+     * Writes [bitmap] to specified [path]
+     *
+     * @param path Output path
+     * @param bitmap Source bitmap
+     * @param format CompressFormat
+     * @param quality Quality level, 0-100
+     */
+    fun writeBitmap(
+        path: String,
+        bitmap: Bitmap,
+        format: Bitmap.CompressFormat,
+        @IntRange(from = 0, to = 100) quality: Int
+    ) {
         File(path).outputStream().use { out ->
             bitmap.compress(format, quality, out)
             out.flush()
@@ -133,8 +160,11 @@ object FileUtils {
         null
     }
 
-    fun getApplicationMainDir() = App.appContext.getExternalFilesDir(null)
-
+    /**
+     * Creates directory with [filepath] if it not exists
+     *
+     * @param filepath File path
+     */
     fun createDirIfNotExists(filepath: String) {
         val file = File(filepath)
         if (!file.exists()) {
@@ -152,37 +182,8 @@ object FileUtils {
     }
 
     /**
-     * Get random filepath in external specified directory
-     * @param context Context
-     * @param extension String
-     * @param directory String
-     * @return Filepath
-     */
-    fun getRandomFilepath(
-        context: Context,
-        extension: String,
-        directory: String = Environment.DIRECTORY_MOVIES
-    ): String {
-        return "${context.getExternalFilesDir(directory)?.absolutePath}/${System.currentTimeMillis()}.$extension"
-    }
-
-    /**
-     * Get random Uri in external specified directory
-     * @param context Context
-     * @param extension String
-     * @param directory String
-     * @return Uri
-     */
-    fun getRandomUri(
-        context: Context,
-        extension: String,
-        directory: String = Environment.DIRECTORY_MOVIES
-    ): Uri {
-        return getUriFromPath(context, getRandomFilepath(context, extension, directory))
-    }
-
-    /**
      * Get uri from provided filepath
+     *
      * @param context Context
      * @param path String
      * @return Uri
@@ -295,19 +296,108 @@ object FileUtils {
     }
 
     /**
-     * Get path of external movie directory
-     * @return File
+     * Puts [videoFile] into gallery directory
+     *
+     * @param context Context
+     * @param videoFile File
+     * @return Output file Uri
      */
-    fun getAndroidMoviesFolder(): File {
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES)
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun saveVideoToGallery(context: Context, videoFile: File): Uri? {
+        val values = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, videoFile.name)
+            put(MediaStore.Images.Media.MIME_TYPE, App.VIDEO_MIME_TYPE)
+            put(
+                MediaStore.Images.Media.RELATIVE_PATH,
+                Environment.DIRECTORY_MOVIES + "/${context.getString(R.string.app_name)}/"
+            )
+            put(MediaStore.Images.Media.IS_PENDING, 1)
+        }
+        val collection = MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+        val fileUri = context.contentResolver.insert(collection, values)
+        fileUri?.let {
+            context.contentResolver.openFileDescriptor(fileUri, "w").use { descriptor ->
+                descriptor?.let {
+                    FileOutputStream(descriptor.fileDescriptor).use { out ->
+                        FileInputStream(videoFile).use { inputStream ->
+                            val buf = ByteArray(8192)
+                            while (true) {
+                                val sz = inputStream.read(buf)
+                                if (sz <= 0) break
+                                out.write(buf, 0, sz)
+                            }
+                        }
+                    }
+                }
+            }
+            values.clear()
+            values.put(MediaStore.Video.Media.IS_PENDING, 0)
+            context.contentResolver.update(fileUri, values, null, null)
+        }
+        return fileUri
     }
 
     /**
-     * Same as getRandomFilepath
-     * @param extension String
-     * @return String
+     * Gets the base name, without extension, of given file name.
+     *
+     * e.g. getBaseName("file.txt") will return "file"
+     *
+     * @param fileName
+     * @return the base name
      */
-    fun getPublicFilepath(extension: String): String {
-        return "${getAndroidMoviesFolder().absolutePath}/${System.currentTimeMillis()}.$extension"
+    fun getBaseName(fileName: String): String {
+        val index = fileName.lastIndexOf('.')
+        return if (index == -1) {
+            fileName
+        } else {
+            fileName.substring(0, index)
+        }
+    }
+
+    /**
+     * Returns temp random filepath
+     *
+     * @return Filepath
+     */
+    fun getInternalRandomFilepath(): String {
+        return "${App.APP_MAIN_FOLDER}/tmp/${System.currentTimeMillis()}"
+    }
+
+    /**
+     * Returns video output filepath
+     *
+     * @param context Context
+     * @param appPrefix Application prefix
+     * @return Filepath
+     */
+    fun getOutputVideoFilePath(
+        context: Context,
+        appPrefix: String = "autotitle_"
+    ): String {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+            "${getInternalMoviesFolder(context)}/$appPrefix${System.currentTimeMillis()}.${App.VIDEO_EXTENSION}"
+        else
+            "${getExternalMoviesFolder(context)}/$appPrefix${System.currentTimeMillis()}.${App.VIDEO_EXTENSION}"
+    }
+
+    /**
+     * Get movie folder filepath in internal specified directory
+     *
+     * @param context Context
+     * @return Filepath
+     */
+    fun getInternalMoviesFolder(context: Context): String {
+        return "${context.getExternalFilesDir(Environment.DIRECTORY_MOVIES)?.absolutePath}"
+    }
+
+    /**
+     * Get movie folder filepath in external specified directory
+     *
+     * Same as [getInternalMoviesFolder], but uses deprecated [Environment.getExternalStoragePublicDirectory]
+     *
+     * @return Public external filepath
+     */
+    fun getExternalMoviesFolder(context: Context): String {
+        return "${Environment.DIRECTORY_MOVIES}/${context.getString(R.string.app_name)}"
     }
 }
