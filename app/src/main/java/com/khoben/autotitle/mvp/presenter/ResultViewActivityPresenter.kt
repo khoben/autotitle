@@ -1,14 +1,17 @@
 package com.khoben.autotitle.mvp.presenter
 
 import android.app.Activity
+import android.app.PendingIntent
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
+import android.media.ThumbnailUtils
 import android.provider.MediaStore
 import androidx.core.app.ShareCompat
-
 import com.khoben.autotitle.App
 import com.khoben.autotitle.R
 import com.khoben.autotitle.common.FileUtils
+import com.khoben.autotitle.common.FileUtils.getFileName
 import com.khoben.autotitle.common.NotificationUtils
 import com.khoben.autotitle.mvp.view.ResultActivityView
 import com.khoben.autotitle.service.mediaplayer.MediaPlayer
@@ -53,11 +56,24 @@ class ResultViewActivityPresenter : MvpPresenter<ResultActivityView>() {
             appContext.contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values)
         if (uri != null) {
             alreadySaved = true
-            savedPath = uri.path
+                    savedPath = uri.getFileName(appContext)
             viewState.showVideoSavedToast(savedPath)
-            NotificationUtils.show(
-                appContext,
-                text = appContext.getString(R.string.result_screen_button_title_saved) + "\n$savedPath"
+                    NotificationUtils.show(
+                        appContext,
+                        text = savedPath!!,
+                        title = appContext.getString(R.string.video_saved_title),
+                        largeIcon = ThumbnailUtils.createVideoThumbnail(
+                            videoPath!!,
+                            MediaStore.Images.Thumbnails.MICRO_KIND
+                        ),
+                        notificationIntent = PendingIntent.getActivity(
+                            appContext,
+                            0,
+                            Intent(Intent.ACTION_VIEW).apply {
+                                data = uri
+                            },
+                            PendingIntent.FLAG_CANCEL_CURRENT
+                        )
             )
             viewState.alreadySaved()
         }

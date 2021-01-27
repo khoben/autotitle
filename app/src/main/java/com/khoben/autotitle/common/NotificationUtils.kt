@@ -2,7 +2,10 @@ package com.khoben.autotitle.common
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -18,18 +21,31 @@ object NotificationUtils {
             val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
                 description = descriptionText
             }
-            (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(
-                channel
-            )
+            (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
+                .createNotificationChannel(channel)
         }
     }
 
-    fun show(context: Context, text: String, title: String = App.appName) {
+    fun show(
+        context: Context,
+        text: String,
+        title: String = App.appName,
+        largeIcon: Bitmap? = null,
+        notificationIntent: PendingIntent? = null
+    ) {
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_stat_name)
             .setContentTitle(title)
             .setContentText(text)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .also { builder ->
+                largeIcon?.let {
+                    builder.setLargeIcon(it)
+                }
+                notificationIntent?.let {
+                    builder.setContentIntent(it)
+                }
+            }
         with(NotificationManagerCompat.from(context)) {
             // notificationId is a unique int for each notification that you must define
             notify(UUID.randomUUID().hashCode(), builder.build())
