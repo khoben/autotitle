@@ -1,29 +1,29 @@
 package com.khoben.autotitle.ui.popup
 
-import android.content.Context
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
 import com.khoben.autotitle.R
-import java.lang.ref.WeakReference
+import com.khoben.autotitle.databinding.PopupWindowVideoProcessLayoutBinding
 
-class VideoProcessingProgressDialog(val context: WeakReference<Context>) {
-    private val inflater = LayoutInflater.from(context.get())
-    private var dialog: AlertDialog? = null
+class VideoProcessingProgressDialog : DialogFragment() {
 
-    private var mainView: View? = null
+    private lateinit var binding: PopupWindowVideoProcessLayoutBinding
+
     private var curPercentTextView: TextView? = null
     private var loadingTextView: TextView? = null
     private var confirmationLayout: LinearLayout? = null
     private var cancelButton: Button? = null
 
-    private var savedHintText = ""
-
     var listener: ProgressDialogListener? = null
+
+    private var savedHintText = ""
 
     interface ProgressDialogListener {
         fun cancelBtnClicked()
@@ -31,33 +31,27 @@ class VideoProcessingProgressDialog(val context: WeakReference<Context>) {
         fun nopeCancelBtnClicked()
     }
 
-    fun show(hint: String = "") {
-        mainView = inflater.inflate(R.layout.popup_window_video_process_layout, null)
-            .apply {
-                loadingTextView = findViewById<TextView>(R.id.loading_text).apply {
-                    text = hint
-                }
-                confirmationLayout = findViewById(R.id.confirmation)
-                curPercentTextView = findViewById(R.id.percentage)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = PopupWindowVideoProcessLayoutBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-                cancelButton = findViewById<Button>(R.id.cancel_btn).apply {
-                    setOnClickListener { onCancelBtnClicked() }
-                }
-
-                findViewById<Button>(R.id.confirm).setOnClickListener {
-                    onConfirmCancelBtnClicked()
-                }
-
-                findViewById<Button>(R.id.nope).setOnClickListener {
-                    onNopeCancelBtnClicked()
-                }
-
-            }
-        dialog = MaterialAlertDialogBuilder(context.get()!!, R.style.CustomAlertDialog).apply {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        dialog?.apply {
             setCancelable(false)
-            setView(mainView!!)
-        }.create()
-        dialog!!.show()
+            setCanceledOnTouchOutside(false)
+        }
+        loadingTextView = binding.loadingText.apply { text = arguments?.getString(EXTRA_HINT) }
+        confirmationLayout = binding.confirmation
+        curPercentTextView = binding.percentage
+        cancelButton = binding.cancelBtn.apply { setOnClickListener { onCancelBtnClicked() } }
+        binding.confirm.setOnClickListener { onConfirmCancelBtnClicked() }
+        binding.nope.setOnClickListener { onNopeCancelBtnClicked() }
     }
 
     private fun onNopeCancelBtnClicked() {
@@ -84,16 +78,19 @@ class VideoProcessingProgressDialog(val context: WeakReference<Context>) {
         confirmationLayout?.visibility = View.VISIBLE
     }
 
-    fun isShowing(): Boolean {
-        return dialog != null && dialog!!.isShowing
-    }
-
     fun updatePercentage(percentage: String) {
         curPercentTextView?.text = percentage
     }
 
-    fun dismiss() {
-        dialog?.dismiss()
-        dialog = null
+    companion object {
+        private val EXTRA_HINT = "EXTRA_HINT"
+
+        fun new(hint: String = ""): VideoProcessingProgressDialog {
+            return VideoProcessingProgressDialog().apply {
+                arguments = Bundle().apply {
+                    putString(EXTRA_HINT, hint)
+                }
+            }
+        }
     }
 }

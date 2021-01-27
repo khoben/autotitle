@@ -110,7 +110,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
         addItemBtn = binding.videoSeekbarLayout.addItem
         recyclerView = binding.recyclerview
 
-        videoProcessingProgressDialog = VideoProcessingProgressDialog(WeakReference(this))
+        videoProcessingProgressDialog = VideoProcessingProgressDialog.new(getString(R.string.save_captions))
             .apply {
                 listener = this@VideoEditActivity
             }
@@ -498,7 +498,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
 
     override fun onVideoSavingStarted() {
         runOnUiThread {
-            videoProcessingProgressDialog.show(getString(R.string.save_captions))
+            videoProcessingProgressDialog.show(supportFragmentManager, "video_processing_dialog")
         }
     }
 
