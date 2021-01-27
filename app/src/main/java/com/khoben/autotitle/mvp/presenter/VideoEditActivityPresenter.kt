@@ -64,14 +64,13 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     }
 
     fun initVideoSource(sourceVideoUri: Uri, videoLoadingMode: VideoLoadMode) {
-        sourceUri = sourceUri ?: sourceVideoUri
-        videoLoadMode = videoLoadMode ?: videoLoadingMode
-    }
+        if (sourceUri != null && videoLoadMode != null) return
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
+        sourceUri = sourceVideoUri
+        videoLoadMode = videoLoadingMode
 
         mediaController.setVideoSource(sourceUri!!)
+
         viewState.initVideoContainerLayoutParams(
             mediaController.mediaPlayer,
             videoRenderer,

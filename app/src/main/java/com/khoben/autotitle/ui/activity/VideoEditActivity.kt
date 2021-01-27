@@ -117,21 +117,9 @@ class VideoEditActivity : MvpAppCompatActivity(),
         alertDialog = CustomAlertDialog(WeakReference(this))
         overlayViewListAdapter = OverlayViewListAdapter()
 
-        videoLayer.setOnClickListener { onViewClicked(it) }
-        binding.backBtn.setOnClickListener { onViewClicked(it) }
-        binding.emptyRecyclerView.addCaptionRecycler.setOnClickListener { onViewClicked(it) }
-        saveBtn.setOnClickListener { onViewClicked(it) }
-        addItemBtn.setOnClickListener { onViewClicked(it) }
-        muteBtn.setOnClickListener { toggleMute() }
-
-        setupRecyclerView(emptyRecyclerView = binding.emptyRecyclerView.root)
-
         val sourceVideoUri = intent.getParcelableExtra<Uri>(VIDEO_SOURCE_URI_INTENT)
         val videoLoadingMode = intent.getSerializableExtra(VIDEO_LOAD_MODE) as VideoLoadMode
 
-        /**
-         * video processing starts in [VideoEditActivityPresenter.onFirstViewAttach]
-         */
         presenter.initVideoSource(sourceVideoUri!!, videoLoadingMode)
         presenter.initOverlayHandler(overlayView, videoControlsView)
         presenter.setMuteState(
@@ -140,6 +128,15 @@ class VideoEditActivity : MvpAppCompatActivity(),
                 App.DEFAULT_MUTE_STATE
             )
         )
+
+        videoLayer.setOnClickListener { onViewClicked(it) }
+        binding.backBtn.setOnClickListener { onViewClicked(it) }
+        binding.emptyRecyclerView.addCaptionRecycler.setOnClickListener { onViewClicked(it) }
+        saveBtn.setOnClickListener { onViewClicked(it) }
+        addItemBtn.setOnClickListener { onViewClicked(it) }
+        muteBtn.setOnClickListener { toggleMute() }
+
+        setupRecyclerView(emptyRecyclerView = binding.emptyRecyclerView.root)
     }
 
     private fun setupRecyclerView(emptyRecyclerView: View) {
