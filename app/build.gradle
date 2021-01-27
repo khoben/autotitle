@@ -105,6 +105,8 @@ dependencies {
     implementation 'me.toptas.fancyshowcase:fancyshowcaseview:1.3.3'
     // Loading animation
     implementation 'com.airbnb.android:lottie:3.6.0'
+    // Morph loading button
+    implementation 'com.github.Muki1992:MaterialLoadingButton:2.0'
     // Animations
     implementation "androidx.dynamicanimation:dynamicanimation-ktx:1.0.0-alpha03"
     /***********************************************/

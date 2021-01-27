@@ -15,6 +15,10 @@ import com.khoben.autotitle.common.FileUtils.getFileName
 import com.khoben.autotitle.common.NotificationUtils
 import com.khoben.autotitle.mvp.view.ResultActivityView
 import com.khoben.autotitle.service.mediaplayer.MediaPlayer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import java.io.File
@@ -48,6 +52,10 @@ class ResultViewActivityPresenter : MvpPresenter<ResultActivityView>() {
             viewState.showVideoSavedToast(savedPath)
             return
         }
+        viewState.onSaveStarted()
+
+        GlobalScope.launch {
+            withContext(Dispatchers.IO) {
         val file = File(videoPath!!)
         val values = ContentValues(3)
         values.put(MediaStore.Video.Media.MIME_TYPE, App.VIDEO_MIME_TYPE)
@@ -57,7 +65,6 @@ class ResultViewActivityPresenter : MvpPresenter<ResultActivityView>() {
         if (uri != null) {
             alreadySaved = true
                     savedPath = uri.getFileName(appContext)
-            viewState.showVideoSavedToast(savedPath)
                     NotificationUtils.show(
                         appContext,
                         text = savedPath!!,
@@ -75,7 +82,9 @@ class ResultViewActivityPresenter : MvpPresenter<ResultActivityView>() {
                             PendingIntent.FLAG_CANCEL_CURRENT
                         )
             )
-            viewState.alreadySaved()
+                }
+                viewState.onSavingEnd()
+                viewState.showVideoSavedToast(savedPath)
         }
     }
 

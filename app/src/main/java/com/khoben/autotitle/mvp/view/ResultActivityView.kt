@@ -9,5 +9,8 @@ interface ResultActivityView : MvpView {
     fun showVideoSavedToast(path: String?)
 
     @AddToEndSingle
-    fun alreadySaved()
+    fun onSaveStarted()
+
+    @AddToEndSingle
+    fun onSavingEnd()
 }

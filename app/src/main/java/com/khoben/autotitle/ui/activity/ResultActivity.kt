@@ -5,13 +5,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import com.google.android.material.button.MaterialButton
 import com.khoben.autotitle.R
 import com.khoben.autotitle.databinding.ActivityPostVideoBinding
 import com.khoben.autotitle.extension.activityresult.permission.permissionsDSL
 import com.khoben.autotitle.mvp.presenter.ResultViewActivityPresenter
 import com.khoben.autotitle.mvp.view.ResultActivityView
 import com.khoben.autotitle.ui.activity.VideoEditActivity.Companion.VIDEO_OUTPUT_URI_INTENT
+import de.mustafagercek.materialloadingbutton.LoadingButton
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
 
@@ -22,7 +22,7 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView {
 
     private var videoPath: String? = null
 
-    private lateinit var saveBtn: MaterialButton
+    private lateinit var saveBtn: LoadingButton
 
     private val saveResult = permissionsDSL {
         allGranted = {
@@ -51,7 +51,7 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView {
             shareVideo()
         }
         saveBtn = binding.saveGalleryBtn
-        saveBtn.setOnClickListener {
+        saveBtn.setButtonOnClickListener {
             saveVideo()
         }
         binding.epVideoView.player = presenter.initNewPlayer()
@@ -82,16 +82,26 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView {
     }
 
     override fun showVideoSavedToast(path: String?) {
-        Toast.makeText(
-            this,
-            getString(R.string.saved_path_video, path),
-            Toast.LENGTH_LONG
-        ).show()
+        runOnUiThread {
+            Toast.makeText(
+                this,
+                getString(R.string.saved_path_video, path),
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
-    override fun alreadySaved() {
-        saveBtn.text = getString(R.string.result_screen_button_title_saved)
-        saveBtn.setBackgroundColor(ContextCompat.getColor(this, R.color.green_color_picker))
-        saveBtn.icon = ContextCompat.getDrawable(this, R.drawable.check_circle_icon_24dp)
+    override fun onSaveStarted() {
+        runOnUiThread {
+            saveBtn.onStartLoading()
+        }
+    }
+
+    override fun onSavingEnd() {
+        runOnUiThread {
+            saveBtn.onStopLoading()
+            saveBtn.setButtonColor(ContextCompat.getColor(this, R.color.green_color_picker))
+            saveBtn.setButtonText(getString(R.string.result_screen_button_title_saved))
+        }
     }
 }
