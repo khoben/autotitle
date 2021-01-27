@@ -54,7 +54,7 @@ interface VideoEditActivityView : MvpView {
     @Skip
     fun onVideoSavingProgress(progress: Double)
 
-    @Skip
+    @OneExecution
     fun onVideoSavingComplete(filepath: String)
 
     @AddToEnd
