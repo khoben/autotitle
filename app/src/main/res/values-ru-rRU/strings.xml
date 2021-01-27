@@ -58,5 +58,22 @@
     <string name="settings_title">Настройки</string>
     <string name="opensource_licenses_title">Лицензии открытого ПО</string>
     <string name="privacy_policy_title">Политика конфиденциальности</string>
+    <string name="email_app_notfound">Приложение для почты не найдено</string>
+    <string name="terms_cond_title">Условия и положения</string>
+    <string name="preferences_general_category">Основные</string>
+    <string name="send_feedback_title">Отправить отзыв</string>
+    <string name="send_feedback_summary">Сообщить о технических проблемах или предложить новые функции</string>
+    <string name="language_preference_title">Язык приложения</string>
+    <string name="theme_preference_title">Тема приложения</string>
+    <string name="copy_video_source_preference_title">Копировать исходное видео</string>
+    <string name="copy_video_source_preference_summary">Сохранять копию исходного видео в папке проекта</string>
+    <string name="preferences_notifications_category">Уведомления</string>
+    <string name="saved_video_notification_title">Сохраненные видео</string>
+    <string name="preferences_playback_category">Воспроизведение</string>
+    <string name="preferences_about_category">О приложении</string>
+    <string name="seek_animation_title">Анимация прокрутки</string>
+    <string name="seek_animation_summary">Плавная анимация прокрутки</string>
+    <string name="seek_frame_preview_title">Предпросмотр при прокрутке</string>
+    <string name="seek_frame_preview_summary">Показывать кадры предварительного просмотра при прокрутке</string>
     <string name="terms_cond_title">Условия и положения</string>
 </resources>

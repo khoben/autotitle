@@ -59,6 +59,7 @@ class App : Application() {
         @JvmStatic
         lateinit var appContext: Context
         const val appName = "AutoTitle"
+        const val appFeedbackEmail = "autotitleapp@gmail.com"
         const val FRAMES_PER_SCREEN = 8
         val SEEKBAR_HEIGHT_DP_PIXELS = 60.dp()
         const val FRAME_TIME_MS = 1000L

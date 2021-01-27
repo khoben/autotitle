@@ -61,5 +61,22 @@
     <string name="settings_title">Settings</string>
     <string name="opensource_licenses_title">Open Source Licenses</string>
     <string name="privacy_policy_title">Privacy Policy</string>
+    <string name="email_app_notfound">Email application not found</string>
+    <string name="terms_cond_title"><![CDATA[Terms &amp; Conditions]]></string>
+    <string name="preferences_general_category">General</string>
+    <string name="send_feedback_title">Send feedback</string>
+    <string name="send_feedback_summary">Report technical issues or suggest new features</string>
+    <string name="language_preference_title">Language</string>
+    <string name="theme_preference_title">Theme</string>
+    <string name="copy_video_source_preference_title">Copy video source</string>
+    <string name="copy_video_source_preference_summary">Save a copy of the source video in the project folder</string>
+    <string name="preferences_notifications_category">Notifications</string>
+    <string name="saved_video_notification_title">Saved video</string>
+    <string name="preferences_playback_category">Playback</string>
+    <string name="preferences_about_category">About</string>
+    <string name="seek_animation_title">Seek animation</string>
+    <string name="seek_animation_summary">Smooth seeking/scrubbing playback animation</string>
+    <string name="seek_frame_preview_title">Seek preview</string>
+    <string name="seek_frame_preview_summary">Show preview frames while seeking/scrubbing</string>
     <string name="terms_cond_title"><![CDATA[Terms &amp; Conditions]]></string>
 </resources>

@@ -2,45 +2,58 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="General">
+    <PreferenceCategory android:title="@string/preferences_general_category">
         <DropDownPreference
             app:key="app_language"
-            app:title="Language"
-            app:useSimpleSummaryProvider="true"/>
+            app:title="@string/language_preference_title"
+            app:useSimpleSummaryProvider="true" />
         <DropDownPreference
             app:key="app_theme"
-            app:title="Theme"
-            app:useSimpleSummaryProvider="true"/>
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="Editing">
+            app:title="@string/theme_preference_title"
+            app:useSimpleSummaryProvider="true" />
         <SwitchPreferenceCompat
             app:key="copy_source_video"
-            app:title="Copy video source"
-            app:summary="Enable copying video source to project folder"/>
-        <SwitchPreferenceCompat
-            app:key="show_notification_onsave"
-            app:title="Show notifications"
-            app:summary="Enable video saving path notifications"/>
-        <SwitchPreferenceCompat
-            app:key="smooth_seek_animation"
-            app:title="Enable seek animation"
-            app:summary="Show smooth seek playback animation"/>
+            app:summary="@string/copy_video_source_preference_summary"
+            app:title="@string/copy_video_source_preference_title" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Help">
+    <PreferenceCategory android:title="@string/preferences_notifications_category">
+        <SwitchPreferenceCompat
+            app:key="show_notification_onsave"
+            app:title="@string/saved_video_notification_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/preferences_playback_category">
+        <SwitchPreferenceCompat
+            app:key="smooth_seek_animation"
+            app:summary="@string/seek_animation_summary"
+            app:title="@string/seek_animation_title" />
+        <SwitchPreferenceCompat
+            android:enabled="false"
+            android:defaultValue="false"
+            app:key="preview_seek_animation"
+            app:summary="@string/seek_frame_preview_summary"
+            app:title="@string/seek_frame_preview_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/preferences_about_category">
         <Preference
             app:key="opensource_licenses"
-            app:title="Open source licenses" />
+            app:title="@string/opensource_licenses_title" />
+        <Preference
+            app:key="terms_conditions"
+            app:title="@string/terms_cond_title" />
+        <Preference
+            app:key="privacy_policy"
+            app:title="@string/privacy_policy_title" />
         <Preference
             app:key="feedback"
-            app:summary="Report technical issues or suggest new features"
-            app:title="Send feedback" />
+            app:summary="@string/send_feedback_summary"
+            app:title="@string/send_feedback_title" />
     </PreferenceCategory>
 
     <Preference
-        app:key="about_app"
         android:layout="@layout/about_app_preference_layout"
-        />
+        app:key="about_app" />
 
 </PreferenceScreen>
