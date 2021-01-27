@@ -75,5 +75,5 @@
     <string name="seek_animation_summary">Плавная анимация прокрутки</string>
     <string name="seek_frame_preview_title">Предпросмотр при прокрутке</string>
     <string name="seek_frame_preview_summary">Показывать кадры предварительного просмотра при прокрутке</string>
-    <string name="terms_cond_title">Условия и положения</string>
+    <string name="video_saved_title">Видео сохранено</string>
 </resources>

@@ -75,5 +75,5 @@
     <string name="seek_animation_summary">Smooth seeking/scrubbing playback animation</string>
     <string name="seek_frame_preview_title">Seek preview</string>
     <string name="seek_frame_preview_summary">Show preview frames while seeking/scrubbing</string>
-    <string name="terms_cond_title"><![CDATA[Terms &amp; Conditions]]></string>
+    <string name="video_saved_title">Video has been saved</string>
 </resources>
