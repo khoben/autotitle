@@ -56,14 +56,24 @@ class ResultViewActivityPresenter : MvpPresenter<ResultActivityView>() {
 
         GlobalScope.launch {
             withContext(Dispatchers.IO) {
-        val file = File(videoPath!!)
-        val values = ContentValues(3)
-        values.put(MediaStore.Video.Media.MIME_TYPE, App.VIDEO_MIME_TYPE)
-        values.put(MediaStore.Video.Media.DATA, file.absolutePath)
-        val uri =
-            appContext.contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values)
-        if (uri != null) {
-            alreadySaved = true
+                val file = File(videoPath!!)
+                val uri =
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                        // saves externally and put it in gallery
+                        FileUtils.saveVideoToGallery(appContext, file)
+                    } else {
+                        // already saved externally, just put it in gallery
+                        val values = ContentValues(2).apply {
+                            put(MediaStore.Video.Media.MIME_TYPE, App.VIDEO_MIME_TYPE)
+                            put(MediaStore.Video.Media.DATA, file.absolutePath)
+                        }
+                        appContext.contentResolver.insert(
+                            MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                            values
+                        )
+                    }
+                if (uri != null) {
+                    alreadySaved = true
                     savedPath = uri.getFileName(appContext)
                     NotificationUtils.show(
                         appContext,
@@ -81,10 +91,11 @@ class ResultViewActivityPresenter : MvpPresenter<ResultActivityView>() {
                             },
                             PendingIntent.FLAG_CANCEL_CURRENT
                         )
-            )
+                    )
                 }
                 viewState.onSavingEnd()
                 viewState.showVideoSavedToast(savedPath)
+            }
         }
     }
 
