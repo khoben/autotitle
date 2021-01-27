@@ -39,7 +39,7 @@ class App : Application() {
     }
 
     private fun initFoldersPath() {
-        APP_MAIN_FOLDER = "${FileUtils.getApplicationMainDir()}"
+        APP_MAIN_FOLDER = "${appContext.getExternalFilesDir(null)}"
         PROJECTS_FOLDER = "${APP_MAIN_FOLDER}/Projects"
         PROJECTS_FILE_SERIALIZED = "${APP_MAIN_FOLDER}/proj"
     }
