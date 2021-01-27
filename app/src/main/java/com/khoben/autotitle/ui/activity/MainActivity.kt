@@ -21,7 +21,6 @@ import com.khoben.autotitle.extension.activityresult.result.takeVideoDSL
 import com.khoben.autotitle.model.project.ThumbProject
 import com.khoben.autotitle.mvp.presenter.MainActivityPresenter
 import com.khoben.autotitle.mvp.view.MainActivityView
-import com.khoben.autotitle.ui.etc.OpenSourceLicensesDialog
 import com.khoben.autotitle.ui.popup.projectitem.ProjectItemOptionsDialog
 import com.khoben.autotitle.ui.popup.projectitem.ProjectTitleEditDialog
 import com.khoben.autotitle.ui.recyclerview.projects.ProjectViewListAdapter

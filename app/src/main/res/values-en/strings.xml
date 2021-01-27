@@ -56,4 +56,7 @@
     <string name="confirm_cancellation_title">Confirm cancellation</string>
     <string name="cancel_caption">Cancel</string>
     <string name="settings_title">Settings</string>
+    <string name="opensource_licenses_title">Open Source Licenses</string>
+    <string name="privacy_policy_title">Privacy Policy</string>
+    <string name="terms_cond_title"><![CDATA[Terms &amp; Conditions]]></string>
 </resources>

@@ -6,7 +6,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.khoben.autotitle.BuildConfig
 import com.khoben.autotitle.R
-import com.khoben.autotitle.ui.etc.OpenSourceLicensesDialog
+import com.khoben.autotitle.ui.etc.HTMLViewerDialog
 
 class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -15,7 +15,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference<Preference>("about_app")?.title = "v${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
 
         findPreference<Preference>("opensource_licenses")?.setOnPreferenceClickListener {
-            OpenSourceLicensesDialog().showLicenses(this.activity as AppCompatActivity)
+            HTMLViewerDialog().showLicenses(this.activity as AppCompatActivity)
             true
         }
     }

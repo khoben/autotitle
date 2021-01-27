@@ -56,4 +56,7 @@
     <string name="confirm_cancellation_title">Подтвердите отмену</string>
     <string name="cancel_caption">Отмена</string>
     <string name="settings_title">Настройки</string>
+    <string name="opensource_licenses_title">Лицензии открытого ПО</string>
+    <string name="privacy_policy_title">Политика конфиденциальности</string>
+    <string name="terms_cond_title">Условия и положения</string>
 </resources>
