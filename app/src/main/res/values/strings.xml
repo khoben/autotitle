@@ -79,4 +79,9 @@
     <string name="seek_frame_preview_title">Seek preview</string>
     <string name="seek_frame_preview_summary">Show preview frames while seeking/scrubbing</string>
     <string name="video_saved_title">Video has been saved</string>
+    <string name="recycler_edit_title">Edit title</string>
+    <string name="recycler_delete">Delete</string>
+    <string name="edit_title_ok">OK</string>
+    <string name="edit_title_cancel">Cancel</string>
+    <string name="edit_title_project_name">Project name</string>
 </resources>

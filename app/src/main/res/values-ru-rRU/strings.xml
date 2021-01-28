@@ -76,4 +76,9 @@
     <string name="seek_frame_preview_title">Предпросмотр при прокрутке</string>
     <string name="seek_frame_preview_summary">Показывать кадры предварительного просмотра при прокрутке</string>
     <string name="video_saved_title">Видео сохранено</string>
+    <string name="recycler_edit_title">Редакт. название</string>
+    <string name="recycler_delete">Удалить</string>
+    <string name="edit_title_ok">Ок</string>
+    <string name="edit_title_cancel">Отмена</string>
+    <string name="edit_title_project_name">Название проекта</string>
 </resources>
