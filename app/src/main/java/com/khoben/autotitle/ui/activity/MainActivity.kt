@@ -99,7 +99,12 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
 
                 override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                     super.onItemRangeInserted(positionStart, itemCount)
-                    showRecentProject()
+                    // emits nothing from LiveData
+                    if (positionStart == 0 && itemCount == 0) {
+                        hideRecentProject()
+                    } else {
+                        showRecentProject()
+                    }
                 }
             })
         }
