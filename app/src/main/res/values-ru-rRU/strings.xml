@@ -81,4 +81,5 @@
     <string name="edit_title_ok">Ок</string>
     <string name="edit_title_cancel">Отмена</string>
     <string name="edit_title_project_name">Название проекта</string>
+    <string name="delete_project_dialog_text">Удалить проект %1$s?</string>
 </resources>

@@ -23,6 +23,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
 import com.google.android.material.snackbar.Snackbar
 import com.khoben.autotitle.App
+import com.khoben.autotitle.App.Companion.VIDEO_EXIST_PROJECT
 import com.khoben.autotitle.App.Companion.VIDEO_LOAD_MODE
 import com.khoben.autotitle.App.Companion.VIDEO_SOURCE_URI_INTENT
 import com.khoben.autotitle.R
@@ -58,7 +59,6 @@ import me.toptas.fancyshowcase.listener.OnCompleteListener
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
 import timber.log.Timber
-import java.lang.ref.WeakReference
 import java.util.*
 
 
@@ -119,17 +119,25 @@ class VideoEditActivity : MvpAppCompatActivity(),
         addItemBtn = binding.videoSeekbarLayout.addItem
         recyclerView = binding.recyclerview
 
-        videoProcessingProgressDialog = VideoProcessingProgressDialog.new(getString(R.string.save_captions))
-            .apply {
-                listener = this@VideoEditActivity
-            }
-        alertDialog = CustomAlertDialog(WeakReference(this))
+        videoProcessingProgressDialog =
+            VideoProcessingProgressDialog.new(getString(R.string.save_captions))
+                .apply {
+                    listener = this@VideoEditActivity
+                }
+        alertDialog =
+            CustomAlertDialog(
+                context = this,
+                layout = R.layout.alert_dialog_single_ok_btn,
+                messageTextView = R.id.mainText,
+                okButton = R.id.okButton
+            )
         overlayViewListAdapter = OverlayViewListAdapter()
 
         val sourceVideoUri = intent.getParcelableExtra<Uri>(VIDEO_SOURCE_URI_INTENT)
         val videoLoadingMode = intent.getSerializableExtra(VIDEO_LOAD_MODE) as VideoLoadMode
+        val existProject = intent.getParcelableExtra<Project>(VIDEO_EXIST_PROJECT)
 
-        presenter.initVideoSource(sourceVideoUri!!, videoLoadingMode)
+        presenter.initVideoSource(sourceVideoUri!!, videoLoadingMode, existProject)
         presenter.initOverlayHandler(overlayView, videoControlsView)
         presenter.setMuteState(
             userSettings.getBoolean(
@@ -614,6 +622,12 @@ class VideoEditActivity : MvpAppCompatActivity(),
             val thumbPath = presenter.createProjectThumbnail(id)
             val insertedProject = projectViewModel.getById(id)
             projectViewModel.update(insertedProject.apply { thumbUri = thumbPath })
+        }
+    }
+
+    override fun updateProject(project: Project) {
+        lifecycleScope.launch {
+            projectViewModel.updateWithTimestamp(project)
         }
     }
 

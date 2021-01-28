@@ -84,4 +84,5 @@
     <string name="edit_title_ok">OK</string>
     <string name="edit_title_cancel">Cancel</string>
     <string name="edit_title_project_name">Project name</string>
+    <string name="delete_project_dialog_text">Delete project %1$s?</string>
 </resources>

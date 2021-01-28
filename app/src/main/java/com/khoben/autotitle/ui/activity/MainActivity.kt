@@ -13,10 +13,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import com.khoben.autotitle.App.Companion.VIDEO_EXIST_PROJECT
 import com.khoben.autotitle.App.Companion.VIDEO_LOAD_MODE
 import com.khoben.autotitle.App.Companion.VIDEO_SOURCE_URI_INTENT
 import com.khoben.autotitle.R
-import com.khoben.autotitle.common.FileUtils
 import com.khoben.autotitle.common.OpeningVideoFileState
 import com.khoben.autotitle.database.entity.Project
 import com.khoben.autotitle.databinding.ActivityMainBinding
@@ -26,6 +26,7 @@ import com.khoben.autotitle.extension.activityresult.result.takeVideoDSL
 import com.khoben.autotitle.model.VideoLoadMode
 import com.khoben.autotitle.mvp.presenter.MainActivityPresenter
 import com.khoben.autotitle.mvp.view.MainActivityView
+import com.khoben.autotitle.ui.popup.CustomAlertDialog
 import com.khoben.autotitle.ui.popup.projectitem.ProjectItemOptionsDialog
 import com.khoben.autotitle.ui.popup.projectitem.ProjectTitleEditDialog
 import com.khoben.autotitle.ui.recyclerview.projects.ProjectViewListAdapter
@@ -204,7 +205,21 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
 
     override fun onRemoveClick(id: Long) {
         lifecycleScope.launch {
-            projectViewModel.deleteById(id)
+            projectViewModel.getById(id).let { project ->
+                CustomAlertDialog(
+                    context = this@MainActivity,
+                    layout = R.layout.alert_dialog_ok_cancel_btn,
+                    messageTextView = R.id.main_text,
+                    okButton = R.id.ok_btn,
+                    okButtonText = getString(R.string.yes_caption),
+                    cancelButton = R.id.cancel_btn,
+                    cancelButtonText = getString(R.string.no_caption)
+                ).show(getString(R.string.delete_project_dialog_text, project.title), {
+                    lifecycleScope.launch {
+                        projectViewModel.deleteById(project.id)
+                    }
+                })
+            }
         }
     }
 
@@ -215,14 +230,49 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
     }
 
     override fun onItemClicked(project: Project) {
-        Timber.d("Clicked on ${project.id}")
-        // TODO: check video source uri
-        val intent = Intent(this, VideoEditActivity::class.java).apply {
-            putExtra(VIDEO_SOURCE_URI_INTENT, Uri.parse(project.sourceFileUri))
-            putExtra(VIDEO_LOAD_MODE, VideoLoadMode.LOAD_RECENT)
+        val uri = Uri.parse(project.sourceFileUri)
+        when(presenter.verifyMedia(uri)) {
+            OpeningVideoFileState.FAILED -> {
+                // TODO: Maybe make sealed class for dialogs?
+                CustomAlertDialog(
+                    context = this,
+                    layout = R.layout.alert_dialog_ok_cancel_btn,
+                    messageTextView = R.id.main_text,
+                    okButton = R.id.ok_btn,
+                    cancelButton = R.id.cancel_btn
+                ).show(getString(R.string.error_while_opening_file), {
+                    CustomAlertDialog(
+                        context = this@MainActivity,
+                        layout = R.layout.alert_dialog_ok_cancel_btn,
+                        messageTextView = R.id.main_text,
+                        okButton = R.id.ok_btn,
+                        okButtonText = getString(R.string.yes_caption),
+                        cancelButton = R.id.cancel_btn,
+                        cancelButtonText = getString(R.string.no_caption)
+                    ).show(getString(R.string.delete_project_dialog_text, project.title), {
+                        lifecycleScope.launch {
+                            projectViewModel.deleteById(project.id)
+                        }
+                    })
+                })
+            }
+            OpeningVideoFileState.LIMIT -> {
+                CustomAlertDialog(
+                    context = this,
+                    layout = R.layout.alert_dialog_single_ok_btn,
+                    messageTextView = R.id.mainText,
+                    okButton = R.id.okButton
+                ).show(getString(R.string.check_limit))
+            }
+            OpeningVideoFileState.SUCCESS -> {
+                val intent = Intent(this, VideoEditActivity::class.java).apply {
+                    putExtra(VIDEO_SOURCE_URI_INTENT, uri)
+                    putExtra(VIDEO_LOAD_MODE, VideoLoadMode.LOAD_RECENT)
+                    putExtra(VIDEO_EXIST_PROJECT, project)
+                }
+                startActivity(intent)
+            }
         }
-        startActivity(intent)
-
     }
 
     companion object {

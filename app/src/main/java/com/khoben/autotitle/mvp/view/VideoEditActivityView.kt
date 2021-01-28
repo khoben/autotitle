@@ -83,4 +83,7 @@ interface VideoEditActivityView : MvpView {
 
     @OneExecution
     fun createNewProject(project: Project)
+
+    @OneExecution
+    fun updateProject(project: Project)
 }

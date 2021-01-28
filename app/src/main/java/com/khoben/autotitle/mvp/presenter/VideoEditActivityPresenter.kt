@@ -64,7 +64,7 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         mediaController.addSubscription(this)
     }
 
-    fun initVideoSource(sourceVideoUri: Uri, videoLoadingMode: VideoLoadMode) {
+    fun initVideoSource(sourceVideoUri: Uri, videoLoadingMode: VideoLoadMode, existProject: Project?) {
         if (sourceUri != null && videoLoadMode != null) return
 
         sourceUri = sourceVideoUri
@@ -87,6 +87,8 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
                     sourceFileUri = FileUtils.getRealPathFromURI(appContext, sourceUri!!)!!
                 )
             )
+        } else {
+            existProject?.let { viewState.updateProject(it) }
         }
 
         processVideo()
