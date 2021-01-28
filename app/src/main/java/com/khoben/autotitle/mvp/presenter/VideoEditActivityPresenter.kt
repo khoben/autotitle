@@ -2,13 +2,16 @@ package com.khoben.autotitle.mvp.presenter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import com.khoben.autotitle.App
 import com.khoben.autotitle.R
+import com.khoben.autotitle.common.BitmapUtils
 import com.khoben.autotitle.common.FileUtils
 import com.khoben.autotitle.common.FileUtils.getFileName
+import com.khoben.autotitle.database.entity.Project
 import com.khoben.autotitle.model.MLCaption
 import com.khoben.autotitle.model.PlaybackEvent
 import com.khoben.autotitle.model.PlaybackState
@@ -17,6 +20,7 @@ import com.khoben.autotitle.model.project.RecentProjectsLoader
 import com.khoben.autotitle.model.project.ThumbProject
 import com.khoben.autotitle.mvp.view.VideoEditActivityView
 import com.khoben.autotitle.service.audioextractor.AudioExtractorNoAudioException
+import com.khoben.autotitle.service.frameretriever.AndroidNativeMetadataProvider
 import com.khoben.autotitle.service.mediaplayer.MediaController
 import com.khoben.autotitle.service.mediaplayer.VideoRender
 import com.khoben.autotitle.service.videoloader.VideoLoaderContract
@@ -77,19 +81,15 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
             getVideoDetails()!!
         )
 
-        RecentProjectsLoader.new(
-            ThumbProject(
-                id = UUID.randomUUID().toString(),
-                title = sourceUri?.getFileName(appContext),
-                dateCreated = System.currentTimeMillis(),
-                dateUpdated = System.currentTimeMillis(),
+        viewState.createNewProject(
+            Project(
+                title = sourceUri?.getFileName(appContext)!!,
                 videoDuration = mediaController.videoDuration,
                 videoFileSizeBytes = FileUtils.getSizeBytes(appContext, sourceUri!!),
-                videoSourceFilePath = FileUtils.getRealPathFromURI(appContext, sourceUri!!)
-            ),
-            sourceUri!!,
-            appContext
+                sourceFileUri = FileUtils.getRealPathFromURI(appContext, sourceUri!!)!!
+            )
         )
+
         processVideo()
     }
 
@@ -537,5 +537,17 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
 
     override fun onPlayPauseButtonClicked() {
         togglePlaybackState()
+    }
+
+    fun createProjectThumbnail(id: Long): String {
+        val projectFolder = "${App.PROJECTS_FOLDER}/${id}"
+        FileUtils.createDirIfNotExists(projectFolder)
+        return "${projectFolder}/thumb".also { thumbPath ->
+            AndroidNativeMetadataProvider(appContext, sourceUri!!)
+                .getFrameAt(0L)?.let { BitmapUtils.cropCenter(it, 512, 384) }
+                ?.let {
+                    FileUtils.writeBitmap(thumbPath, it, Bitmap.CompressFormat.WEBP, 75)
+                }
+        }
     }
 }

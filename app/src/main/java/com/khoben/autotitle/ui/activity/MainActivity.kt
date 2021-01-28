@@ -8,22 +8,27 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.khoben.autotitle.App.Companion.VIDEO_SOURCE_URI_INTENT
 import com.khoben.autotitle.R
 import com.khoben.autotitle.common.OpeningVideoFileState
+import com.khoben.autotitle.database.entity.Project
 import com.khoben.autotitle.databinding.ActivityMainBinding
 import com.khoben.autotitle.extension.activityresult.permission.permissionsDSL
 import com.khoben.autotitle.extension.activityresult.result.getContentDSL
 import com.khoben.autotitle.extension.activityresult.result.takeVideoDSL
-import com.khoben.autotitle.model.project.ThumbProject
 import com.khoben.autotitle.mvp.presenter.MainActivityPresenter
 import com.khoben.autotitle.mvp.view.MainActivityView
 import com.khoben.autotitle.ui.popup.projectitem.ProjectItemOptionsDialog
 import com.khoben.autotitle.ui.popup.projectitem.ProjectTitleEditDialog
 import com.khoben.autotitle.ui.recyclerview.projects.ProjectViewListAdapter
+import com.khoben.autotitle.viewmodel.ProjectViewModel
+import com.khoben.autotitle.viewmodel.ProjectViewModelFactory
+import kotlinx.coroutines.launch
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
 import timber.log.Timber
@@ -70,10 +75,18 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
     private lateinit var binding: ActivityMainBinding
     private val recyclerViewAdapter = ProjectViewListAdapter()
 
+    private val projectViewModel: ProjectViewModel by viewModels {
+        ProjectViewModelFactory(applicationContext)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        projectViewModel.projectList.observe(this, { projects ->
+            submitList(projects)
+        })
 
         binding.recentRecycler.adapter = recyclerViewAdapter.apply {
             registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -82,6 +95,11 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
                     if (recyclerViewAdapter.itemCount < 1) {
                         hideRecentProjectAnim()
                     }
+                }
+
+                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                    super.onItemRangeInserted(positionStart, itemCount)
+                    showRecentProject()
                 }
             })
         }
@@ -119,13 +137,13 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
         binding.guideline1.setGuidelinePercent(guidelineInitialPercent)
     }
 
-    override fun submitList(list: List<ThumbProject>) {
+    override fun submitList(list: List<Project>) {
         recyclerViewAdapter.submitList(ArrayList(list))
     }
 
-    override fun showEditTitleFragment(idx: Int, title: String) {
+    override fun showEditTitleFragment(id: Long, title: String) {
         supportFragmentManager.let {
-            ProjectTitleEditDialog.show(idx, title).apply {
+            ProjectTitleEditDialog.show(id, title).apply {
                 show(it, "edit_title_fragment")
             }
         }
@@ -164,26 +182,24 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        presenter.loadRecentProjects()
+    override fun onEditTitleClick(id: Long) {
+        lifecycleScope.launch {
+            projectViewModel.getById(id).title.let { title ->
+                showEditTitleFragment(id, title)
+            }
+        }
     }
 
-    override fun onPause() {
-        super.onPause()
-        presenter.saveRecentProjects()
+    override fun onRemoveClick(id: Long) {
+        lifecycleScope.launch {
+            projectViewModel.deleteById(id)
+        }
     }
 
-    override fun onEditTitleClick(idx: Int) {
-        presenter.onEditTitleClick(idx)
-    }
-
-    override fun onRemoveClick(idx: Int) {
-        presenter.onRemoveClick(idx)
-    }
-
-    override fun onEditedItem(idx: Int, title: String) {
-        presenter.editItemTitle(idx, title)
+    override fun onEditedItem(id: Long, title: String) {
+        lifecycleScope.launch {
+            projectViewModel.updateTitle(id, title)
+        }
     }
 
     companion object {

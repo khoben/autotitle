@@ -1,5 +1,6 @@
 package com.khoben.autotitle.mvp.view
 
+import com.khoben.autotitle.database.entity.Project
 import com.khoben.autotitle.model.VideoInfo
 import com.khoben.autotitle.service.mediaplayer.MediaSurfacePlayer
 import com.khoben.autotitle.service.mediaplayer.VideoRender
@@ -79,4 +80,7 @@ interface VideoEditActivityView : MvpView {
 
     @OneExecution
     fun showOverlayEditor(overlay: OverlayObject)
+
+    @OneExecution
+    fun createNewProject(project: Project)
 }

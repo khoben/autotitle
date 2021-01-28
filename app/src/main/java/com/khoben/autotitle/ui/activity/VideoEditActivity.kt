@@ -12,9 +12,11 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.*
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -24,10 +26,10 @@ import com.khoben.autotitle.App
 import com.khoben.autotitle.App.Companion.VIDEO_LOAD_MODE
 import com.khoben.autotitle.App.Companion.VIDEO_SOURCE_URI_INTENT
 import com.khoben.autotitle.R
+import com.khoben.autotitle.database.entity.Project
 import com.khoben.autotitle.databinding.ActivityVideoBinding
 import com.khoben.autotitle.model.VideoInfo
 import com.khoben.autotitle.model.VideoLoadMode
-import com.khoben.autotitle.model.project.RecentProjectsLoader
 import com.khoben.autotitle.mvp.presenter.VideoEditActivityPresenter
 import com.khoben.autotitle.mvp.view.VideoEditActivityView
 import com.khoben.autotitle.service.mediaplayer.MediaSurfacePlayer
@@ -46,6 +48,9 @@ import com.khoben.autotitle.ui.recyclerview.overlays.OverlayViewListAdapter
 import com.khoben.autotitle.ui.recyclerview.overlays.RecyclerViewItemEventListener
 import com.khoben.autotitle.ui.recyclerview.overlays.SwipeToDeleteCallback
 import com.khoben.autotitle.ui.snackbar.SnackBarHelper
+import com.khoben.autotitle.viewmodel.ProjectViewModel
+import com.khoben.autotitle.viewmodel.ProjectViewModelFactory
+import kotlinx.coroutines.launch
 import me.toptas.fancyshowcase.FancyShowCaseQueue
 import me.toptas.fancyshowcase.FancyShowCaseView
 import me.toptas.fancyshowcase.FocusShape
@@ -80,6 +85,10 @@ class VideoEditActivity : MvpAppCompatActivity(),
     private lateinit var lottieAnimationLoadingView: View
     private lateinit var binding: ActivityVideoBinding
     private lateinit var overlayViewListAdapter: OverlayViewListAdapter
+
+    private val projectViewModel: ProjectViewModel by viewModels {
+        ProjectViewModelFactory(applicationContext)
+    }
 
     private val userSettings by lazy {
         getSharedPreferences(
@@ -248,7 +257,6 @@ class VideoEditActivity : MvpAppCompatActivity(),
         super.onPause()
         presenter.pausePlayback()
         userSettings.edit().putBoolean(USER_SETTINGS_ITEM_MUTED, presenter.getMuteState()).apply()
-        RecentProjectsLoader.save()
     }
 
     override fun onDestroy() {
@@ -594,6 +602,15 @@ class VideoEditActivity : MvpAppCompatActivity(),
                     presenter.saveEditedOverlay(overlay, inputText, colorCode)
                 }
             })
+        }
+    }
+
+    override fun createNewProject(project: Project) {
+        lifecycleScope.launch {
+            val id = projectViewModel.insertWithTimestamp(project)
+            val thumbPath = presenter.createProjectThumbnail(id)
+            val insertedProject = projectViewModel.getById(id)
+            projectViewModel.update(insertedProject.apply { thumbUri = thumbPath })
         }
     }
 
