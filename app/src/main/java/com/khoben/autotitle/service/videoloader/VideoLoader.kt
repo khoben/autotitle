@@ -12,7 +12,7 @@ import com.khoben.autotitle.service.frameretriever.VideoFrameRetriever
 import com.khoben.autotitle.ui.player.seekbar.FramesHolder
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import timber.log.Timber
 import javax.inject.Inject
@@ -20,7 +20,7 @@ import javax.inject.Named
 
 class VideoLoader : VideoLoaderContract() {
 
-    private var disposable: Disposable? = null
+    private var disposable = CompositeDisposable()
     private var errorListener: ((Throwable) -> Unit)? = null
 
     @Inject
@@ -77,7 +77,9 @@ class VideoLoader : VideoLoaderContract() {
             }, { error ->
                 FileUtils.deleteFile(context!!, tempAudioPath!!)
                 onError.invoke(error)
-            })
+            }).also {
+                disposable.add(it)
+            }
         return this
     }
 
@@ -91,16 +93,14 @@ class VideoLoader : VideoLoaderContract() {
                 callback.invoke(result)
             }, { error ->
                 onError.invoke(error)
-            })
+            }).also {
+                disposable.add(it)
+            }
         return this
     }
 
     override fun cancel() {
-        disposable?.let {
-            if (it.isDisposed.not()) {
-                it.dispose()
-            }
-        }
+        disposable.clear()
         errorListener = null
     }
 }

@@ -68,11 +68,12 @@ open class VideoFrameRetrieverImpl(
         return Observable.create { emitter ->
             val returnList = arrayListOf<Bitmap>()
             for (i in 0..videoDuration!! step frameTime) {
+                if (emitter.isDisposed) break
                 var bitmap: Bitmap? = null
                 try {
                     bitmap = videoMetadataProvider!!.getFrameAt(1000L * i)
                 } catch (e: Exception) {
-                    emitter.onError(e)
+                    if (!emitter.isDisposed) emitter.onError(e)
                 }
                 bitmap?.let { returnList.add(it) }
             }
@@ -85,11 +86,12 @@ open class VideoFrameRetrieverImpl(
         return Observable.create { emitter ->
             val returnList = arrayListOf<Bitmap>()
             for (i in 0..videoDuration!! step frameTime) {
+                if (emitter.isDisposed) break
                 var bitmap: Bitmap? = null
                 try {
                     bitmap = videoMetadataProvider!!.getCroppedFrameAt(1000L * i, w, h)
                 } catch (e: Exception) {
-                    emitter.onError(e)
+                    if (!emitter.isDisposed) emitter.onError(e)
                 }
                 bitmap?.let { returnList.add(it) }
             }
