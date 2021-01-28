@@ -8,8 +8,8 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.khoben.autotitle.R
 import com.khoben.autotitle.common.FileUtils
+import com.khoben.autotitle.database.entity.Project
 import com.khoben.autotitle.extension.formattedTime
-import com.khoben.autotitle.model.project.ThumbProject
 import com.khoben.autotitle.ui.overlay.OverlayDataMapper
 import timber.log.Timber
 
@@ -40,9 +40,9 @@ fun ImageView.setBadgeColor(item: OverlayDataMapper) {
 }
 
 @BindingAdapter("thumb")
-fun ImageView.setThumb(item: ThumbProject) {
+fun ImageView.setThumb(item: Project) {
     // load bitmap
-    val path = item.getThumbPath()
+    val path = item.thumbUri
     if (FileUtils.checkIfExists(path)) {
         setImageBitmap(BitmapFactory.decodeFile(path))
     } else {

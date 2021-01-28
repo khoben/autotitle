@@ -3,7 +3,6 @@ package com.khoben.autotitle
 import android.app.Application
 import android.content.Context
 import com.huawei.hms.mlsdk.common.MLApplication
-import com.khoben.autotitle.common.FileUtils
 import com.khoben.autotitle.common.NotificationUtils
 import com.khoben.autotitle.di.components.ApplicationComponent
 import com.khoben.autotitle.di.components.DaggerApplicationComponent

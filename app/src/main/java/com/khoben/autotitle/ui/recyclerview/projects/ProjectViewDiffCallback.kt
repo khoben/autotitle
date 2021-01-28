@@ -1,19 +1,19 @@
 package com.khoben.autotitle.ui.recyclerview.projects
 
 import androidx.recyclerview.widget.DiffUtil
-import com.khoben.autotitle.model.project.ThumbProject
+import com.khoben.autotitle.database.entity.Project
 
-class ProjectViewDiffCallback : DiffUtil.ItemCallback<ThumbProject>() {
-    override fun areItemsTheSame(oldItem: ThumbProject, newItem: ThumbProject): Boolean {
+class ProjectViewDiffCallback : DiffUtil.ItemCallback<Project>() {
+    override fun areItemsTheSame(oldItem: Project, newItem: Project): Boolean {
         return oldItem.id == newItem.id
     }
 
     override fun areContentsTheSame(
-        oldItem: ThumbProject,
-        newItem: ThumbProject
+        oldItem: Project,
+        newItem: Project
     ): Boolean {
-        return oldItem.dateCreated == newItem.dateCreated &&
-                oldItem.dateUpdated == newItem.dateUpdated &&
+        return oldItem.createdAt == newItem.createdAt &&
+                oldItem.updatedAt == newItem.updatedAt &&
                 oldItem.title == newItem.title &&
                 oldItem.videoDuration == newItem.videoDuration &&
                 oldItem.videoFileSizeBytes == newItem.videoFileSizeBytes

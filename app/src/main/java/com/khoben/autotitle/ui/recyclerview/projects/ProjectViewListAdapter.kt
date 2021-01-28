@@ -6,12 +6,12 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.khoben.autotitle.database.entity.Project
 import com.khoben.autotitle.databinding.RecyclerViewProjectItemBinding
-import com.khoben.autotitle.model.project.ThumbProject
 import com.khoben.autotitle.ui.popup.projectitem.ProjectItemOptionsDialog
 
 class ProjectViewListAdapter :
-    ListAdapter<ThumbProject,
+    ListAdapter<Project,
             ProjectViewListAdapter.ProjectViewHolder>(ProjectViewDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
@@ -27,7 +27,7 @@ class ProjectViewListAdapter :
     class ProjectViewHolder(private val binding: RecyclerViewProjectItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(project: ThumbProject) {
+        fun bind(project: Project) {
             initContextMenu()
             binding.project = project
             binding.executePendingBindings()
@@ -39,7 +39,7 @@ class ProjectViewListAdapter :
 
         private fun showPopupMenu() {
             (itemView.context as AppCompatActivity).supportFragmentManager.let {
-                ProjectItemOptionsDialog.show(bindingAdapterPosition).apply {
+                ProjectItemOptionsDialog.show(binding.project!!.id).apply {
                     show(it, "recycler_bottom_modal_sheet")
                 }
             }

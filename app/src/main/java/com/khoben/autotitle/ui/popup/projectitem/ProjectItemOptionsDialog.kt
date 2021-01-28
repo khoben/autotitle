@@ -23,7 +23,7 @@ class ProjectItemOptionsDialog : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val idx = requireArguments().getInt(EXTRA_IDX_ITEM)
+        val idx = requireArguments().getLong(EXTRA_IDX_ITEM)
         binding?.projectItemEditBtn?.setOnClickListener {
             dismissAllowingStateLoss()
             listener?.onEditTitleClick(idx)
@@ -51,18 +51,18 @@ class ProjectItemOptionsDialog : BottomSheetDialogFragment() {
     }
 
     interface ItemClickListener {
-        fun onEditTitleClick(idx: Int)
-        fun onRemoveClick(idx: Int)
+        fun onEditTitleClick(id: Long)
+        fun onRemoveClick(id: Long)
     }
 
     companion object {
         const val EXTRA_IDX_ITEM = "extra_idx_item"
 
         @JvmStatic
-        fun show(idx: Int): ProjectItemOptionsDialog {
+        fun show(id: Long): ProjectItemOptionsDialog {
             return ProjectItemOptionsDialog().apply {
                 arguments = Bundle().apply {
-                    putInt(EXTRA_IDX_ITEM, idx)
+                    putLong(EXTRA_IDX_ITEM, id)
                 }
             }
         }

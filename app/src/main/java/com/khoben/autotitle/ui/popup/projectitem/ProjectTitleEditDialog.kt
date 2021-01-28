@@ -25,7 +25,7 @@ class ProjectTitleEditDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         dialog?.setCanceledOnTouchOutside(false)
-        val idx = requireArguments().getInt(EXTRA_IDX_ITEM)
+        val idx = requireArguments().getLong (EXTRA_IDX_ITEM)
         val title = requireArguments().getString(EXTRA_TITLE_ITEM)
         binding!!.editText.setText(title)
         binding!!.editText.focusAndShowKeyboard()
@@ -63,7 +63,7 @@ class ProjectTitleEditDialog : DialogFragment() {
     }
 
     interface ItemTitleEditListener {
-        fun onEditedItem(idx: Int, title: String)
+        fun onEditedItem(id: Long, title: String)
     }
 
     companion object {
@@ -71,10 +71,10 @@ class ProjectTitleEditDialog : DialogFragment() {
         const val EXTRA_TITLE_ITEM = "extra_title_item"
 
         @JvmStatic
-        fun show(idx: Int, title: String): ProjectTitleEditDialog {
+        fun show(id: Long, title: String): ProjectTitleEditDialog {
             return ProjectTitleEditDialog().apply {
                 arguments = Bundle().apply {
-                    putInt(EXTRA_IDX_ITEM, idx)
+                    putLong(EXTRA_IDX_ITEM, id)
                     putString(EXTRA_TITLE_ITEM, title)
                 }
             }
