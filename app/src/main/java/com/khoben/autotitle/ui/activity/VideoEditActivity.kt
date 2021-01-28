@@ -268,7 +268,10 @@ class VideoEditActivity : MvpAppCompatActivity(),
         // if loading screen is showing then ignore back press event
         if (lottieAnimationLoadingView.isVisible) return
 
-        val func: () -> Unit = { onSuperBackPressed() }
+        val func: () -> Unit = {
+            presenter.releaseResources()
+            onSuperBackPressed()
+        }
         val text: String = getString(R.string.exit_question)
 
         MaterialAlertDialogBuilder(this)

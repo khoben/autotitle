@@ -13,14 +13,17 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import com.khoben.autotitle.App.Companion.VIDEO_LOAD_MODE
 import com.khoben.autotitle.App.Companion.VIDEO_SOURCE_URI_INTENT
 import com.khoben.autotitle.R
+import com.khoben.autotitle.common.FileUtils
 import com.khoben.autotitle.common.OpeningVideoFileState
 import com.khoben.autotitle.database.entity.Project
 import com.khoben.autotitle.databinding.ActivityMainBinding
 import com.khoben.autotitle.extension.activityresult.permission.permissionsDSL
 import com.khoben.autotitle.extension.activityresult.result.getContentDSL
 import com.khoben.autotitle.extension.activityresult.result.takeVideoDSL
+import com.khoben.autotitle.model.VideoLoadMode
 import com.khoben.autotitle.mvp.presenter.MainActivityPresenter
 import com.khoben.autotitle.mvp.view.MainActivityView
 import com.khoben.autotitle.ui.popup.projectitem.ProjectItemOptionsDialog
@@ -36,7 +39,9 @@ import timber.log.Timber
 
 class MainActivity : MvpAppCompatActivity(), MainActivityView,
     ProjectItemOptionsDialog.ItemClickListener,
-    ProjectTitleEditDialog.ItemTitleEditListener {
+    ProjectTitleEditDialog.ItemTitleEditListener,
+    ProjectViewListAdapter.OnItemClickListener
+{
 
     @InjectPresenter
     lateinit var presenter: MainActivityPresenter
@@ -73,7 +78,9 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
     }
 
     private lateinit var binding: ActivityMainBinding
-    private val recyclerViewAdapter = ProjectViewListAdapter()
+    private val recyclerViewAdapter = ProjectViewListAdapter().apply {
+        clickListener = this@MainActivity
+    }
 
     private val projectViewModel: ProjectViewModel by viewModels {
         ProjectViewModelFactory(applicationContext)
@@ -207,7 +214,19 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
         }
     }
 
+    override fun onItemClicked(project: Project) {
+        Timber.d("Clicked on ${project.id}")
+        // TODO: check video source uri
+        val intent = Intent(this, VideoEditActivity::class.java).apply {
+            putExtra(VIDEO_SOURCE_URI_INTENT, Uri.parse(project.sourceFileUri))
+            putExtra(VIDEO_LOAD_MODE, VideoLoadMode.LOAD_RECENT)
+        }
+        startActivity(intent)
+
+    }
+
     companion object {
         private const val VIDEO_FILE_SELECT_TYPE = "video/*"
     }
+
 }

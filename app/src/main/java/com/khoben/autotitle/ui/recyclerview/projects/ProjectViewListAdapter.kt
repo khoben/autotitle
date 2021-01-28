@@ -14,6 +14,12 @@ class ProjectViewListAdapter :
     ListAdapter<Project,
             ProjectViewListAdapter.ProjectViewHolder>(ProjectViewDiffCallback()) {
 
+    var clickListener: OnItemClickListener? = null
+
+    interface OnItemClickListener {
+        fun onItemClicked(project: Project)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
         return ProjectViewHolder.from(parent)
     }
@@ -21,16 +27,19 @@ class ProjectViewListAdapter :
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: ProjectViewHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(item)
+        holder.bind(item, clickListener)
     }
 
     class ProjectViewHolder(private val binding: RecyclerViewProjectItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(project: Project) {
+        fun bind(project: Project, clickListener: OnItemClickListener? = null) {
             initContextMenu()
             binding.project = project
             binding.executePendingBindings()
+            itemView.setOnClickListener {
+                clickListener?.onItemClicked(binding.project!!)
+            }
         }
 
         private fun initContextMenu() {

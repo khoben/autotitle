@@ -78,14 +78,16 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
             getVideoDetails()!!
         )
 
-        viewState.createNewProject(
-            Project(
-                title = sourceUri?.getFileName(appContext)!!,
-                videoDuration = mediaController.videoDuration,
-                videoFileSizeBytes = FileUtils.getSizeBytes(appContext, sourceUri!!),
-                sourceFileUri = FileUtils.getRealPathFromURI(appContext, sourceUri!!)!!
+        if (videoLoadingMode != VideoLoadMode.LOAD_RECENT) {
+            viewState.createNewProject(
+                Project(
+                    title = sourceUri?.getFileName(appContext)!!,
+                    videoDuration = mediaController.videoDuration,
+                    videoFileSizeBytes = FileUtils.getSizeBytes(appContext, sourceUri!!),
+                    sourceFileUri = FileUtils.getRealPathFromURI(appContext, sourceUri!!)!!
+                )
             )
-        )
+        }
 
         processVideo()
     }
@@ -546,5 +548,9 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
                     FileUtils.writeBitmap(thumbPath, it, Bitmap.CompressFormat.WEBP, 75)
                 }
         }
+    }
+
+    fun releaseResources() {
+        videoLoader.cancel()
     }
 }
