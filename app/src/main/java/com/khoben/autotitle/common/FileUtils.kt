@@ -360,7 +360,9 @@ object FileUtils {
      * @return Filepath
      */
     fun getInternalRandomFilepath(): String {
-        return "${App.APP_MAIN_FOLDER}/tmp/${System.currentTimeMillis()}"
+        val tempDirPath = "${App.APP_MAIN_FOLDER}/tmp"
+        createDirIfNotExists(tempDirPath)
+        return "$tempDirPath/${System.currentTimeMillis()}"
     }
 
     /**
