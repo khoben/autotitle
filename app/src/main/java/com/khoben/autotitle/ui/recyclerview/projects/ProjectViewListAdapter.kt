@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.khoben.autotitle.database.entity.Project
 import com.khoben.autotitle.databinding.RecyclerViewProjectItemBinding
-import com.khoben.autotitle.model.project.ThumbProject
 import com.khoben.autotitle.ui.popup.projectitem.ProjectItemOptionsDialog
 
 class ProjectViewListAdapter :

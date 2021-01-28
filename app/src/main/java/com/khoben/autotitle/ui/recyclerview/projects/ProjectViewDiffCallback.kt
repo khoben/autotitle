@@ -2,7 +2,6 @@ package com.khoben.autotitle.ui.recyclerview.projects
 
 import androidx.recyclerview.widget.DiffUtil
 import com.khoben.autotitle.database.entity.Project
-import com.khoben.autotitle.model.project.ThumbProject
 
 class ProjectViewDiffCallback : DiffUtil.ItemCallback<Project>() {
     override fun areItemsTheSame(oldItem: Project, newItem: Project): Boolean {

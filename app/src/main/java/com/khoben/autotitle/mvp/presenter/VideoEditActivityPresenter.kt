@@ -16,8 +16,6 @@ import com.khoben.autotitle.model.MLCaption
 import com.khoben.autotitle.model.PlaybackEvent
 import com.khoben.autotitle.model.PlaybackState
 import com.khoben.autotitle.model.VideoLoadMode
-import com.khoben.autotitle.model.project.RecentProjectsLoader
-import com.khoben.autotitle.model.project.ThumbProject
 import com.khoben.autotitle.mvp.view.VideoEditActivityView
 import com.khoben.autotitle.service.audioextractor.AudioExtractorNoAudioException
 import com.khoben.autotitle.service.frameretriever.AndroidNativeMetadataProvider
@@ -34,7 +32,6 @@ import moxy.InjectViewState
 import moxy.MvpPresenter
 import timber.log.Timber
 import java.lang.ref.WeakReference
-import java.util.*
 import javax.inject.Inject
 
 @InjectViewState

@@ -5,15 +5,10 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import com.khoben.autotitle.App
 import com.khoben.autotitle.App.Companion.LIMIT_DURATION_MS
-import com.khoben.autotitle.common.FileUtils
 import com.khoben.autotitle.common.OpeningVideoFileState
-import com.khoben.autotitle.database.AppDatabase
-import com.khoben.autotitle.model.project.RecentProjectsLoader
 import com.khoben.autotitle.mvp.view.MainActivityView
-import kotlinx.serialization.ExperimentalSerializationApi
 import moxy.InjectViewState
 import moxy.MvpPresenter
-import timber.log.Timber
 import javax.inject.Inject
 
 

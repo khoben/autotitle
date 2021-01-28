@@ -10,7 +10,6 @@ import com.khoben.autotitle.R
 import com.khoben.autotitle.common.FileUtils
 import com.khoben.autotitle.database.entity.Project
 import com.khoben.autotitle.extension.formattedTime
-import com.khoben.autotitle.model.project.ThumbProject
 import com.khoben.autotitle.ui.overlay.OverlayDataMapper
 import timber.log.Timber
 
