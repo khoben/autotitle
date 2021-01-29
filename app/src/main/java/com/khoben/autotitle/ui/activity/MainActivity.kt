@@ -36,6 +36,7 @@ import kotlinx.coroutines.launch
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
 import timber.log.Timber
+import java.io.File
 
 
 class MainActivity : MvpAppCompatActivity(), MainActivityView,
@@ -230,7 +231,7 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
     }
 
     override fun onItemClicked(project: Project) {
-        val uri = Uri.parse(project.sourceFileUri)
+        val uri = Uri.fromFile(File(project.sourceFileUri))
         when(presenter.verifyMedia(uri)) {
             OpeningVideoFileState.FAILED -> {
                 // TODO: Maybe make sealed class for dialogs?
