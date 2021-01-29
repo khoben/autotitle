@@ -13,6 +13,7 @@ import com.khoben.autotitle.R
 import com.khoben.autotitle.common.FileUtils
 import com.khoben.autotitle.common.FileUtils.getFileName
 import com.khoben.autotitle.common.NotificationUtils
+import com.khoben.autotitle.common.PreferencesUtils
 import com.khoben.autotitle.mvp.view.ResultActivityView
 import com.khoben.autotitle.service.mediaplayer.MediaPlayer
 import kotlinx.coroutines.Dispatchers
@@ -75,23 +76,25 @@ class ResultViewActivityPresenter : MvpPresenter<ResultActivityView>() {
                 if (uri != null) {
                     alreadySaved = true
                     savedPath = uri.getFileName(appContext)
-                    NotificationUtils.show(
-                        appContext,
-                        text = savedPath!!,
-                        title = appContext.getString(R.string.video_saved_title),
-                        largeIcon = ThumbnailUtils.createVideoThumbnail(
-                            videoPath!!,
-                            MediaStore.Images.Thumbnails.MICRO_KIND
-                        ),
-                        notificationIntent = PendingIntent.getActivity(
+                    if (PreferencesUtils.showNotificationOnSave() == true) {
+                        NotificationUtils.show(
                             appContext,
-                            0,
-                            Intent(Intent.ACTION_VIEW).apply {
-                                data = uri
-                            },
-                            PendingIntent.FLAG_CANCEL_CURRENT
+                            text = savedPath!!,
+                            title = appContext.getString(R.string.video_saved_title),
+                            largeIcon = ThumbnailUtils.createVideoThumbnail(
+                                videoPath!!,
+                                MediaStore.Images.Thumbnails.MICRO_KIND
+                            ),
+                            notificationIntent = PendingIntent.getActivity(
+                                appContext,
+                                0,
+                                Intent(Intent.ACTION_VIEW).apply {
+                                    data = uri
+                                },
+                                PendingIntent.FLAG_CANCEL_CURRENT
+                            )
                         )
-                    )
+                    }
                 }
                 viewState.onSavingEnd()
                 viewState.showVideoSavedToast(savedPath)

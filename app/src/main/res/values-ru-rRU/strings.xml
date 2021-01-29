@@ -82,4 +82,8 @@
     <string name="edit_title_cancel">Отмена</string>
     <string name="edit_title_project_name">Название проекта</string>
     <string name="delete_project_dialog_text">Удалить проект %1$s?</string>
+    <string name="processing_the_video">Обработка видео…</string>
+    <string name="theme_title_system">Системная</string>
+    <string name="theme_title_dark">Темная</string>
+    <string name="theme_title_light">Светлая</string>
 </resources>

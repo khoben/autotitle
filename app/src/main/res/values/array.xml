@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="loading_text">
-        <item>Processing video</item>
-        <item>Extracting captions</item>
+    <string-array name="themes">
+        <item>@string/theme_title_system</item>
+        <item>@string/theme_title_dark</item>
+        <item>@string/theme_title_light</item>
+    </string-array>
+    <string-array name="themes_code">
+        <item>system</item>
+        <item>dark</item>
+        <item>light</item>
     </string-array>
 </resources>

@@ -21,6 +21,7 @@ import com.iammert.rangeview.library.RangeView
 import com.khoben.autotitle.App
 import com.khoben.autotitle.App.Companion.FRAMES_PER_SCREEN
 import com.khoben.autotitle.R
+import com.khoben.autotitle.common.PreferencesUtils
 import com.khoben.autotitle.extension.dp
 import com.khoben.autotitle.ui.overlay.OverlayObject
 import com.khoben.autotitle.ui.overlay.OverlayText
@@ -511,7 +512,7 @@ class VideoSeekBarFramesView(
 
         velocityTracker?.recycle()
         velocityTracker = null
-        if (abs(xVelocity) > VELOCITY_MIN && App.SEEKBAR_FLING_SMOOTH_ANIMATION) {
+        if (abs(xVelocity) > VELOCITY_MIN && PreferencesUtils.seekBarSmoothAnimation() == true) {
             startXAnimation()
         } else {
             seekTo(xCoordinateToTimestamp(movableFrameLineContainer.x))

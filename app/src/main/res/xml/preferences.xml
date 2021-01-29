@@ -4,12 +4,10 @@
 
     <PreferenceCategory android:title="@string/preferences_general_category">
         <DropDownPreference
-            app:key="app_language"
-            app:title="@string/language_preference_title"
-            app:useSimpleSummaryProvider="true" />
-        <DropDownPreference
             app:key="app_theme"
             app:title="@string/theme_preference_title"
+            app:entries="@array/themes"
+            app:entryValues="@array/themes_code"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreferenceCompat
             app:key="copy_source_video"
