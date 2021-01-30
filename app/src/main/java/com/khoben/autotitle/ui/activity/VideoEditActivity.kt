@@ -128,8 +128,8 @@ class VideoEditActivity : MvpAppCompatActivity(),
             CustomAlertDialog(
                 context = this,
                 layout = R.layout.alert_dialog_single_ok_btn,
-                messageTextView = R.id.mainText,
-                okButton = R.id.okButton
+                messageTextView = R.id.main_text,
+                okButton = R.id.ok_btn
             )
         overlayViewListAdapter = OverlayViewListAdapter()
 

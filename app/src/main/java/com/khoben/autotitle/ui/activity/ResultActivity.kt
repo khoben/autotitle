@@ -2,18 +2,22 @@ package com.khoben.autotitle.ui.activity
 
 import android.Manifest
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.khoben.autotitle.R
+import com.khoben.autotitle.common.PermissionManager
 import com.khoben.autotitle.databinding.ActivityPostVideoBinding
-import com.khoben.autotitle.extension.activityresult.permission.permissionsDSL
 import com.khoben.autotitle.mvp.presenter.ResultViewActivityPresenter
 import com.khoben.autotitle.mvp.view.ResultActivityView
 import com.khoben.autotitle.ui.activity.VideoEditActivity.Companion.VIDEO_OUTPUT_URI_INTENT
+import com.khoben.autotitle.ui.popup.CustomAlertDialog
 import de.mustafagercek.materialloadingbutton.LoadingButton
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
+import java.lang.ref.WeakReference
 
 class ResultActivity : MvpAppCompatActivity(), ResultActivityView {
 
@@ -24,42 +28,52 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView {
 
     private lateinit var saveBtn: LoadingButton
 
-    private val saveResult = permissionsDSL {
-        allGranted = {
-            presenter.save()
-        }
-        denied = {
-            // denied
-        }
-        explained = {
-            // explained
-        }
-    }
+    private val permissionManager = PermissionManager(WeakReference(this))
+    private val writeStoragePermissionToken = "storage"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityPostVideoBinding.inflate(layoutInflater)
         setContentView(binding.root)
         videoPath = intent.getStringExtra(VIDEO_OUTPUT_URI_INTENT)
-        binding.backBtn.setOnClickListener {
-            finish()
-        }
-        binding.homeBtn.setOnClickListener {
-            toMainActivity()
-        }
-        binding.shareBtn.setOnClickListener {
-            shareVideo()
-        }
-        saveBtn = binding.saveGalleryBtn
-        saveBtn.setButtonOnClickListener {
-            saveVideo()
-        }
+        binding.backBtn.setOnClickListener { finish() }
+        binding.homeBtn.setOnClickListener { toMainActivity() }
+        binding.shareBtn.setOnClickListener { shareVideo() }
+        saveBtn = binding.saveGalleryBtn.apply { setButtonOnClickListener { saveVideo() } }
         binding.epVideoView.player = presenter.initNewPlayer()
         presenter.init(videoPath!!)
+
+        permissionManager.register(writeStoragePermissionToken, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), {
+            CustomAlertDialog(
+                context = this,
+                layout = R.layout.alert_dialog_single_ok_btn,
+                messageTextView = R.id.main_text,
+                okButton = R.id.ok_btn,
+                okButtonText = getString(R.string.edit_title_ok),
+            ).show(getString(R.string.permission_message_storage_alert))
+        }, {
+            CustomAlertDialog(
+                context = this,
+                layout = R.layout.alert_dialog_ok_cancel_btn,
+                messageTextView = R.id.main_text,
+                okButton = R.id.ok_btn,
+                okButtonText = getString(R.string.settings_caption),
+                cancelButton = R.id.cancel_btn,
+                cancelButtonText = getString(R.string.cancel_caption)
+            ).show(
+                getString(R.string.permission_message_storage_alert) +
+                        "\n" +
+                        getString(R.string.permission_message_explained),
+                {
+                    startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts("package", packageName, null)
+                    })
+                })
+        })
     }
 
     private fun saveVideo() {
-        saveResult.launch(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+        permissionManager.runWithPermission(writeStoragePermissionToken) { presenter.save() }
     }
 
     private fun shareVideo() {

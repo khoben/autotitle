@@ -86,4 +86,8 @@
     <string name="theme_title_system">System</string>
     <string name="theme_title_dark">Dark</string>
     <string name="theme_title_light">Light</string>
+    <string name="settings_caption">Settings</string>
+    <string name="permission_message_camera_alert">Application needs camera access to taking video.</string>
+    <string name="permission_message_explained">Try to grant it in application settings.</string>
+    <string name="permission_message_storage_alert">Application needs storage permission to loading and saving project files.</string>
 </resources>

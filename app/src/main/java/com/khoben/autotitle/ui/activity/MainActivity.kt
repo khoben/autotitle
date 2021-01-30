@@ -5,6 +5,7 @@ import android.animation.ValueAnimator
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
@@ -18,9 +19,9 @@ import com.khoben.autotitle.App.Companion.VIDEO_LOAD_MODE
 import com.khoben.autotitle.App.Companion.VIDEO_SOURCE_URI_INTENT
 import com.khoben.autotitle.R
 import com.khoben.autotitle.common.OpeningVideoFileState
+import com.khoben.autotitle.common.PermissionManager
 import com.khoben.autotitle.database.entity.Project
 import com.khoben.autotitle.databinding.ActivityMainBinding
-import com.khoben.autotitle.extension.activityresult.permission.permissionsDSL
 import com.khoben.autotitle.extension.activityresult.result.getContentDSL
 import com.khoben.autotitle.extension.activityresult.result.takeVideoDSL
 import com.khoben.autotitle.model.VideoLoadMode
@@ -37,40 +38,16 @@ import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
 import timber.log.Timber
 import java.io.File
+import java.lang.ref.WeakReference
 
 
 class MainActivity : MvpAppCompatActivity(), MainActivityView,
     ProjectItemOptionsDialog.ItemClickListener,
     ProjectTitleEditDialog.ItemTitleEditListener,
-    ProjectViewListAdapter.OnItemClickListener
-{
+    ProjectViewListAdapter.OnItemClickListener {
 
     @InjectPresenter
     lateinit var presenter: MainActivityPresenter
-
-    private val getContentWithPermission = permissionsDSL {
-        allGranted = {
-            getContentActivityResult.launch(VIDEO_FILE_SELECT_TYPE)
-        }
-        denied = {
-            // denied
-        }
-        explained = {
-            // explained
-        }
-    }
-
-    private val loadContentWithPermission = permissionsDSL {
-        allGranted = {
-            loadProject()
-        }
-        denied = {
-            // denied
-        }
-        explained = {
-            // explained
-        }
-    }
 
     private val getContentActivityResult = getContentDSL {
         success = { uri ->
@@ -90,19 +67,6 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
         }
     }
 
-    private val takeVideoWithPermission = permissionsDSL {
-        allGranted = {
-            // unused input but required
-            takeVideoActivityResult.launch(null)
-        }
-        denied = {
-            // denied
-        }
-        explained = {
-            // explained
-        }
-    }
-
     private lateinit var binding: ActivityMainBinding
     private val recyclerViewAdapter = ProjectViewListAdapter().apply {
         clickListener = this@MainActivity
@@ -111,6 +75,10 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
     private val projectViewModel: ProjectViewModel by viewModels {
         ProjectViewModelFactory(applicationContext)
     }
+
+    private val permissionManager = PermissionManager(WeakReference(this))
+    private val readStoragePermissionToken = "storage"
+    private val takeVideoPermissionToken = "take_video"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -148,6 +116,62 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
 
         guidelineInitialPercent =
             (binding.guideline1.layoutParams as ConstraintLayout.LayoutParams).guidePercent
+
+        permissionManager.register(takeVideoPermissionToken, arrayOf(Manifest.permission.CAMERA), {
+            CustomAlertDialog(
+                context = this@MainActivity,
+                layout = R.layout.alert_dialog_single_ok_btn,
+                messageTextView = R.id.main_text,
+                okButton = R.id.ok_btn,
+                okButtonText = getString(R.string.edit_title_ok),
+            ).show(getString(R.string.permission_message_camera_alert))
+        }, {
+            CustomAlertDialog(
+                context = this@MainActivity,
+                layout = R.layout.alert_dialog_ok_cancel_btn,
+                messageTextView = R.id.main_text,
+                okButton = R.id.ok_btn,
+                okButtonText = getString(R.string.settings_caption),
+                cancelButton = R.id.cancel_btn,
+                cancelButtonText = getString(R.string.cancel_caption)
+            ).show(
+                getString(R.string.permission_message_camera_alert) +
+                        "\n" +
+                        getString(R.string.permission_message_explained),
+                {
+                    startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts("package", packageName, null)
+                    })
+                })
+        })
+
+        permissionManager.register(readStoragePermissionToken, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), {
+            CustomAlertDialog(
+                context = this@MainActivity,
+                layout = R.layout.alert_dialog_single_ok_btn,
+                messageTextView = R.id.main_text,
+                okButton = R.id.ok_btn,
+                okButtonText = getString(R.string.edit_title_ok),
+            ).show(getString(R.string.permission_message_storage_alert))
+        }, {
+            CustomAlertDialog(
+                context = this@MainActivity,
+                layout = R.layout.alert_dialog_ok_cancel_btn,
+                messageTextView = R.id.main_text,
+                okButton = R.id.ok_btn,
+                okButtonText = getString(R.string.settings_caption),
+                cancelButton = R.id.cancel_btn,
+                cancelButtonText = getString(R.string.cancel_caption)
+            ).show(
+                getString(R.string.permission_message_storage_alert) +
+                        "\n" +
+                        getString(R.string.permission_message_explained),
+                {
+                    startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts("package", packageName, null)
+                    })
+                })
+        })
     }
 
     private var guidelineInitialPercent = -1F
@@ -192,11 +216,15 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
     }
 
     private fun takeVideoClick(view: View) {
-        takeVideoWithPermission.launch(arrayOf(Manifest.permission.CAMERA))
+        permissionManager.runWithPermission(takeVideoPermissionToken) {
+            takeVideoActivityResult.launch(null)
+        }
     }
 
     private fun getContentClick(view: View) {
-        getContentWithPermission.launch(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE))
+        permissionManager.runWithPermission(readStoragePermissionToken) {
+            getContentActivityResult.launch(VIDEO_FILE_SELECT_TYPE)
+        }
     }
 
     override fun onVideoSelected(uri: Uri) {
@@ -257,13 +285,13 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
     private var clickedProject: Project? = null
     override fun onItemClicked(project: Project) {
         clickedProject = project
-        loadContentWithPermission.launch(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE))
+        permissionManager.runWithPermission(readStoragePermissionToken) { loadProject() }
     }
 
     private fun loadProject() {
         val project = clickedProject!!
         val uri = Uri.fromFile(File(project.sourceFileUri))
-        when(presenter.verifyMedia(uri)) {
+        when (presenter.verifyMedia(uri)) {
             OpeningVideoFileState.FAILED -> {
                 // TODO: Maybe make sealed class for dialogs?
                 CustomAlertDialog(
@@ -292,8 +320,8 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
                 CustomAlertDialog(
                     context = this,
                     layout = R.layout.alert_dialog_single_ok_btn,
-                    messageTextView = R.id.mainText,
-                    okButton = R.id.okButton
+                    messageTextView = R.id.main_text,
+                    okButton = R.id.ok_btn
                 ).show(getString(R.string.check_limit))
             }
             OpeningVideoFileState.SUCCESS -> {

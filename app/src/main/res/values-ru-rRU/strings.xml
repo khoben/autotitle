@@ -86,4 +86,8 @@
     <string name="theme_title_system">Системная</string>
     <string name="theme_title_dark">Темная</string>
     <string name="theme_title_light">Светлая</string>
+    <string name="settings_caption">Настройки</string>
+    <string name="permission_message_camera_alert">Приложению требуется доступ к камере для съемки видео.</string>
+    <string name="permission_message_explained">Попробуйте  дать доступ  в настройках приложения.</string>
+    <string name="permission_message_storage_alert">Приложению требуется разрешение на хранение для загрузки и сохранения файлов проекта.</string>
 </resources>
