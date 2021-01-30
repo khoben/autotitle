@@ -48,6 +48,30 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
     @InjectPresenter
     lateinit var presenter: MainActivityPresenter
 
+    private val getContentWithPermission = permissionsDSL {
+        allGranted = {
+            getContentActivityResult.launch(VIDEO_FILE_SELECT_TYPE)
+        }
+        denied = {
+            // denied
+        }
+        explained = {
+            // explained
+        }
+    }
+
+    private val loadContentWithPermission = permissionsDSL {
+        allGranted = {
+            loadProject()
+        }
+        denied = {
+            // denied
+        }
+        explained = {
+            // explained
+        }
+    }
+
     private val getContentActivityResult = getContentDSL {
         success = { uri ->
             onVideoSelected(uri as Uri)
@@ -172,7 +196,7 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
     }
 
     private fun getContentClick(view: View) {
-        getContentActivityResult.launch(VIDEO_FILE_SELECT_TYPE)
+        getContentWithPermission.launch(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE))
     }
 
     override fun onVideoSelected(uri: Uri) {
@@ -230,7 +254,14 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
         }
     }
 
+    private var clickedProject: Project? = null
     override fun onItemClicked(project: Project) {
+        clickedProject = project
+        loadContentWithPermission.launch(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE))
+    }
+
+    private fun loadProject() {
+        val project = clickedProject!!
         val uri = Uri.fromFile(File(project.sourceFileUri))
         when(presenter.verifyMedia(uri)) {
             OpeningVideoFileState.FAILED -> {
