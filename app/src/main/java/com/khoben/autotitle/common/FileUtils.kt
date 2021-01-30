@@ -169,7 +169,7 @@ object FileUtils {
         val file = File(filepath)
         if (!file.exists()) {
             try {
-                when (file.mkdir()) {
+                when (file.mkdirs()) {
                     true -> Timber.d("Directory $filepath was created")
                     else -> Timber.e("Directory $filepath dir wasn't created")
                 }
