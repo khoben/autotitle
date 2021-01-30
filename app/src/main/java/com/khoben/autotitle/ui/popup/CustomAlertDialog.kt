@@ -14,6 +14,7 @@ class CustomAlertDialog(
     private val context: Context,
     @LayoutRes private val layout: Int,
     @IdRes private val messageTextView: Int,
+    private var content: String? = null,
     @IdRes private var okButton: Int? = null,
     @IdRes private var cancelButton: Int? = null,
     private var okButtonText: String? = null,
@@ -29,7 +30,7 @@ class CustomAlertDialog(
         onCancelClicked: (() -> Unit)? = null
     ) {
         view = inflater.inflate(layout, null)
-        view!!.findViewById<TextView>(messageTextView).text = message
+        view!!.findViewById<TextView>(messageTextView).text = content ?: message
         okButton?.let {
             view!!.findViewById<TextView>(it).apply {
                 text = okButtonText ?: text
