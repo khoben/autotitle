@@ -2,8 +2,6 @@ package com.khoben.autotitle.ui.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.Preference
-import androidx.preference.PreferenceScreen
 import com.khoben.autotitle.R
 import com.khoben.autotitle.databinding.ActivitySettingsBinding
 

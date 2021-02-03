@@ -25,7 +25,7 @@ interface VideoEditActivityView : MvpView {
     fun onErrorVideoProcessing(e: Throwable)
 
     @Skip
-    fun showPopupWindow(content: String)
+    fun showInfoMessage(content: String = "", title: String = "")
 
     @OneExecution
     fun setControlsToTime(time: Long)

@@ -2,8 +2,6 @@ package com.khoben.autotitle
 
 import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
-import androidx.preference.PreferenceManager
 import com.huawei.hms.mlsdk.common.MLApplication
 import com.khoben.autotitle.common.DisplayUtils
 import com.khoben.autotitle.common.NotificationUtils

@@ -19,7 +19,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.*
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
 import com.google.android.material.snackbar.Snackbar
 import com.khoben.autotitle.App
@@ -41,10 +40,12 @@ import com.khoben.autotitle.ui.overlay.OverlayText
 import com.khoben.autotitle.ui.player.VideoControlsView
 import com.khoben.autotitle.ui.player.VideoSurfaceView
 import com.khoben.autotitle.ui.player.seekbar.FramesHolder
+import com.khoben.autotitle.ui.popup.AlertDialogInfoMessage
 import com.khoben.autotitle.ui.popup.CustomAlertDialog
 import com.khoben.autotitle.ui.popup.VideoProcessingProgressDialog
 import com.khoben.autotitle.ui.popup.textoverlayeditor.TextEditorDialogFragment
-import com.khoben.autotitle.ui.recyclerview.*
+import com.khoben.autotitle.ui.recyclerview.EmptyRecyclerView
+import com.khoben.autotitle.ui.recyclerview.RecyclerViewClickListener
 import com.khoben.autotitle.ui.recyclerview.overlays.OverlayViewListAdapter
 import com.khoben.autotitle.ui.recyclerview.overlays.RecyclerViewItemEventListener
 import com.khoben.autotitle.ui.recyclerview.overlays.SwipeToDeleteCallback
@@ -65,7 +66,8 @@ import java.util.*
 class VideoEditActivity : MvpAppCompatActivity(),
     VideoEditActivityView,
     RecyclerViewItemEventListener,
-    VideoProcessingProgressDialog.ProgressDialogListener {
+    VideoProcessingProgressDialog.ProgressDialogListener,
+    CustomAlertDialog.DialogClickListener {
 
     @InjectPresenter
     lateinit var presenter: VideoEditActivityPresenter
@@ -76,8 +78,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
     private lateinit var videoControlsView: VideoControlsView
     private lateinit var recyclerView: EmptyRecyclerView
 
-    private lateinit var videoProcessingProgressDialog: VideoProcessingProgressDialog
-    private lateinit var alertDialog: CustomAlertDialog
+    private var videoProcessingProgressDialog: VideoProcessingProgressDialog? = null
     private lateinit var saveBtn: Button
     private lateinit var muteBtn: MaterialButton
     private lateinit var addItemBtn: Button
@@ -96,6 +97,9 @@ class VideoEditActivity : MvpAppCompatActivity(),
             Context.MODE_PRIVATE
         )
     }
+
+    private val VIDEO_SAVING_PROGRESS_TAG = "video_processing_dialog"
+    private val backPressedDialogToken = "back_pressed_dialog"
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -119,19 +123,13 @@ class VideoEditActivity : MvpAppCompatActivity(),
         addItemBtn = binding.videoSeekbarLayout.addItem
         recyclerView = binding.recyclerview
 
-        videoProcessingProgressDialog =
-            VideoProcessingProgressDialog.new(getString(R.string.save_captions))
-                .apply {
-                    listener = this@VideoEditActivity
-                }
-        alertDialog =
-            CustomAlertDialog(
-                context = this,
-                layout = R.layout.alert_dialog_single_ok_btn,
-                messageTextView = R.id.main_text,
-                okButton = R.id.ok_btn
-            )
         overlayViewListAdapter = OverlayViewListAdapter()
+
+        if (savedInstanceState != null) {
+            supportFragmentManager.findFragmentByTag(VIDEO_SAVING_PROGRESS_TAG)?.let { fragment ->
+                videoProcessingProgressDialog = fragment as VideoProcessingProgressDialog
+            }
+        }
 
         val sourceVideoUri = intent.getParcelableExtra<Uri>(VIDEO_SOURCE_URI_INTENT)
         val videoLoadingMode = intent.getSerializableExtra(VIDEO_LOAD_MODE) as VideoLoadMode
@@ -186,6 +184,8 @@ class VideoEditActivity : MvpAppCompatActivity(),
                     }
 
                     override fun onLongClick(view: View?, position: Int) {
+                        Timber.d("OnLongClicked")
+
                     }
 
                     override fun onDoubleClick(view: View?, position: Int) {
@@ -276,24 +276,28 @@ class VideoEditActivity : MvpAppCompatActivity(),
         // if loading screen is showing then ignore back press event
         if (lottieAnimationLoadingView.isVisible) return
 
-        val func: () -> Unit = {
+        CustomAlertDialog.Builder()
+            .setPositive(getString(R.string.yes_caption))
+            .setNegative(getString(R.string.cancel_caption))
+            .build(
+                getString(R.string.confirm_exit),
+                getString(R.string.exit_question),
+                backPressedDialogToken
+            )
+            .show(supportFragmentManager, CustomAlertDialog.TAG)
+    }
+
+    override fun dialogOnNegative(token: String) {}
+
+    override fun dialogOnPositive(token: String) {
+        if (token == backPressedDialogToken) {
             presenter.releaseResources()
             onSuperBackPressed()
         }
-        val text: String = getString(R.string.exit_question)
-
-        MaterialAlertDialogBuilder(this)
-            .setMessage(text)
-            .setCancelable(false)
-            .setPositiveButton(getString(R.string.yes_caption)) { _, _ ->
-                func()
-            }
-            .setNegativeButton(getString(R.string.no_caption)) { dialog, _ ->
-                dialog.cancel()
-            }
-            .create()
-            .show()
     }
+
+    override fun dialogOnNeutral(token: String) {}
+
 
     private fun onSuperBackPressed() {
         if (isTaskRoot && supportFragmentManager.backStackEntryCount == 0) {
@@ -312,8 +316,9 @@ class VideoEditActivity : MvpAppCompatActivity(),
         setLoadingViewVisibility(false)
     }
 
-    override fun showPopupWindow(content: String) {
-        alertDialog.show(content)
+    override fun showInfoMessage(content: String, title: String) {
+        AlertDialogInfoMessage.new(title, content)
+            .show(supportFragmentManager, AlertDialogInfoMessage.TAG)
     }
 
     override fun onVideoProcessed() {
@@ -324,7 +329,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
                 val handler = Handler(Looper.getMainLooper())
                 val runnable = object : Runnable {
                     override fun run() {
-                        if (alertDialog.isShowing()) {
+                        if (supportFragmentManager.findFragmentByTag(AlertDialogInfoMessage.TAG) != null) {
                             handler.postDelayed(this, App.GUIDE_SHOW_DELAY)
                         } else {
                             handler.removeCallbacks(this)
@@ -514,13 +519,17 @@ class VideoEditActivity : MvpAppCompatActivity(),
 
     override fun onVideoSavingStarted() {
         runOnUiThread {
-            videoProcessingProgressDialog.show(supportFragmentManager, "video_processing_dialog")
+            videoProcessingProgressDialog =
+                VideoProcessingProgressDialog.new(getString(R.string.save_captions))
+                    .apply {
+                        show(supportFragmentManager, VIDEO_SAVING_PROGRESS_TAG)
+                    }
         }
     }
 
     override fun onVideoSavingCancelled() {
         runOnUiThread {
-            videoProcessingProgressDialog.dismiss()
+            videoProcessingProgressDialog?.dismiss()
             Toast.makeText(
                 this,
                 getString(R.string.video_saving_cancelled_caption),
@@ -532,7 +541,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
     override fun onVideoSavingError(msg: String) {
         Timber.e(msg)
         runOnUiThread {
-            videoProcessingProgressDialog.dismiss()
+            videoProcessingProgressDialog?.dismiss()
             Toast.makeText(
                 this,
                 getString(R.string.error_while_saving),
@@ -544,7 +553,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
     override fun onVideoSavingProgress(progress: Double) {
         val percent = (progress * 100).toInt()
         runOnUiThread {
-            videoProcessingProgressDialog.updatePercentage(
+            videoProcessingProgressDialog?.updatePercentage(
                 getString(
                     R.string.percent_text,
                     percent.toString()
@@ -563,8 +572,8 @@ class VideoEditActivity : MvpAppCompatActivity(),
     override fun onVideoSavingComplete(filepath: String) {
         Timber.d("Saved video with path=$filepath")
         runOnUiThread {
-            videoProcessingProgressDialog.updatePercentage(getString(R.string.percent_text, "0"))
-            videoProcessingProgressDialog.dismiss()
+            videoProcessingProgressDialog?.updatePercentage(getString(R.string.percent_text, "0"))
+            videoProcessingProgressDialog?.dismiss()
             Toast.makeText(
                 this,
                 getString(R.string.saved_caption),
@@ -593,11 +602,13 @@ class VideoEditActivity : MvpAppCompatActivity(),
         when (state) {
             true -> {
                 muteBtn.setIconResource(R.drawable.volume_off_icon_24dp)
-                if (clicked) Toast.makeText(this, "Muted", Toast.LENGTH_SHORT).show()
+                if (clicked) Toast.makeText(this, getString(R.string.sound_off), Toast.LENGTH_SHORT)
+                    .show()
             }
             else -> {
                 muteBtn.setIconResource(R.drawable.volume_up_icon_24dp)
-                if (clicked) Toast.makeText(this, "Unmuted", Toast.LENGTH_SHORT).show()
+                if (clicked) Toast.makeText(this, getString(R.string.sound_on), Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
@@ -631,14 +642,6 @@ class VideoEditActivity : MvpAppCompatActivity(),
         }
     }
 
-    companion object {
-        const val VIDEO_OUTPUT_URI_INTENT = "VIDEO_OUTPUT_URI"
-        private const val USER_SETTINGS_PREF = "USER_SETTINGS_PREF"
-        private const val USER_SETTINGS_ITEM_GUIDE_SHOWN = "GUIDED_TOUR"
-        private const val USER_SETTINGS_ITEM_GUIDE_DESELECT_ITEM = "GUIDE_DESELECT"
-        private const val USER_SETTINGS_ITEM_MUTED = "PLAYER_MUTED"
-    }
-
     override fun cancelBtnClicked() {
         presenter.pauseSavingVideo()
     }
@@ -649,5 +652,13 @@ class VideoEditActivity : MvpAppCompatActivity(),
 
     override fun nopeCancelBtnClicked() {
         presenter.resumeSavingVideo()
+    }
+
+    companion object {
+        const val VIDEO_OUTPUT_URI_INTENT = "VIDEO_OUTPUT_URI"
+        private const val USER_SETTINGS_PREF = "USER_SETTINGS_PREF"
+        private const val USER_SETTINGS_ITEM_GUIDE_SHOWN = "GUIDED_TOUR"
+        private const val USER_SETTINGS_ITEM_GUIDE_DESELECT_ITEM = "GUIDE_DESELECT"
+        private const val USER_SETTINGS_ITEM_MUTED = "PLAYER_MUTED"
     }
 }

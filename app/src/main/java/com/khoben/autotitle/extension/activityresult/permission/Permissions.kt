@@ -19,7 +19,11 @@ inline fun ComponentActivity.requestMultiplePermissions(
         when {
             deniedList.isNotEmpty() -> {
                 val map = deniedList.groupBy { permission ->
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) DENIED else EXPLAINED
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(
+                            this,
+                            permission
+                        )
+                    ) DENIED else EXPLAINED
                 }
                 map[DENIED]?.let { denied.invoke(it) }
                 map[EXPLAINED]?.let { explained.invoke(it) }

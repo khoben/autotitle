@@ -64,7 +64,11 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         mediaController.addSubscription(this)
     }
 
-    fun initVideoSource(sourceVideoUri: Uri, videoLoadingMode: VideoLoadMode, existProject: Project?) {
+    fun initVideoSource(
+        sourceVideoUri: Uri,
+        videoLoadingMode: VideoLoadMode,
+        existProject: Project?
+    ) {
         if (sourceUri != null && videoLoadMode != null) return
 
         sourceUri = sourceVideoUri
@@ -127,7 +131,7 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
                     captionResult.caption == null ||
                             captionResult.caption.isEmpty() -> {
                         Timber.d("No captions")
-                        viewState.showPopupWindow(appContext.getString(R.string.error_no_captions))
+                        viewState.showInfoMessage( appContext.getString(R.string.error_no_captions), appContext.getString(R.string.attention))
                     }
                     //Success
                     else -> {
@@ -141,26 +145,24 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
                 when (captionError) {
                     is AudioExtractorNoAudioException -> {
                         Timber.e("No captions. Source video doesn't have audio track")
-                        viewState.showPopupWindow(
+                        viewState.showInfoMessage(
                             appContext.getString(R.string.error_no_captions)
                                     + ".\n"
-                                    + appContext.getString(R.string.error_no_captions_no_audio)
+                                    + appContext.getString(R.string.error_no_captions_no_audio), appContext.getString(R.string.attention)
                         )
                     }
                     else -> {
                         Timber.e("No captions. Network service error")
-                        viewState.showPopupWindow(
+                        viewState.showInfoMessage(
                             appContext.getString(R.string.error_no_captions)
                                     + "\n"
-                                    + appContext.getString(R.string.error_no_caption_net_error)
+                                    + appContext.getString(R.string.error_no_caption_net_error), appContext.getString(R.string.attention)
                         )
                     }
 
                 }
                 Timber.e("Error while loading video $captionError")
             })
-        } else if (videoLoadMode == VideoLoadMode.LOAD_RECENT) {
-            // TODO: LOAD RECENT
         }
     }
 

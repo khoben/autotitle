@@ -1,5 +1,6 @@
 package com.khoben.autotitle.ui.popup
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,10 +8,10 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import com.khoben.autotitle.R
 import com.khoben.autotitle.databinding.PopupWindowVideoProcessLayoutBinding
+import com.khoben.autotitle.ui.popup.projectitem.ProjectTitleEditDialog
 
 class VideoProcessingProgressDialog : DialogFragment() {
 
@@ -21,15 +22,12 @@ class VideoProcessingProgressDialog : DialogFragment() {
     private var confirmationLayout: LinearLayout? = null
     private var cancelButton: Button? = null
 
-    var listener: ProgressDialogListener? = null
+    private var listener: ProgressDialogListener? = null
 
     private var savedHintText = ""
 
-    interface ProgressDialogListener {
-        fun cancelBtnClicked()
-        fun confirmCancelBtnClicked()
-        fun nopeCancelBtnClicked()
-    }
+    private val EXTRA_BUTTON_STATE = "BUTTON_STATE"
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,6 +50,37 @@ class VideoProcessingProgressDialog : DialogFragment() {
         cancelButton = binding.cancelBtn.apply { setOnClickListener { onCancelBtnClicked() } }
         binding.confirm.setOnClickListener { onConfirmCancelBtnClicked() }
         binding.nope.setOnClickListener { onNopeCancelBtnClicked() }
+
+        savedInstanceState?.let {
+            if (!it.getBoolean(EXTRA_BUTTON_STATE)) {
+                onCancelBtnClicked()
+            }
+        }
+    }
+
+    interface ProgressDialogListener {
+        fun cancelBtnClicked()
+        fun confirmCancelBtnClicked()
+        fun nopeCancelBtnClicked()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is ProgressDialogListener) {
+            listener = context
+        } else {
+            throw RuntimeException("$context must implement ProgressDialogListener")
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        listener = null
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(EXTRA_BUTTON_STATE, confirmationLayout?.visibility == View.INVISIBLE)
     }
 
     private fun onNopeCancelBtnClicked() {

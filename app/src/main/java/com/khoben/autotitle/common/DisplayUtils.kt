@@ -4,9 +4,7 @@ import android.app.Activity
 import android.content.res.Resources
 import android.os.Build
 import android.util.TypedValue
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.fragment.app.FragmentActivity
 
 object DisplayUtils {
     /**

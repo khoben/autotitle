@@ -13,8 +13,28 @@
     </style>
 
     <style name="CustomAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:windowMinWidthMinor">0dp</item>
+<!--        <item name="android:layout_width">wrap_content</item>-->
+<!--        <item name="android:windowMinWidthMinor">0dp</item>-->
+        <item name="buttonBarPositiveButtonStyle">@style/Alert.Button.Positive</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Alert.Button.Neutral</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/Alert.Body</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/Alert.Title</item>
+    </style>
+
+    <style name="Alert.Button.Positive" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+    </style>
+
+    <style name="Alert.Button.Neutral" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">?android:attr/textColorTertiary</item>
+    </style>
+
+    <style name="Alert.Title" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Alert.Body" parent="MaterialAlertDialog.MaterialComponents.Body.Text">
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="ShapeAppearanceOverlay.MyApp.Button.Circle" parent="">

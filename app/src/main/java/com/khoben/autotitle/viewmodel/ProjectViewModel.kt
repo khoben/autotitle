@@ -11,6 +11,11 @@ import com.khoben.autotitle.database.entity.Project
 class ProjectViewModel(context: Context) : ViewModel() {
     private val projectDao = AppDatabase.getInstance(context).projectDao()
 
+    /**
+     * Current selected project within activity
+     */
+    var currentProject: Project? = null
+
     val projectList: LiveData<List<Project>> = projectDao.all
 
     suspend fun getById(id: Long) = projectDao.getById(id)

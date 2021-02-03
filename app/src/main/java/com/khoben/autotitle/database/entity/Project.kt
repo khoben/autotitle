@@ -17,4 +17,4 @@ data class Project(
     @ColumnInfo(name = "source_file_uri") val sourceFileUri: String,
     @ColumnInfo(name = "video_file_size_byte") val videoFileSizeBytes: Long,
     @ColumnInfo(name = "video_duration_ms") val videoDuration: Long
-): Parcelable
+) : Parcelable

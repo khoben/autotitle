@@ -34,13 +34,13 @@
     <string name="guide_doubletap">Кликните два раза по субтитру для его редактирования.</string>
     <string name="guide_recycler_delete">Свайпните влево для удаления субтитра.</string>
     <string name="error_no_internet">Отсутствует подключение к сервису распознавания.</string>
-    <string name="error_no_captions">Субтитры не распознаны</string>
-    <string name="error_no_caption_net_error">Проверьте ваше интернет соединение.</string>
+    <string name="error_no_captions">Субтитры не были обнаружены</string>
+    <string name="error_no_caption_net_error">из-за недоступности сервиса. Проверьте ваше интернет соединение.</string>
     <string name="empty_recycler_add_caption">Добавить</string>
     <string name="here_are_no_captions_you_can_add_it">Здесь пока пусто.</string>
     <string name="snack_bar_undo">Отмена</string>
     <string name="snack_bar_item_deleted">Объект удален.</string>
-    <string name="error_no_captions_no_audio">Исходное видео без аудиодорожки</string>
+    <string name="error_no_captions_no_audio">Исходное видео без аудиодорожки.</string>
     <string name="language_config_path">language_config_ru.json</string>
     <string name="language_selection_notselected">Не выбран</string>
     <string name="language_selection_title">Язык</string>
@@ -81,7 +81,7 @@
     <string name="edit_title_ok">Ок</string>
     <string name="edit_title_cancel">Отмена</string>
     <string name="edit_title_project_name">Название проекта</string>
-    <string name="delete_project_dialog_text">Удалить проект %1$s?</string>
+    <string name="delete_project_dialog_text">Удалить проект &lt;b>%1$s&lt;/b>?</string>
     <string name="processing_the_video">Обработка видео…</string>
     <string name="theme_title_system">Системная</string>
     <string name="theme_title_dark">Темная</string>
@@ -90,4 +90,10 @@
     <string name="permission_message_camera_alert">Приложению требуется доступ к камере для съемки видео.</string>
     <string name="permission_message_explained">Попробуйте  дать доступ  в настройках приложения.</string>
     <string name="permission_message_storage_alert">Приложению требуется разрешение на хранение для загрузки и сохранения файлов проекта.</string>
+    <string name="delete_title">Удаление</string>
+    <string name="app_needs_permission">Требуется разрешение</string>
+    <string name="sound_off">Звук выключен</string>
+    <string name="sound_on">Звук включен</string>
+    <string name="confirm_exit">Подтверждение выхода</string>
+    <string name="attention">Внимание</string>
 </resources>

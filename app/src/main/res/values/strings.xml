@@ -44,7 +44,7 @@
     <string name="here_are_no_captions_you_can_add_it">Here are no captions.</string>
     <string name="snack_bar_undo">Undo</string>
     <string name="snack_bar_item_deleted">Item deleted.</string>
-    <string name="error_no_captions_no_audio">Source video doesn\'t have audio track</string>
+    <string name="error_no_captions_no_audio">Source video doesn\'t have audio track.</string>
     <string name="language_selection_notselected">Tap to select</string>
     <string name="language_selection_title">Language</string>
     <string name="language_selection_search_nothing">Nothing</string>
@@ -84,7 +84,7 @@
     <string name="edit_title_ok">OK</string>
     <string name="edit_title_cancel">Cancel</string>
     <string name="edit_title_project_name">Project name</string>
-    <string name="delete_project_dialog_text">Delete project %1$s?</string>
+    <string name="delete_project_dialog_text">Delete project &lt;b>%1$s&lt;/b>?</string>
     <string name="processing_the_video">Video processing…</string>
     <string name="theme_title_system">System</string>
     <string name="theme_title_dark">Dark</string>
@@ -93,4 +93,10 @@
     <string name="permission_message_camera_alert">Application needs camera access to taking video.</string>
     <string name="permission_message_explained">Try to grant it in application settings.</string>
     <string name="permission_message_storage_alert">Application needs storage permission to loading and saving project files.</string>
+    <string name="delete_title">Deleting</string>
+    <string name="app_needs_permission">App needs permission</string>
+    <string name="sound_off">Sound off</string>
+    <string name="sound_on">Sound on</string>
+    <string name="confirm_exit">Confirm exit</string>
+    <string name="attention">Attention</string>
 </resources>

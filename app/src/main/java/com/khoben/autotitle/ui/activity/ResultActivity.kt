@@ -13,13 +13,14 @@ import com.khoben.autotitle.databinding.ActivityPostVideoBinding
 import com.khoben.autotitle.mvp.presenter.ResultViewActivityPresenter
 import com.khoben.autotitle.mvp.view.ResultActivityView
 import com.khoben.autotitle.ui.activity.VideoEditActivity.Companion.VIDEO_OUTPUT_URI_INTENT
+import com.khoben.autotitle.ui.popup.AlertDialogInfoMessage
 import com.khoben.autotitle.ui.popup.CustomAlertDialog
 import de.mustafagercek.materialloadingbutton.LoadingButton
 import moxy.MvpAppCompatActivity
 import moxy.presenter.InjectPresenter
-import java.lang.ref.WeakReference
 
-class ResultActivity : MvpAppCompatActivity(), ResultActivityView {
+class ResultActivity : MvpAppCompatActivity(), ResultActivityView,
+    CustomAlertDialog.DialogClickListener {
 
     @InjectPresenter
     lateinit var presenter: ResultViewActivityPresenter
@@ -28,8 +29,9 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView {
 
     private lateinit var saveBtn: LoadingButton
 
-    private val permissionManager = PermissionManager(WeakReference(this))
+    private lateinit var permissionManager: PermissionManager
     private val writeStoragePermissionToken = "storage"
+    private val rationaleStorageDialogToken = "alert_rationale_storage"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,33 +45,28 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView {
         binding.epVideoView.player = presenter.initNewPlayer()
         presenter.init(videoPath!!)
 
-        permissionManager.register(writeStoragePermissionToken, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), {
-            CustomAlertDialog(
-                context = this,
-                layout = R.layout.alert_dialog_single_ok_btn,
-                messageTextView = R.id.main_text,
-                okButton = R.id.ok_btn,
-                okButtonText = getString(R.string.edit_title_ok),
-            ).show(getString(R.string.permission_message_storage_alert))
-        }, {
-            CustomAlertDialog(
-                context = this,
-                layout = R.layout.alert_dialog_ok_cancel_btn,
-                messageTextView = R.id.main_text,
-                okButton = R.id.ok_btn,
-                okButtonText = getString(R.string.settings_caption),
-                cancelButton = R.id.cancel_btn,
-                cancelButtonText = getString(R.string.cancel_caption)
-            ).show(
-                getString(R.string.permission_message_storage_alert) +
-                        "\n" +
-                        getString(R.string.permission_message_explained),
-                {
-                    startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                        data = Uri.fromParts("package", packageName, null)
-                    })
-                })
-        })
+        permissionManager = PermissionManager(this)
+        permissionManager.register(
+            writeStoragePermissionToken,
+            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+            {
+                AlertDialogInfoMessage.new(
+                    getString(R.string.app_needs_permission),
+                    getString(R.string.permission_message_storage_alert)
+                ).show(supportFragmentManager, AlertDialogInfoMessage.TAG)
+            },
+            {
+                CustomAlertDialog.Builder()
+                    .setPositive(getString(R.string.settings_caption))
+                    .setNeutral(getString(R.string.cancel_caption))
+                    .build(
+                        getString(R.string.app_needs_permission),
+                        getString(R.string.permission_message_storage_alert) +
+                                "\n" +
+                                getString(R.string.permission_message_explained),
+                        rationaleStorageDialogToken
+                    ).show(supportFragmentManager, CustomAlertDialog.TAG)
+            })
     }
 
     private fun saveVideo() {
@@ -87,6 +84,7 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView {
 
     override fun onDestroy() {
         presenter.releasePlayer()
+        permissionManager.release()
         super.onDestroy()
     }
 
@@ -118,4 +116,16 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView {
             saveBtn.setButtonText(getString(R.string.result_screen_button_title_saved))
         }
     }
+
+    override fun dialogOnNegative(token: String) {}
+
+    override fun dialogOnPositive(token: String) {
+        if (token == rationaleStorageDialogToken) {
+            startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", packageName, null)
+            })
+        }
+    }
+
+    override fun dialogOnNeutral(token: String) { }
 }
