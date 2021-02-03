@@ -71,6 +71,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:padding="16dp"
+            android:textIsSelectable="true"
             android:textAppearance="?textAppearanceBody1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
