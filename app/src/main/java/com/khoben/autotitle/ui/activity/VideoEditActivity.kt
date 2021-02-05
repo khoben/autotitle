@@ -46,9 +46,7 @@ import com.khoben.autotitle.ui.popup.VideoProcessingProgressDialog
 import com.khoben.autotitle.ui.popup.textoverlayeditor.TextEditorDialogFragment
 import com.khoben.autotitle.ui.recyclerview.EmptyRecyclerView
 import com.khoben.autotitle.ui.recyclerview.RecyclerViewClickListener
-import com.khoben.autotitle.ui.recyclerview.overlays.OverlayViewListAdapter
-import com.khoben.autotitle.ui.recyclerview.overlays.RecyclerViewItemEventListener
-import com.khoben.autotitle.ui.recyclerview.overlays.SwipeToDeleteCallback
+import com.khoben.autotitle.ui.recyclerview.overlays.*
 import com.khoben.autotitle.ui.snackbar.SnackBarHelper
 import com.khoben.autotitle.viewmodel.ProjectViewModel
 import com.khoben.autotitle.viewmodel.ProjectViewModelFactory
@@ -174,6 +172,13 @@ class VideoEditActivity : MvpAppCompatActivity(),
             (recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 
+        val selectTouchListener = SelectionTouchListener(recyclerView).apply {
+            setMultiSelectListener(LongPressSelectTouchListener(recyclerView))
+        }
+
+        overlayViewListAdapter.addSelectListener(selectTouchListener)
+        recyclerView.addOnItemTouchListener(selectTouchListener)
+
         recyclerView.addOnItemTouchListener(
             RecyclerViewClickListener(
                 this,
@@ -184,8 +189,6 @@ class VideoEditActivity : MvpAppCompatActivity(),
                     }
 
                     override fun onLongClick(view: View?, position: Int) {
-                        Timber.d("OnLongClicked")
-
                     }
 
                     override fun onDoubleClick(view: View?, position: Int) {
@@ -197,10 +200,12 @@ class VideoEditActivity : MvpAppCompatActivity(),
 
         val swipeHandler = object : SwipeToDeleteCallback(this) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                swipeListener?.swipeDeleted(viewHolder.itemView)
                 // swipe to delete action
                 presenter.deleteOverlay(viewHolder.bindingAdapterPosition)
             }
         }
+        swipeHandler.swipeListener = selectTouchListener
         ItemTouchHelper(swipeHandler).attachToRecyclerView(recyclerView)
     }
 
@@ -589,11 +594,6 @@ class VideoEditActivity : MvpAppCompatActivity(),
         videoControlsView.setControlsToTime(time)
     }
 
-    override fun onClickedAddBelow(item: Int) {
-        Timber.d("Clicked on $item")
-        presenter.addOverlayAfterSpecificPosition(item)
-    }
-
     private fun toggleMute() {
         presenter.toggleMute(true)
     }
@@ -652,6 +652,14 @@ class VideoEditActivity : MvpAppCompatActivity(),
 
     override fun nopeCancelBtnClicked() {
         presenter.resumeSavingVideo()
+    }
+
+    override fun onMoveUp(id: Int, start: Int, end: Int, text: String?) {
+        Timber.d("up $id $start $end $text")
+    }
+
+    override fun onMoveDown(id: Int, start: Int, end: Int, text: String?) {
+        Timber.d("down $id $start $end $text")
     }
 
     companion object {

@@ -1,7 +1,6 @@
 package com.khoben.autotitle.ui.popup
 
 import android.app.Dialog
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder

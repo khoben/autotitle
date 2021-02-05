@@ -64,14 +64,13 @@
             app:overlayToString="@{overlay}"
             tools:text="0:59.0" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/item_content"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
             android:padding="16dp"
-            android:textIsSelectable="true"
             android:textAppearance="?textAppearanceBody1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

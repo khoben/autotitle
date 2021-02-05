@@ -25,12 +25,12 @@ fun TextView.setOverlayToString(item: OverlayDataMapper) {
 
 @BindingAdapter("overlayContentString")
 fun TextView.setOverlayContentString(item: OverlayDataMapper) {
-    text = if (item.text.isEmpty()) {
+    if (item.text.isEmpty()) {
         setTypeface(typeface, Typeface.ITALIC)
-        context.getString(R.string.empty_overlay_recycler)
+        setText(context.getString(R.string.empty_overlay_recycler), TextView.BufferType.SPANNABLE)
     } else {
         setTypeface(typeface, Typeface.NORMAL)
-        item.text
+        setText(item.text, TextView.BufferType.SPANNABLE)
     }
 }
 
