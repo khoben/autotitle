@@ -1,11 +1,9 @@
 package com.khoben.autotitle.ui.recyclerview.overlays
 
 import android.annotation.SuppressLint
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.khoben.autotitle.R
@@ -45,6 +43,17 @@ class OverlayViewListAdapter :
 
     fun addSelectListener(selectTouchListener: SelectionTouchListener) {
         this.selectListener = selectTouchListener
+        this.selectListener!!.selectionController =
+            object : SelectionTouchListener.SelectionControllerListener {
+                override fun onMoveDown(uuid: UUID?, start: Int, end: Int, text: CharSequence) {
+
+                }
+
+                override fun onMoveUp(uuid: UUID?, start: Int, end: Int, text: CharSequence) {
+
+                }
+
+            }
     }
 
     inner class OverlayViewHolder(private val binding: RecyclerViewOverlayItemBinding) :
@@ -53,6 +62,7 @@ class OverlayViewListAdapter :
         private val itemSelectedColor by lazy {
             StyledAttrUtils.getColor(itemView.context, R.attr.colorControlHighlight)
         }
+
         private val surfaceColor by lazy {
             StyledAttrUtils.getColor(itemView.context, R.attr.colorSurface)
         }

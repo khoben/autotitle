@@ -43,7 +43,7 @@ class TextSelectionHandlePopup(ctx: Context?, rightHandle: Boolean) {
     }
 
     fun hide() {
-        mWindow!!.dismiss()
+        mWindow?.dismiss()
     }
 
     fun isVisible(): Boolean {

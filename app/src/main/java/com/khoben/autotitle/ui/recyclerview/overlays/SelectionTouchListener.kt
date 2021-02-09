@@ -80,7 +80,9 @@ class SelectionTouchListener(private val mRecyclerView: RecyclerView) :
 
     override fun onViewAttachedToWindow(v: View) {}
     override fun onViewDetachedFromWindow(v: View) {
-        clearSelection()
+        Timber.d("onViewDetachedFromWindow")
+        hideHandles()
+        hideActionModeForSelection()
     }
 
     private fun createHandles() {
@@ -115,7 +117,7 @@ class SelectionTouchListener(private val mRecyclerView: RecyclerView) :
     }
 
     private fun showActionMode() {
-        Timber.d("showActionMode (${mActionModeCallback.mCurrentActionMode != null})")
+        Timber.d("showActionMode")
         if (mActionModeCallback.mCurrentActionMode != null) return
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             mRecyclerView.startActionMode(mActionModeCallback2, ActionMode.TYPE_FLOATING)
@@ -125,13 +127,11 @@ class SelectionTouchListener(private val mRecyclerView: RecyclerView) :
     }
 
     private fun hideActionModeForSelection() {
-        Timber.d("hideActionModeForSelection (${mActionModeCallback.mCurrentActionMode != null})")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && mActionModeCallback.mCurrentActionMode != null)
             mActionModeCallback.mCurrentActionMode!!.finish()
     }
 
     private fun handleSelection(x: Float, y: Float, rawX: Float, rawY: Float): Boolean {
-//        val view = mRecyclerView.findChildViewUnder(x, y) ?: return mSelectionLongPressMode
         val textView = mCurTextView ?: return mSelectionLongPressMode
         textView.getLocationOnScreen(mTmpLocation)
         val viewX = rawX - mTmpLocation[0]
@@ -169,9 +169,7 @@ class SelectionTouchListener(private val mRecyclerView: RecyclerView) :
     }
 
     override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-        Timber.d("onInterceptTouchEvent")
         if (e.actionMasked == MotionEvent.ACTION_DOWN) {
-            Timber.d("ACTION_DOWN")
             mTouchDownX = e.x
             mTouchDownY = e.y
             hideActionModeForSelection()
@@ -179,7 +177,6 @@ class SelectionTouchListener(private val mRecyclerView: RecyclerView) :
         if (e.actionMasked == MotionEvent.ACTION_UP ||
             e.actionMasked == MotionEvent.ACTION_CANCEL
         ) {
-            Timber.d("ACTION_UP")
             if (!mSelectionLongPressMode && e.eventTime - e.downTime < MAX_CLICK_DURATION &&
                 sqrt(
                     (e.x - mTouchDownX).toDouble().pow(2.0) +
@@ -235,8 +232,7 @@ class SelectionTouchListener(private val mRecyclerView: RecyclerView) :
         }
 
     fun clearSelection() {
-        Timber.d("clearSelection")
-        if (mActionModeCallback.mCurrentActionMode != null) mActionModeCallback.mCurrentActionMode!!.finish()
+        hideActionModeForSelection()
         mCurTextView?.let {
             TextSelectionHelper.removeSelection(it.text as Spannable)
         }
@@ -319,13 +315,14 @@ class SelectionTouchListener(private val mRecyclerView: RecyclerView) :
                 object : RecyclerViewScrollerRunnable.OnScrolledListener {
                     override fun onScrolled(scrollDir: Int) {
                         mRecyclerView.getLocationOnScreen(mTmpLocation)
-                        if (scrollDir < 0) onMoved(
-                            mTmpLocation[0].toFloat(),
-                            (mTmpLocation[1] - 1).toFloat()
-                        ) else if (scrollDir > 0) onMoved(
-                            (mTmpLocation[0] + mRecyclerView.width).toFloat(), (
-                                    mTmpLocation[1] + mRecyclerView.height + 1).toFloat()
-                        )
+                        if (scrollDir < 0)
+                            onMoved(mTmpLocation[0].toFloat(), (mTmpLocation[1] - 1).toFloat())
+                        else
+                            if (scrollDir > 0)
+                                onMoved(
+                                    (mTmpLocation[0] + mRecyclerView.width).toFloat(),
+                                    (mTmpLocation[1] + mRecyclerView.height + 1).toFloat()
+                                )
                     }
                 })
         }
@@ -334,6 +331,7 @@ class SelectionTouchListener(private val mRecyclerView: RecyclerView) :
     inner class BaseActionModeCallback : ActionMode.Callback {
         var mCurrentActionMode: ActionMode? = null
         override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
+            Timber.d("onCreateActionMode")
             mCurrentActionMode = mode
             mode.menuInflater.inflate(R.menu.menu_context_selection, menu)
             return true
@@ -357,7 +355,7 @@ class SelectionTouchListener(private val mRecyclerView: RecyclerView) :
                         ClipData.newPlainText("AutoTitle text", selectedText)
                     )
                     clearSelection()
-                    mode.finish()
+                    hideActionModeForSelection()
                     true
                 }
                 R.id.action_select_all -> {
@@ -365,13 +363,15 @@ class SelectionTouchListener(private val mRecyclerView: RecyclerView) :
                     true
                 }
                 R.id.action_move_up -> {
+                    doMoveUp()
                     clearSelection()
-                    mode.finish()
+                    hideActionModeForSelection()
                     true
                 }
                 R.id.action_move_down -> {
+                    doMoveDown()
                     clearSelection()
-                    mode.finish()
+                    hideActionModeForSelection()
                     true
                 }
                 else -> false
@@ -379,9 +379,34 @@ class SelectionTouchListener(private val mRecyclerView: RecyclerView) :
         }
 
         override fun onDestroyActionMode(mode: ActionMode) {
+            Timber.d("onDestroyActionMode")
             mCurrentActionMode = null
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || mode.type != ActionMode.TYPE_FLOATING) clearSelection()
         }
+    }
+
+    var selectionController: SelectionControllerListener? = null
+
+    interface SelectionControllerListener {
+        fun onMoveDown(uuid: UUID?, start: Int, end: Int, text: CharSequence)
+        fun onMoveUp(uuid: UUID?, start: Int, end: Int, text: CharSequence)
+    }
+
+    private fun doMoveDown() {
+        selectionController?.onMoveDown(
+            mCurTextUUID,
+            mSelectionStartOffset,
+            mSelectionEndOffset,
+            selectedText
+        )
+    }
+
+    private fun doMoveUp() {
+        selectionController?.onMoveUp(
+            mCurTextUUID,
+            mSelectionStartOffset,
+            mSelectionEndOffset,
+            selectedText
+        )
     }
 
     private fun doSelectAll() {
@@ -395,8 +420,17 @@ class SelectionTouchListener(private val mRecyclerView: RecyclerView) :
 
     fun applySelection(itemContent: TextView, uuid: UUID) {
         if (mCurTextUUID == uuid) {
+            Timber.d("applySelection")
             mCurTextView = itemContent
             setSelection(mSelectionStartOffset, mSelectionEndOffset)
+        }
+    }
+
+    private val recyclerViewGlobalRect = Rect()
+    fun checkIfShouldClearSelection(ev: MotionEvent?) {
+        mRecyclerView.getGlobalVisibleRect(recyclerViewGlobalRect)
+        if (!recyclerViewGlobalRect.contains(ev!!.rawX.toInt(), ev.rawY.toInt())) {
+            clearSelection()
         }
     }
 
@@ -420,37 +454,24 @@ class SelectionTouchListener(private val mRecyclerView: RecyclerView) :
         }
 
         override fun onGetContentRect(mode: ActionMode, view: View, outRect: Rect) {
-            Timber.d("onGetContentRect")
-            view.getLocationOnScreen(mTmpLocation)
             val textView = mCurTextView
             val lineStart = textView?.layout?.getLineForOffset(mSelectionStartOffset) ?: -1
             val lineEnd = textView?.layout?.getLineForOffset(mSelectionEndOffset) ?: -1
-            outRect.top = 0
-            if (textView != null) {
-                textView.getLocationOnScreen(mTmpLocation2)
-                outRect.top = mTmpLocation2[1] - mTmpLocation[1]
-                outRect.top += textView.layout.getLineTop(lineStart)
-            }
-            outRect.bottom = view.height
-            if (textView != null) {
-                textView.getLocationOnScreen(mTmpLocation2)
-                outRect.bottom = mTmpLocation2[1] - mTmpLocation[1]
-                outRect.bottom += textView.layout.getLineBottom(lineEnd)
-            }
-            outRect.left = 0
-            outRect.right = view.width
-            if (textView != null && lineStart == lineEnd) {
-                textView.getLocationOnScreen(mTmpLocation2)
-                outRect.left = mTmpLocation2[0] - mTmpLocation[0]
-                outRect.left += textView.layout.getPrimaryHorizontal(mSelectionStartOffset).toInt()
-                outRect.right = mTmpLocation2[0] - mTmpLocation[0]
-                outRect.right += textView.layout.getPrimaryHorizontal(mSelectionEndOffset).toInt()
-            }
+            view.getLocationOnScreen(mTmpLocation)
+            if (textView == null) return
+            textView.getLocationOnScreen(mTmpLocation2)
+            outRect.top = mTmpLocation2[1] - mTmpLocation[1] + textView.layout.getLineTop(lineStart)
+            outRect.bottom =
+                mTmpLocation2[1] - mTmpLocation[1] + textView.layout.getLineBottom(lineEnd)
+            outRect.left =
+                mTmpLocation2[0] - mTmpLocation[0] + textView.layout.getPrimaryHorizontal(
+                    mSelectionStartOffset
+                ).toInt()
+            outRect.right =
+                mTmpLocation2[0] - mTmpLocation[0] + textView.layout.getPrimaryHorizontal(
+                    mSelectionEndOffset
+                ).toInt()
         }
-    }
-
-    interface ActionModeStateCallback {
-        fun onActionModeStateChanged(mode: ActionMode?, visible: Boolean)
     }
 
     companion object {

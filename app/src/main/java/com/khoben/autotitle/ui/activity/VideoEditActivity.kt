@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
@@ -76,6 +77,8 @@ class VideoEditActivity : MvpAppCompatActivity(),
     private lateinit var videoControlsView: VideoControlsView
     private lateinit var recyclerView: EmptyRecyclerView
 
+    private var selectRecyclerViewTouchListener: SelectionTouchListener? = null
+
     private var videoProcessingProgressDialog: VideoProcessingProgressDialog? = null
     private lateinit var saveBtn: Button
     private lateinit var muteBtn: MaterialButton
@@ -117,7 +120,12 @@ class VideoEditActivity : MvpAppCompatActivity(),
         addItemBtn = binding.videoSeekbarLayout.addItem
         recyclerView = binding.recyclerview
 
-        overlayViewListAdapter = OverlayViewListAdapter()
+        videoLayer.setOnClickListener { onViewClicked(it) }
+        binding.backBtn.setOnClickListener { onViewClicked(it) }
+        binding.emptyRecyclerView.addCaptionRecycler.setOnClickListener { onViewClicked(it) }
+        saveBtn.setOnClickListener { onViewClicked(it) }
+        addItemBtn.setOnClickListener { onViewClicked(it) }
+        muteBtn.setOnClickListener { toggleMute() }
 
         setupRecyclerView(emptyRecyclerView = binding.emptyRecyclerView.root)
 
@@ -133,15 +141,13 @@ class VideoEditActivity : MvpAppCompatActivity(),
                 App.DEFAULT_MUTE_STATE
             )
         )
+    }
 
-        videoLayer.setOnClickListener { onViewClicked(it) }
-        binding.backBtn.setOnClickListener { onViewClicked(it) }
-        binding.emptyRecyclerView.addCaptionRecycler.setOnClickListener { onViewClicked(it) }
-        saveBtn.setOnClickListener { onViewClicked(it) }
-        addItemBtn.setOnClickListener { onViewClicked(it) }
-        muteBtn.setOnClickListener { toggleMute() }
-
-        setupRecyclerView(emptyRecyclerView = binding.emptyRecyclerView.root)
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        // pass activity touch event to recyclerview selection listener
+        // to dismiss action mode popup window then clicks outside recyclerview
+        selectRecyclerViewTouchListener?.checkIfShouldClearSelection(ev)
+        return super.dispatchTouchEvent(ev)
     }
 
     private fun setupRecyclerView(emptyRecyclerView: View) {
@@ -159,17 +165,23 @@ class VideoEditActivity : MvpAppCompatActivity(),
                     )
                 })
             it.layoutManager = LinearLayoutManager(this)
-            it.adapter = overlayViewListAdapter
+            it.adapter =
+                OverlayViewListAdapter().apply {
+                    listItemEventListener = this@VideoEditActivity
+                }.also { adapter ->
+                    overlayViewListAdapter = adapter
+                }
             it.setEmptyView(emptyRecyclerView)
             (recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 
-        val selectTouchListener = SelectionTouchListener(recyclerView).apply {
-            setMultiSelectListener(LongPressSelectTouchListener(recyclerView))
-        }
 
-        overlayViewListAdapter.addSelectListener(selectTouchListener)
-        recyclerView.addOnItemTouchListener(selectTouchListener)
+        selectRecyclerViewTouchListener = SelectionTouchListener(recyclerView).apply {
+            setMultiSelectListener(LongPressSelectTouchListener(recyclerView))
+        }.also {
+            overlayViewListAdapter.addSelectListener(it)
+            recyclerView.addOnItemTouchListener(it)
+        }
 
         recyclerView.addOnItemTouchListener(
             RecyclerViewClickListener(
@@ -188,16 +200,14 @@ class VideoEditActivity : MvpAppCompatActivity(),
                     }
                 })
         )
-        overlayViewListAdapter.listItemEventListener = this
 
         val swipeHandler = object : SwipeToDeleteCallback(this) {
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                swipeListener?.swipeDeleted(viewHolder.itemView)
+            override fun onSwipedDone(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 // swipe to delete action
                 presenter.deleteOverlay(viewHolder.bindingAdapterPosition)
             }
         }
-        swipeHandler.swipeListener = selectTouchListener
+        swipeHandler.swipeListener = selectRecyclerViewTouchListener
         ItemTouchHelper(swipeHandler).attachToRecyclerView(recyclerView)
     }
 

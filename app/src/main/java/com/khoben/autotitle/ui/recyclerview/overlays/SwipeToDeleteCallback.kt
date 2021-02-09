@@ -112,5 +112,12 @@ abstract class SwipeToDeleteCallback internal constructor(context: Context) :
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }
 
+    abstract fun onSwipedDone(viewHolder: RecyclerView.ViewHolder, direction: Int)
+
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+        swipeListener?.swipeDeleted(viewHolder.itemView)
+        onSwipedDone(viewHolder, direction)
+    }
+
     override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder) = 0.5F
 }
