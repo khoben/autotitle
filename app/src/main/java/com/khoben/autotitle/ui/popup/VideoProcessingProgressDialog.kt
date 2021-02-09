@@ -26,7 +26,7 @@ class VideoProcessingProgressDialog : DialogFragment() {
     private var savedHintText = ""
 
     private val EXTRA_BUTTON_STATE = "BUTTON_STATE"
-
+    private val EXTRA_PERCENT_STATE = "EXTRA_PERCENT_STATE"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,8 +50,9 @@ class VideoProcessingProgressDialog : DialogFragment() {
         binding.confirm.setOnClickListener { onConfirmCancelBtnClicked() }
         binding.nope.setOnClickListener { onNopeCancelBtnClicked() }
 
-        savedInstanceState?.let {
-            if (!it.getBoolean(EXTRA_BUTTON_STATE)) {
+        savedInstanceState?.let { bundle ->
+            curPercentTextView?.text = bundle.getCharSequence(EXTRA_PERCENT_STATE, "")
+            if (!bundle.getBoolean(EXTRA_BUTTON_STATE)) {
                 onCancelBtnClicked()
             }
         }
@@ -80,6 +81,7 @@ class VideoProcessingProgressDialog : DialogFragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean(EXTRA_BUTTON_STATE, confirmationLayout?.visibility == View.INVISIBLE)
+        outState.putCharSequence(EXTRA_PERCENT_STATE, curPercentTextView?.text)
     }
 
     private fun onNopeCancelBtnClicked() {
