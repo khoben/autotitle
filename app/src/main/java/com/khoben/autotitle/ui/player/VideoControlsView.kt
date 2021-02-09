@@ -26,8 +26,6 @@ class VideoControlsView(context: Context, attrs: AttributeSet) :
     private var viewWidth = 0
     private var viewHeight = 0
 
-    private var screenWidth = context.resources.displayMetrics.widthPixels
-
     override fun onFinishInflate() {
         super.onFinishInflate()
         /****Current and total video time****/
@@ -52,10 +50,6 @@ class VideoControlsView(context: Context, attrs: AttributeSet) :
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         viewWidth = videoSeekBarFramesView.measuredWidth
         viewHeight = measuredHeight
-    }
-
-    fun addFramesToSeekBar(bitmaps: List<Bitmap>, frameTime: Long) {
-        videoSeekBarFramesView.addFramesToSeekBar(bitmaps, frameTime)
     }
 
     fun loadFrames(data: FramesHolder) {

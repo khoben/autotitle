@@ -179,23 +179,6 @@ class VideoSeekBarFramesView(
         }
     }
 
-    /**
-     * Adds frames to seekbar
-     * @param bitmaps
-     * @param frameTime
-     */
-    fun addFramesToSeekBar(bitmaps: List<Bitmap?>, frameTime: Long) {
-        if (imageList!!.childCount > 0) {
-            Timber.e("Frames added already")
-            return
-        }
-        frameTimeInMs = frameTime
-        addFramesToSeekBar(bitmaps)
-    }
-
-    private fun addFramesToSeekBar(bitmaps: List<Bitmap?>) {
-    }
-
     private fun addRangeView(w: Int, h: Int) {
         rangeView = LayoutInflater.from(context)
             .inflate(R.layout.range_view, null) as RangeView
