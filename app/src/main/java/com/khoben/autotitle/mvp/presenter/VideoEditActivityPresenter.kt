@@ -115,6 +115,7 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         // Load frame-line
         videoLoaderInstance.loadFrames({ frameResult ->
             viewState.loadFrames(frameResult)
+            if (videoLoadMode != VideoLoadMode.AUTO_DETECT) successProcessedVideo()
         }, { frameError ->
             Timber.e("Error while loading video $frameError")
             errorProcessVideo(frameError)
@@ -126,6 +127,7 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
             videoLoaderInstance.loadCaptions({ captionResult ->
                 // if caption loaded then success
                 successProcessedVideo()
+                viewState.setLoadingViewVisibility(false)
                 when {
                     // Empty result
                     captionResult.caption == null ||

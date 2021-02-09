@@ -12,7 +12,7 @@ import java.util.*
 
 interface VideoEditActivityView : MvpView {
 
-    @Skip
+    @OneExecution
     fun setLoadingViewVisibility(visible: Boolean)
 
     @AddToEndSingle

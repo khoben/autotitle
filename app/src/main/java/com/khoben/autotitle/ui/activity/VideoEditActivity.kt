@@ -107,10 +107,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        lottieAnimationLoadingView = binding.lottieLoadingView.root.apply {
-            // ignore all touches on loading screen
-            setOnTouchListener { _, _ -> true }
-        }
+        lottieAnimationLoadingView = binding.lottieLoadingView.root
         videoControlsView = binding.videoSeekbarLayout.videoSeekbarView
         videoSurfaceView = binding.videolayer.videoPreview
         videoLayer = binding.videolayer.root
@@ -324,7 +321,6 @@ class VideoEditActivity : MvpAppCompatActivity(),
     override fun onVideoProcessed() {
         runOnUiThread {
             Timber.d("Video processed")
-
             if (!userSettings.getBoolean(USER_SETTINGS_ITEM_GUIDE_SHOWN, false)) {
                 val handler = Handler(Looper.getMainLooper())
                 val runnable = object : Runnable {
@@ -343,7 +339,6 @@ class VideoEditActivity : MvpAppCompatActivity(),
             } else {
                 Timber.d("Guide was shown")
             }
-            setLoadingViewVisibility(false)
         }
     }
 
