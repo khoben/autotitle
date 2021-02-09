@@ -96,7 +96,6 @@ class VideoEditActivity : MvpAppCompatActivity(),
         )
     }
 
-    private val VIDEO_SAVING_PROGRESS_TAG = "video_processing_dialog"
     private val backPressedDialogToken = "back_pressed_dialog"
 
     @SuppressLint("ClickableViewAccessibility")
@@ -123,11 +122,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
 
         overlayViewListAdapter = OverlayViewListAdapter()
 
-        if (savedInstanceState != null) {
-            supportFragmentManager.findFragmentByTag(VIDEO_SAVING_PROGRESS_TAG)?.let { fragment ->
-                videoProcessingProgressDialog = fragment as VideoProcessingProgressDialog
-            }
-        }
+        setupRecyclerView(emptyRecyclerView = binding.emptyRecyclerView.root)
 
         val sourceVideoUri = intent.getParcelableExtra<Uri>(VIDEO_SOURCE_URI_INTENT)
         val videoLoadingMode = intent.getSerializableExtra(VIDEO_LOAD_MODE) as VideoLoadMode
@@ -527,7 +522,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
             videoProcessingProgressDialog =
                 VideoProcessingProgressDialog.new(getString(R.string.save_captions))
                     .apply {
-                        show(supportFragmentManager, VIDEO_SAVING_PROGRESS_TAG)
+                        show(supportFragmentManager, VideoProcessingProgressDialog.TAG)
                     }
         }
     }
@@ -652,6 +647,11 @@ class VideoEditActivity : MvpAppCompatActivity(),
 
     override fun nopeCancelBtnClicked() {
         presenter.resumeSavingVideo()
+    }
+
+    override fun onAttachBack(dialog: VideoProcessingProgressDialog) {
+        if (videoProcessingProgressDialog == null)
+            videoProcessingProgressDialog = dialog
     }
 
     override fun onMoveUp(id: Int, start: Int, end: Int, text: String?) {

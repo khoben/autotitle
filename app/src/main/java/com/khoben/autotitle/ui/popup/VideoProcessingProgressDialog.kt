@@ -62,12 +62,14 @@ class VideoProcessingProgressDialog : DialogFragment() {
         fun cancelBtnClicked()
         fun confirmCancelBtnClicked()
         fun nopeCancelBtnClicked()
+        fun onAttachBack(dialog: VideoProcessingProgressDialog)
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is ProgressDialogListener) {
             listener = context
+            listener?.onAttachBack(this)
         } else {
             throw RuntimeException("$context must implement ProgressDialogListener")
         }
@@ -113,6 +115,7 @@ class VideoProcessingProgressDialog : DialogFragment() {
     }
 
     companion object {
+        const val TAG = "video_processing_dialog"
         private val EXTRA_HINT = "EXTRA_HINT"
 
         fun new(hint: String = ""): VideoProcessingProgressDialog {
