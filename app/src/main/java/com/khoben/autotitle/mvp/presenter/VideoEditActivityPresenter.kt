@@ -394,7 +394,8 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     }
 
     override fun syncCurrentPlaybackTimeWithSeekBar(time: Long, isSeeking: Boolean) {
-        if (time >= mediaController.videoDuration) return
+        var time = time
+        if (time >= mediaController.videoDuration) time = mediaController.videoDuration
         if (isSeeking) seekTo(time)
         overlayHandler!!.changeVisibilityOverlayByTime(time)
     }
