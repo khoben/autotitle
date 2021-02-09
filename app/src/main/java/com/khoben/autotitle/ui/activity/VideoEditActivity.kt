@@ -219,21 +219,15 @@ class VideoEditActivity : MvpAppCompatActivity(),
         Timber.d("Video details = $videoDetails")
         videoControlsView.setMediaDuration(videoDetails.duration)
         videoSurfaceView.init(videoRenderer, mediaPlayer)
-        if (videoDetails.rotation == 0 &&
-            videoDetails.width > videoDetails.height ||
-            videoDetails.rotation == 180 &&
-            videoDetails.width > videoDetails.height
-        ) {
+        /**
+         * Four possible rotation degree values 0, 90, 180, 270
+         *
+         * 90, 270 -- width and height are transposed
+         */
+        if (videoDetails.rotation == 0 || videoDetails.rotation == 180) {
             videoSurfaceView.setVideoSize(videoDetails.width, videoDetails.height)
-            Timber.d("Horizontal video")
         } else {
-            // rotated
-            if (videoDetails.rotation == 0) {
-                videoSurfaceView.setVideoSize(videoDetails.width, videoDetails.height)
-            } else {
-                videoSurfaceView.setVideoSize(videoDetails.height, videoDetails.width)
-            }
-            Timber.d("Vertical video")
+            videoSurfaceView.setVideoSize(videoDetails.height, videoDetails.width)
         }
 
         // adjust overlay size by video surface size
