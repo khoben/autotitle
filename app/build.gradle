@@ -120,6 +120,8 @@ dependencies {
     implementation 'com.github.Muki1992:MaterialLoadingButton:2.0'
     // Animations
     implementation "androidx.dynamicanimation:dynamicanimation-ktx:1.0.0-alpha03"
+    // Gestures
+    implementation 'com.github.Almeros:android-gesture-detectors:e2e854b'
     /***********************************************/
 
     // Huawei services
