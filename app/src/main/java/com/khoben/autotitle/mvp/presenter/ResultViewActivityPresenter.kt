@@ -76,7 +76,7 @@ class ResultViewActivityPresenter : MvpPresenter<ResultActivityView>() {
                 if (uri != null) {
                     alreadySaved = true
                     savedPath = uri.getFileName(appContext)
-                    if (PreferencesUtils.showNotificationOnSave() == true) {
+                    if (PreferencesUtils.showNotificationOnSave == true) {
                         NotificationUtils.show(
                             appContext,
                             text = savedPath!!,

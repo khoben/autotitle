@@ -512,7 +512,7 @@ class VideoSeekBarFramesView(
 
         velocityTracker?.recycle()
         velocityTracker = null
-        if (abs(xVelocity) > VELOCITY_MIN && PreferencesUtils.seekBarSmoothAnimation() == true) {
+        if (abs(xVelocity) > VELOCITY_MIN && PreferencesUtils.seekBarSmoothAnimation == true) {
             startXAnimation()
         } else {
             seekTo(xCoordinateToTimestamp(movableFrameLineContainer.x))

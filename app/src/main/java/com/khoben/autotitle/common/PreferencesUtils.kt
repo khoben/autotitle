@@ -7,14 +7,54 @@ import androidx.preference.PreferenceManager
 object PreferencesUtils {
 
     private var instance: SharedPreferences? = null
+    private var preferenceChangeListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
 
-    fun init(context: Context) {
+    private const val seekBarSmoothAnimationKey = "smooth_seek_animation"
+    private const val previewSeekAnimationKey = "preview_seek_animation"
+    private const val showNotificationOnSaveKey = "show_notification_onsave"
+    private const val copySourceVideoKey = "copy_source_video"
+    private const val appThemeKey = "app_theme"
+
+    var seekBarSmoothAnimation: Boolean? = null
+    var previewSeekAnimation: Boolean? = null
+    var showNotificationOnSave: Boolean? = null
+    var copySourceVideo: Boolean? = null
+    var appTheme: String? = null
+
+    fun register(context: Context) {
         instance = PreferenceManager.getDefaultSharedPreferences(context)
+
+        seekBarSmoothAnimation = instance?.getBoolean(seekBarSmoothAnimationKey, true)
+        previewSeekAnimation = instance?.getBoolean(previewSeekAnimationKey, false)
+        showNotificationOnSave = instance?.getBoolean(showNotificationOnSaveKey, true)
+        copySourceVideo = instance?.getBoolean(copySourceVideoKey, false)
+        appTheme = instance?.getString(appThemeKey, "system")
+
+        preferenceChangeListener =
+            SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
+                when (key) {
+                    seekBarSmoothAnimationKey -> {
+                        seekBarSmoothAnimation = prefs.getBoolean(seekBarSmoothAnimationKey, true)
+                    }
+                    previewSeekAnimationKey -> {
+                        previewSeekAnimation = prefs.getBoolean(previewSeekAnimationKey, false)
+                    }
+                    showNotificationOnSaveKey -> {
+                        showNotificationOnSave = prefs.getBoolean(showNotificationOnSaveKey, true)
+                    }
+                    copySourceVideoKey -> {
+                        copySourceVideo = prefs.getBoolean(copySourceVideoKey, false)
+                    }
+                    appThemeKey -> {
+                        appTheme = prefs.getString(appThemeKey, "system")
+                    }
+                }
+            }
+        instance?.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
     }
 
-    fun seekBarSmoothAnimation() = instance?.getBoolean("smooth_seek_animation", true)
-    fun previewSeekAnimation() = instance?.getBoolean("preview_seek_animation", false)
-    fun showNotificationOnSave() = instance?.getBoolean("show_notification_onsave", true)
-    fun copySourceVideo() = instance?.getBoolean("copy_source_video", false)
-    fun appTheme() = instance?.getString("app_theme", "system")
+    fun unRegister() {
+        instance?.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
+    }
+
 }

@@ -19,8 +19,8 @@ class App : Application() {
         super.onCreate()
         appContext = applicationContext
         initFoldersPath()
-        PreferencesUtils.init(this)
-        DisplayUtils.setAppUi(mode = PreferencesUtils.appTheme()!!)
+        PreferencesUtils.register(this)
+        DisplayUtils.setAppUi(mode = PreferencesUtils.appTheme!!)
         if (BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
         MLApplication.getInstance().apiKey =
             "CgB6e3x9/hsdbdBs4UtMv9w9yHOgLLpQWbfDNjtbW5685ZLdOW5HlpWzDmveL69IjxoeAg8TClmuNnbmvZ9xprrw"
