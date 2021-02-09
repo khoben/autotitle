@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.drawable.ColorDrawable
 import android.util.TypedValue
+import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -12,6 +13,14 @@ import com.khoben.autotitle.R
 
 abstract class SwipeToDeleteCallback internal constructor(context: Context) :
     ItemTouchHelper.Callback() {
+
+    var swipeListener: SwipeListener? = null
+
+    interface SwipeListener {
+        fun swipeStarted(view: View)
+        fun swipeEnded(view: View)
+        fun swipeDeleted(view: View)
+    }
 
     private val mBackground = ColorDrawable().apply {
         val typedValue = TypedValue()
@@ -41,6 +50,10 @@ abstract class SwipeToDeleteCallback internal constructor(context: Context) :
         isCurrentlyActive: Boolean
     ) {
         val itemView = viewHolder.itemView
+        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+            if (isCurrentlyActive) swipeListener?.swipeStarted(viewHolder.itemView)
+            else if (dX >= 0) swipeListener?.swipeEnded(viewHolder.itemView)
+        }
         val iconMarginVertical = (viewHolder.itemView.height - deleteDrawable.intrinsicHeight) / 2
 
         when {

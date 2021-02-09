@@ -64,7 +64,7 @@
             app:overlayToString="@{overlay}"
             tools:text="0:59.0" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/item_content"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

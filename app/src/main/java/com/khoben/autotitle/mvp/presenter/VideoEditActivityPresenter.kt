@@ -131,7 +131,10 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
                     captionResult.caption == null ||
                             captionResult.caption.isEmpty() -> {
                         Timber.d("No captions")
-                        viewState.showInfoMessage( appContext.getString(R.string.error_no_captions), appContext.getString(R.string.attention))
+                        viewState.showInfoMessage(
+                            appContext.getString(R.string.error_no_captions),
+                            appContext.getString(R.string.attention)
+                        )
                     }
                     //Success
                     else -> {
@@ -148,7 +151,8 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
                         viewState.showInfoMessage(
                             appContext.getString(R.string.error_no_captions)
                                     + ".\n"
-                                    + appContext.getString(R.string.error_no_captions_no_audio), appContext.getString(R.string.attention)
+                                    + appContext.getString(R.string.error_no_captions_no_audio),
+                            appContext.getString(R.string.attention)
                         )
                     }
                     else -> {
@@ -156,7 +160,8 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
                         viewState.showInfoMessage(
                             appContext.getString(R.string.error_no_captions)
                                     + "\n"
-                                    + appContext.getString(R.string.error_no_caption_net_error), appContext.getString(R.string.attention)
+                                    + appContext.getString(R.string.error_no_caption_net_error),
+                            appContext.getString(R.string.attention)
                         )
                     }
 

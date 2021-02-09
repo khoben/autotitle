@@ -3,6 +3,8 @@
 
     <color name="brandPrimary">#019B7F</color>
 
+    <color name="highlightedTextColor">#6640c4ff</color>
+
     <color name="white">#FFFFFF</color>
     <color name="white75">#BFFFFFFF</color>
 

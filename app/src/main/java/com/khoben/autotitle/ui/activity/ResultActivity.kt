@@ -127,5 +127,5 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView,
         }
     }
 
-    override fun dialogOnNeutral(token: String) { }
+    override fun dialogOnNeutral(token: String) {}
 }

@@ -323,12 +323,14 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
                 CustomAlertDialog.Builder()
                     .setPositive(getString(R.string.yes_caption))
                     .setNeutral(getString(R.string.cancel_caption))
-                    .build(getString(R.string.error_while_opening_file), fromHtml(
-                        getString(
-                            R.string.delete_project_dialog_text,
-                            project.title
-                        )
-                    ), deleteProjectDialogToken)
+                    .build(
+                        getString(R.string.error_while_opening_file), fromHtml(
+                            getString(
+                                R.string.delete_project_dialog_text,
+                                project.title
+                            )
+                        ), deleteProjectDialogToken
+                    )
                     .show(supportFragmentManager, CustomAlertDialog.TAG)
             }
             OpeningVideoFileState.LIMIT -> {

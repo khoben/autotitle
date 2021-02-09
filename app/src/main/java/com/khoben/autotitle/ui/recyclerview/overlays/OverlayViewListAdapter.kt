@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.khoben.autotitle.R
+import com.khoben.autotitle.common.StyledAttrUtils
 import com.khoben.autotitle.databinding.RecyclerViewOverlayItemBinding
 import com.khoben.autotitle.ui.overlay.OverlayDataMapper
 import java.util.*
@@ -17,14 +19,21 @@ class OverlayViewListAdapter :
             OverlayViewListAdapter.OverlayViewHolder>(OverlayViewDiffCallback()),
     RecyclerViewItemEventListener {
 
+    private var selectListener: SelectionTouchListener? = null
+
     var listItemEventListener: RecyclerViewItemEventListener? = null
-    override fun onClickedAddBelow(item: Int) {
-        listItemEventListener?.onClickedAddBelow(item)
+    override fun onMoveUp(id: Int, start: Int, end: Int, text: String?) {
+        listItemEventListener?.onMoveUp(id, start, end, text)
+    }
+
+    override fun onMoveDown(id: Int, start: Int, end: Int, text: String?) {
+        listItemEventListener?.onMoveDown(id, start, end, text)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OverlayViewHolder {
-        return OverlayViewHolder.from(parent)
-            .apply { listItemEventListener = this@OverlayViewListAdapter }
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val binding = RecyclerViewOverlayItemBinding.inflate(layoutInflater, parent, false)
+        return OverlayViewHolder(binding)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -34,33 +43,28 @@ class OverlayViewListAdapter :
         holder.bind(item)
     }
 
-    class OverlayViewHolder(private val binding: RecyclerViewOverlayItemBinding) :
+    fun addSelectListener(selectTouchListener: SelectionTouchListener) {
+        this.selectListener = selectTouchListener
+    }
+
+    inner class OverlayViewHolder(private val binding: RecyclerViewOverlayItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        var listItemEventListener: RecyclerViewItemEventListener? = null
-
         private val itemSelectedColor by lazy {
-            val typedValue = TypedValue()
-            itemView.context.theme.resolveAttribute(
-                R.attr.colorControlHighlight,
-                typedValue,
-                true
-            )
-            ContextCompat.getColor(itemView.context, typedValue.resourceId)
+            StyledAttrUtils.getColor(itemView.context, R.attr.colorControlHighlight)
         }
         private val surfaceColor by lazy {
-            val typedValue = TypedValue()
-            itemView.context.theme.resolveAttribute(
-                R.attr.colorSurface,
-                typedValue,
-                true
-            )
-            ContextCompat.getColor(itemView.context, typedValue.resourceId)
+            StyledAttrUtils.getColor(itemView.context, R.attr.colorSurface)
         }
 
         fun bind(overlay: OverlayDataMapper) {
+            binding.itemContent.setOnLongClickListener { textView ->
+                selectListener?.startLongPressSelect(textView as TextView, overlay.uuid)
+                true
+            }
             binding.overlay = overlay
             binding.executePendingBindings()
+            selectListener?.applySelection(binding.itemContent, overlay.uuid)
         }
 
         fun setSelected(isSelected: Boolean) {
@@ -68,14 +72,6 @@ class OverlayViewListAdapter :
                 itemView.setBackgroundColor(itemSelectedColor)
             else
                 itemView.setBackgroundColor(surfaceColor)
-        }
-
-        companion object {
-            fun from(parent: ViewGroup): OverlayViewHolder {
-                val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = RecyclerViewOverlayItemBinding.inflate(layoutInflater, parent, false)
-                return OverlayViewHolder(binding)
-            }
         }
     }
 }

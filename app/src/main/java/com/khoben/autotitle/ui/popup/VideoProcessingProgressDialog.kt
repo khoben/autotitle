@@ -11,7 +11,6 @@ import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.khoben.autotitle.R
 import com.khoben.autotitle.databinding.PopupWindowVideoProcessLayoutBinding
-import com.khoben.autotitle.ui.popup.projectitem.ProjectTitleEditDialog
 
 class VideoProcessingProgressDialog : DialogFragment() {
 
