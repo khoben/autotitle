@@ -500,24 +500,15 @@ class VideoEditActivity : MvpAppCompatActivity(),
     override fun onOverlaysChangedList(overlays: List<OverlayObject>) {
         // update recycler view
         runOnUiThread {
-            overlayViewListAdapter.submitList(overlays.map {
-                if (it is OverlayText) {
-                    OverlayDataMapper(
-                        startTime = it.startTime,
-                        endTime = it.endTime,
-                        uuid = it.uuid,
-                        text = it.text!!,
-                        badgeColor = it.badgeColor,
-                        isSelected = it.isInEdit
-                    )
-                } else {
-                    OverlayDataMapper(
-                        startTime = it.startTime,
-                        endTime = it.endTime,
-                        uuid = it.uuid,
-                        isSelected = it.isInEdit
-                    )
-                }
+            overlayViewListAdapter.submitList(overlays.filterIsInstance<OverlayText>().map {
+                OverlayDataMapper(
+                    startTime = it.startTime,
+                    endTime = it.endTime,
+                    uuid = it.uuid,
+                    text = it.text!!,
+                    badgeColor = it.badgeColor,
+                    isSelected = it.isInEdit
+                )
             })
         }
     }
