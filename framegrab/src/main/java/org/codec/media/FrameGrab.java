@@ -11,7 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class FrameGrab {
-    static boolean DEBUG = true;
+    static boolean DEBUG = false;
     private final String TAG = "FrameGrab";
     private final HandlerThread mGLThread;
     private final Handler mGLHandler;

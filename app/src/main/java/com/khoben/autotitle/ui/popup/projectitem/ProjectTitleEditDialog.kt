@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import com.khoben.autotitle.common.ViewUtils.focusAndShowKeyboard
+import com.khoben.autotitle.util.ViewUtils.focusAndShowKeyboard
 import com.khoben.autotitle.databinding.RecyclerEditTitleBinding
 import com.khoben.autotitle.extension.dp
 

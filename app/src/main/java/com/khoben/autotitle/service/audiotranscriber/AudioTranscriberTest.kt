@@ -9,6 +9,7 @@ import io.reactivex.rxjava3.core.Observable
 class AudioTranscriberTest(context: Context) : AudioTranscriber {
 
     private fun mockService(): Observable<MLCaptionEnvelop> {
+        Thread.sleep(2000L)
         return resultMockService()
     }
 

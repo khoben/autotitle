@@ -14,8 +14,6 @@ import android.view.*
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.khoben.autotitle.R
-import com.khoben.autotitle.common.TextSelectionHandlePopup
-import com.khoben.autotitle.common.TextSelectionHelper
 import timber.log.Timber
 import java.util.*
 import kotlin.math.max

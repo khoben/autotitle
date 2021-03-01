@@ -35,17 +35,17 @@ class AudioTranscriberImpl(var context: Context) : AudioTranscriber {
     override fun start(uri: Uri): Observable<MLCaptionEnvelop> {
         return Observable.create { emitter ->
             engine.setAftListener(object : MLRemoteAftListener {
-                override fun onInitComplete(p0: String, p1: Any) {
+                override fun onInitComplete(taskId: String, ext: Any?) {
                 }
 
-                override fun onUploadProgress(p0: String, p1: Double, p2: Any) {
+                override fun onUploadProgress(taskId: String, progress: Double, ext: Any?) {
                 }
 
-                override fun onEvent(p0: String, p1: Int, p2: Any) {
+                override fun onEvent(taskId: String, eventId: Int, ext: Any?) {
                 }
 
-                override fun onResult(p0: String, result: MLRemoteAftResult, p2: Any) {
-                    if (result.isComplete) {
+                override fun onResult(taskId: String, result: MLRemoteAftResult?, ext: Any?) {
+                    if (result?.isComplete == true) {
                         // Process the transcription result
                         val sentences = result.sentences?.mapNotNull {
                             MLCaption(it.text, it.startTime.toLong(), it.endTime.toLong())
@@ -55,8 +55,8 @@ class AudioTranscriberImpl(var context: Context) : AudioTranscriber {
                     }
                 }
 
-                override fun onError(p0: String, p1: Int, p2: String) {
-                    emitter.onError(Error(p2))
+                override fun onError(taskId: String, errorCode: Int, message: String) {
+                    emitter.onError(Error(message))
                 }
 
             })

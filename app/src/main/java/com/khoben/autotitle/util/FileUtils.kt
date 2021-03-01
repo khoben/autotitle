@@ -1,4 +1,4 @@
-package com.khoben.autotitle.common
+package com.khoben.autotitle.util
 
 import android.content.ContentResolver
 import android.content.ContentUris
@@ -376,10 +376,7 @@ object FileUtils {
         context: Context,
         appPrefix: String = "autotitle_"
     ): String {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-            "${getInternalMoviesFolder(context)}/$appPrefix${System.currentTimeMillis()}.${App.VIDEO_EXTENSION}"
-        else
-            "${getExternalMoviesFolder(context)}/$appPrefix${System.currentTimeMillis()}.${App.VIDEO_EXTENSION}"
+        return "${getInternalMoviesFolder(context)}/$appPrefix${System.currentTimeMillis()}.${App.VIDEO_EXTENSION}"
     }
 
     /**
@@ -390,16 +387,5 @@ object FileUtils {
      */
     fun getInternalMoviesFolder(context: Context): String {
         return "${context.getExternalFilesDir(Environment.DIRECTORY_MOVIES)?.absolutePath}"
-    }
-
-    /**
-     * Get movie folder filepath in external specified directory
-     *
-     * Same as [getInternalMoviesFolder], but uses deprecated [Environment.getExternalStoragePublicDirectory]
-     *
-     * @return Public external filepath
-     */
-    fun getExternalMoviesFolder(context: Context): String {
-        return "${Environment.DIRECTORY_MOVIES}/${context.getString(R.string.app_name)}"
     }
 }

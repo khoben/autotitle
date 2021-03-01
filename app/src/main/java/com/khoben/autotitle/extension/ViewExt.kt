@@ -3,7 +3,7 @@ package com.khoben.autotitle.extension
 import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
-import com.khoben.autotitle.common.ViewUtils
+import com.khoben.autotitle.util.ViewUtils
 
 /**
  * Get bounding rectangle of [View]

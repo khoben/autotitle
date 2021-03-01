@@ -10,10 +10,10 @@ import android.provider.MediaStore
 import androidx.core.app.ShareCompat
 import com.khoben.autotitle.App
 import com.khoben.autotitle.R
-import com.khoben.autotitle.common.FileUtils
-import com.khoben.autotitle.common.FileUtils.getFileName
-import com.khoben.autotitle.common.NotificationUtils
-import com.khoben.autotitle.common.PreferencesUtils
+import com.khoben.autotitle.util.FileUtils
+import com.khoben.autotitle.util.FileUtils.getFileName
+import com.khoben.autotitle.common.NotificationHelper
+import com.khoben.autotitle.common.SharedPrefsHelper
 import com.khoben.autotitle.mvp.view.ResultActivityView
 import com.khoben.autotitle.service.mediaplayer.MediaPlayer
 import kotlinx.coroutines.Dispatchers
@@ -64,7 +64,7 @@ class ResultViewActivityPresenter : MvpPresenter<ResultActivityView>() {
                         FileUtils.saveVideoToGallery(appContext, file)
                     } else {
                         // already saved externally, just put it in gallery
-                        val values = ContentValues(2).apply {
+                        val values = ContentValues(3).apply {
                             put(MediaStore.Video.Media.MIME_TYPE, App.VIDEO_MIME_TYPE)
                             put(MediaStore.Video.Media.DATA, file.absolutePath)
                         }
@@ -76,8 +76,8 @@ class ResultViewActivityPresenter : MvpPresenter<ResultActivityView>() {
                 if (uri != null) {
                     alreadySaved = true
                     savedPath = uri.getFileName(appContext)
-                    if (PreferencesUtils.showNotificationOnSave == true) {
-                        NotificationUtils.show(
+                    if (SharedPrefsHelper.showNotificationOnSave == true) {
+                        NotificationHelper.show(
                             appContext,
                             text = savedPath!!,
                             title = appContext.getString(R.string.video_saved_title),

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:minWidth="36dp"
     android:padding="8dp">
     <TextView
         android:id="@+id/overlay_content"
@@ -11,7 +12,7 @@
         android:background="@android:color/transparent"
         android:textColor="@color/white"
         android:textSize="18sp"
-        android:gravity="center"
-        tools:text="test"
+        android:layout_gravity="center"
+        tools:text="t"
         tools:textColor="@color/black" />
 </com.khoben.autotitle.ui.overlay.OverlayText>

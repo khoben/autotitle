@@ -4,7 +4,7 @@ import com.khoben.autotitle.App
 import com.khoben.autotitle.service.audioextractor.AudioExtractor
 import com.khoben.autotitle.service.audioextractor.AudioExtractorImpl
 import com.khoben.autotitle.service.audiotranscriber.AudioTranscriber
-import com.khoben.autotitle.service.audiotranscriber.AudioTranscriberTest
+import com.khoben.autotitle.service.audiotranscriber.AudioTranscriberImpl
 import com.khoben.autotitle.service.frameretriever.AsyncFrameRetrieverImpl
 import com.khoben.autotitle.service.frameretriever.VideoFrameRetriever
 import com.khoben.autotitle.service.frameretriever.VideoFrameRetrieverImpl
@@ -66,7 +66,7 @@ class ApplicationModule(private val app: App) {
     @Provides
     @Singleton
     internal fun provideAudioTranscriber(): AudioTranscriber {
-        return AudioTranscriberTest(context = app.applicationContext)
+        return AudioTranscriberImpl(context = app.applicationContext)
     }
 
     @Provides

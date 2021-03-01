@@ -1,4 +1,4 @@
-package com.khoben.autotitle.common
+package com.khoben.autotitle.ui.recyclerview.overlays
 
 import android.annotation.SuppressLint
 import android.content.Context

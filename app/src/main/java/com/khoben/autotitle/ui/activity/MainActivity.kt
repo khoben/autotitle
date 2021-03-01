@@ -16,11 +16,12 @@ import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import com.huawei.agconnect.crash.AGConnectCrash
 import com.khoben.autotitle.App.Companion.VIDEO_EXIST_PROJECT
 import com.khoben.autotitle.App.Companion.VIDEO_LOAD_MODE
 import com.khoben.autotitle.App.Companion.VIDEO_SOURCE_URI_INTENT
 import com.khoben.autotitle.R
-import com.khoben.autotitle.common.OpeningVideoFileState
+import com.khoben.autotitle.model.OpeningVideoFileState
 import com.khoben.autotitle.common.PermissionManager
 import com.khoben.autotitle.database.entity.Project
 import com.khoben.autotitle.databinding.ActivityMainBinding
@@ -197,7 +198,7 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
 
     private fun hideRecentProjectAnim() {
         binding.recentTitle.isVisible = false
-        binding.recentBtnEdit.isVisible = false
+//        binding.recentBtnEdit.isVisible = false
         ValueAnimator.ofFloat(guidelineInitialPercent, 1F).apply {
             duration = 1000
             interpolator = AccelerateDecelerateInterpolator()
@@ -209,13 +210,13 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView,
 
     override fun hideRecentProject() {
         binding.recentTitle.isVisible = false
-        binding.recentBtnEdit.isVisible = false
+//        binding.recentBtnEdit.isVisible = false
         binding.guideline1.setGuidelinePercent(1F)
     }
 
     override fun showRecentProject() {
         binding.recentTitle.isVisible = true
-        binding.recentBtnEdit.isVisible = true
+//        binding.recentBtnEdit.isVisible = true
         binding.guideline1.setGuidelinePercent(guidelineInitialPercent)
     }
 

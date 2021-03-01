@@ -2,10 +2,11 @@ package com.khoben.autotitle
 
 import android.app.Application
 import android.content.Context
+import com.huawei.agconnect.crash.AGConnectCrash
 import com.huawei.hms.mlsdk.common.MLApplication
-import com.khoben.autotitle.common.DisplayUtils
-import com.khoben.autotitle.common.NotificationUtils
-import com.khoben.autotitle.common.PreferencesUtils
+import com.khoben.autotitle.util.DisplayUtils
+import com.khoben.autotitle.common.NotificationHelper
+import com.khoben.autotitle.common.SharedPrefsHelper
 import com.khoben.autotitle.di.components.ApplicationComponent
 import com.khoben.autotitle.di.components.DaggerApplicationComponent
 import com.khoben.autotitle.di.modules.ApplicationModule
@@ -18,14 +19,19 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         appContext = applicationContext
+        initCrashlytics()
         initFoldersPath()
-        PreferencesUtils.register(this)
-        DisplayUtils.setAppUi(mode = PreferencesUtils.appTheme!!)
+        SharedPrefsHelper.register(this)
+        DisplayUtils.setAppUi(mode = SharedPrefsHelper.appTheme!!)
         if (BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
         MLApplication.getInstance().apiKey =
             "CgB6e3x9/hsdbdBs4UtMv9w9yHOgLLpQWbfDNjtbW5685ZLdOW5HlpWzDmveL69IjxoeAg8TClmuNnbmvZ9xprrw"
         createApplicationComponent()
-        NotificationUtils.createNotificationChannel(applicationContext, appName)
+        NotificationHelper.createNotificationChannel(applicationContext, appName)
+    }
+
+    private fun initCrashlytics() {
+        AGConnectCrash.getInstance().enableCrashCollection(true)
     }
 
     private fun initFoldersPath() {
@@ -41,6 +47,7 @@ class App : Application() {
     }
 
     companion object {
+
         @JvmStatic
         lateinit var applicationComponent: ApplicationComponent
 
@@ -59,10 +66,13 @@ class App : Application() {
         const val VIDEO_SOURCE_URI_INTENT = "com.khoben.autotitle.VIDEO_SOURCE"
         const val VIDEO_LOAD_MODE = "com.khoben.autotitle.VIDEO_LOAD_MODE"
         const val VIDEO_EXIST_PROJECT = "com.khoben.autotitle.VIDEO_EXIST_PROJECT"
+        const val VIDEO_LANGUAGE_RECOGNITION = "com.khoben.autotitle.VIDEO_LANGUAGE_RECOGNITION"
         val THUMB_SIZE = Pair(100, 100)
         const val GUIDE_SHOW_DELAY: Long = 2000L
         const val DEFAULT_MUTE_STATE = false
         lateinit var APP_MAIN_FOLDER: String
         lateinit var PROJECTS_FOLDER: String
+        const val PROJECT_THUMB_FILENAME = "thumb"
+        const val PROJECT_OVERLAYS_FILENAME = "overlays"
     }
 }

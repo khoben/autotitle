@@ -36,7 +36,6 @@ class MainActivityTest {
     @Test
     fun checkIfActivityIsLaunched() {
         testRule.launchActivity(null)
-        onView(withId(R.id.logo_title)).check(matches(isDisplayed()))
         onView(withId(R.id.welcome_title)).check(matches(isDisplayed()))
     }
 

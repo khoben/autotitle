@@ -24,9 +24,12 @@ import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MOD
 import com.google.android.material.snackbar.Snackbar
 import com.khoben.autotitle.App
 import com.khoben.autotitle.App.Companion.VIDEO_EXIST_PROJECT
+import com.khoben.autotitle.App.Companion.VIDEO_LANGUAGE_RECOGNITION
 import com.khoben.autotitle.App.Companion.VIDEO_LOAD_MODE
 import com.khoben.autotitle.App.Companion.VIDEO_SOURCE_URI_INTENT
+import com.khoben.autotitle.BuildConfig
 import com.khoben.autotitle.R
+import com.khoben.autotitle.common.FontProvider
 import com.khoben.autotitle.database.entity.Project
 import com.khoben.autotitle.databinding.ActivityVideoBinding
 import com.khoben.autotitle.model.VideoInfo
@@ -35,9 +38,7 @@ import com.khoben.autotitle.mvp.presenter.VideoEditActivityPresenter
 import com.khoben.autotitle.mvp.view.VideoEditActivityView
 import com.khoben.autotitle.service.mediaplayer.MediaSurfacePlayer
 import com.khoben.autotitle.service.mediaplayer.VideoRender
-import com.khoben.autotitle.ui.overlay.OverlayDataMapper
-import com.khoben.autotitle.ui.overlay.OverlayObject
-import com.khoben.autotitle.ui.overlay.OverlayText
+import com.khoben.autotitle.ui.overlay.*
 import com.khoben.autotitle.ui.player.VideoControlsView
 import com.khoben.autotitle.ui.player.VideoSurfaceView
 import com.khoben.autotitle.ui.player.seekbar.FramesHolder
@@ -132,8 +133,9 @@ class VideoEditActivity : MvpAppCompatActivity(),
         val sourceVideoUri = intent.getParcelableExtra<Uri>(VIDEO_SOURCE_URI_INTENT)
         val videoLoadingMode = intent.getSerializableExtra(VIDEO_LOAD_MODE) as VideoLoadMode
         val existProject = intent.getParcelableExtra<Project>(VIDEO_EXIST_PROJECT)
+        val recognitionLanguage = intent.getStringExtra(VIDEO_LANGUAGE_RECOGNITION)
 
-        presenter.initVideoSource(sourceVideoUri!!, videoLoadingMode, existProject)
+        presenter.initVideoSource(sourceVideoUri!!, videoLoadingMode, existProject, recognitionLanguage)
         presenter.initOverlayHandler(overlayView, videoControlsView)
         presenter.setMuteState(
             userSettings.getBoolean(
@@ -216,7 +218,6 @@ class VideoEditActivity : MvpAppCompatActivity(),
         videoRenderer: VideoRender,
         videoDetails: VideoInfo
     ) {
-        Timber.d("Video details = $videoDetails")
         videoControlsView.setMediaDuration(videoDetails.duration)
         videoSurfaceView.init(videoRenderer, mediaPlayer)
         /**
@@ -264,6 +265,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
 
     override fun onPause() {
         super.onPause()
+        presenter.saveOverlays()
         presenter.pausePlayback()
         userSettings.edit().putBoolean(USER_SETTINGS_ITEM_MUTED, presenter.getMuteState()).apply()
     }
@@ -313,7 +315,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
     }
 
     override fun onErrorVideoProcessing(e: Throwable) {
-        Timber.e(e.toString())
+        Timber.e(e)
         setLoadingViewVisibility(false)
     }
 
@@ -615,6 +617,7 @@ class VideoEditActivity : MvpAppCompatActivity(),
     override fun createNewProject(project: Project) {
         lifecycleScope.launch {
             val id = projectViewModel.insertWithTimestamp(project)
+            presenter.setIdForNewProject(id)
             val thumbPath = presenter.createProjectThumbnail(id)
             val insertedProject = projectViewModel.getById(id)
             projectViewModel.update(insertedProject.apply { thumbUri = thumbPath })

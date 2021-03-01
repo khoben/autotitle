@@ -13,6 +13,7 @@ import androidx.core.animation.addListener
 import com.khoben.autotitle.App.Companion.FRAME_TIME_MS
 import com.khoben.autotitle.extension.getRect
 import com.khoben.autotitle.model.MLCaption
+import com.khoben.autotitle.model.OverlayTextSaveLightModel
 import com.khoben.autotitle.ui.overlay.gesture.ControlType
 import com.khoben.autotitle.ui.overlay.gesture.MultiTouchListener
 import timber.log.Timber
@@ -189,6 +190,51 @@ class OverlayHandler private constructor(
         return newOverlay
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    private fun createTextOverlayFromDiskModel(overlayDiskModel: OverlayTextSaveLightModel): OverlayText {
+        val newOverlay = overlayFactory.get(OverlayType.TEXT) as OverlayText
+        newOverlay.apply {
+            this.startTime = overlayDiskModel.startTime
+            this.endTime = overlayDiskModel.endTime
+            this.textView!!.text = overlayDiskModel.text
+            this.scaleX = overlayDiskModel.scale
+            this.scaleY = overlayDiskModel.scale
+            this.pivotX = overlayDiskModel.pivotX
+            this.pivotY = overlayDiskModel.pivotY
+            this.translationX = overlayDiskModel.translationX
+            this.translationY = overlayDiskModel.translationY
+            this.rotation = overlayDiskModel.rotation
+            this.textView!!.setTextColor(overlayDiskModel.textColor)
+            // gestures
+            this.initMultiTouchListener(
+                parentView.get()!!.getRect(),
+                object : MultiTouchListener.OnGestureControl {
+                    override fun onClick() {
+                        selectOverlay(newOverlay, false)
+                    }
+
+                    override fun onLongClick() {
+                    }
+
+                    override fun onDoubleTap() {
+                        editOverlay(newOverlay)
+                    }
+
+                    override fun onMove() {
+                        selectOverlay(newOverlay, false)
+                    }
+
+                    override fun onControlClicked(which: ControlType) {
+                        if (which == ControlType.DELETE_BTN) {
+                            removeOverlay(newOverlay)
+                        }
+                    }
+
+                })
+        }
+        return newOverlay
+    }
+
     /**
      * Adds new [OverlayText]
      *
@@ -215,6 +261,21 @@ class OverlayHandler private constructor(
             overlayObjectEventListener?.onAdded(newOverlay, overlayViews)
         }
     }
+
+    private fun addTextOverlaysFromDisk(
+        overlayDiskModel: OverlayTextSaveLightModel,
+        batch: Boolean = true
+    ) {
+        val newOverlay = createTextOverlayFromDiskModel(overlayDiskModel)
+        if (!batch) setSelectedOverlay(newOverlay)
+        addOverlayToParent(newOverlay)
+        overlayViews.add(newOverlay)
+        if (!batch) {
+            overlayViews.sort()
+            overlayObjectEventListener?.onAdded(newOverlay, overlayViews)
+        }
+    }
+
 
     /**
      * Adds new overlay with provided [type]
@@ -471,6 +532,25 @@ class OverlayHandler private constructor(
         overlays.forEach { addTextOverlay(it.startTime, it.endTime, it.text, true) }
         overlayViews.sort()
         overlayObjectEventListener?.onAddedAll(overlayViews)
+    }
+
+    fun addAllOverlayObjects(overlays: List<OverlayObject>) {
+        overlayViews.clear()
+        overlayViews.addAll(overlays)
+        overlayObjectEventListener?.onAddedAll(overlayViews)
+    }
+
+    fun addAllFromDisk(decoded: List<OverlayTextSaveLightModel>) {
+        Timber.d("addAllFromDisk $decoded")
+        parentView.get()?.post {
+            overlayViews.clear()
+            decoded.forEach {
+                addTextOverlaysFromDisk(it, true)
+            }
+            overlayViews.sort()
+            overlayObjectEventListener?.onAddedAll(overlayViews)
+            hideAllOverlaysExceptAtStart()
+        }
     }
 
     /**

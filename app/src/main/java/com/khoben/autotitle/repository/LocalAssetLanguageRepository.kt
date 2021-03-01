@@ -3,7 +3,7 @@ package com.khoben.autotitle.repository
 import com.google.gson.reflect.TypeToken
 import com.khoben.autotitle.App
 import com.khoben.autotitle.R
-import com.khoben.autotitle.common.FileUtils
+import com.khoben.autotitle.util.FileUtils
 import com.khoben.autotitle.model.LanguageItem
 
 class LocalAssetLanguageRepository : LanguageRepository() {

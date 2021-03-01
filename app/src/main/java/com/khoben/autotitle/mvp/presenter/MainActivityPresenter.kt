@@ -5,7 +5,7 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import com.khoben.autotitle.App
 import com.khoben.autotitle.App.Companion.LIMIT_DURATION_MS
-import com.khoben.autotitle.common.OpeningVideoFileState
+import com.khoben.autotitle.model.OpeningVideoFileState
 import com.khoben.autotitle.mvp.view.MainActivityView
 import moxy.InjectViewState
 import moxy.MvpPresenter

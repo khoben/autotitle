@@ -5,20 +5,14 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.ColorInt
 import com.khoben.autotitle.App
 import com.khoben.autotitle.R
-import com.khoben.autotitle.common.BitmapUtils
-import com.khoben.autotitle.common.FileUtils
-import com.khoben.autotitle.common.FileUtils.getFileName
 import com.khoben.autotitle.database.entity.Project
-import com.khoben.autotitle.model.MLCaption
-import com.khoben.autotitle.model.PlaybackEvent
-import com.khoben.autotitle.model.PlaybackState
-import com.khoben.autotitle.model.VideoLoadMode
+import com.khoben.autotitle.model.*
 import com.khoben.autotitle.mvp.view.VideoEditActivityView
 import com.khoben.autotitle.service.audioextractor.AudioExtractorNoAudioException
-import com.khoben.autotitle.service.frameretriever.AndroidNativeMetadataProvider
 import com.khoben.autotitle.service.mediaplayer.MediaController
 import com.khoben.autotitle.service.mediaplayer.VideoRender
 import com.khoben.autotitle.service.videoloader.VideoLoaderContract
@@ -26,11 +20,23 @@ import com.khoben.autotitle.service.videosaver.VideoProcessorBase
 import com.khoben.autotitle.service.videosaver.VideoProcessorListener
 import com.khoben.autotitle.ui.overlay.OverlayHandler
 import com.khoben.autotitle.ui.overlay.OverlayObject
+import com.khoben.autotitle.ui.overlay.OverlayText
 import com.khoben.autotitle.ui.player.VideoControlsView
+import com.khoben.autotitle.ui.player.seekbar.FrameStatus
 import com.khoben.autotitle.ui.player.seekbar.SeekBarListener
+import com.khoben.autotitle.util.BitmapUtils
+import com.khoben.autotitle.util.FileUtils
+import com.khoben.autotitle.util.FileUtils.getFileName
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.decodeFromByteArray
+import kotlinx.serialization.encodeToByteArray
+import kotlinx.serialization.protobuf.ProtoBuf
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import timber.log.Timber
+import java.io.File
 import java.lang.ref.WeakReference
 import javax.inject.Inject
 
@@ -58,6 +64,8 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     private var overlayHandler: OverlayHandler? = null
     private var sourceUri: Uri? = null
     private var videoLoadMode: VideoLoadMode? = null
+    private var currentProject: Project? = null
+    private var recognitionLanguage: String? = null
 
     init {
         App.applicationComponent.inject(this)
@@ -67,12 +75,15 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     fun initVideoSource(
         sourceVideoUri: Uri,
         videoLoadingMode: VideoLoadMode,
-        existProject: Project?
+        existProject: Project?,
+        recognitionLanguage: String?
     ) {
         if (sourceUri != null && videoLoadMode != null) return
 
         sourceUri = sourceVideoUri
         videoLoadMode = videoLoadingMode
+        currentProject = existProject
+        this.recognitionLanguage = recognitionLanguage
 
         mediaController.setVideoSource(sourceUri!!)
 
@@ -89,10 +100,15 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
                     videoDuration = mediaController.videoDuration,
                     videoFileSizeBytes = FileUtils.getSizeBytes(appContext, sourceUri!!),
                     sourceFileUri = FileUtils.getRealPathFromURI(appContext, sourceUri!!)!!
-                )
+                ).also {
+                    currentProject = it
+                }
             )
         } else {
-            existProject?.let { viewState.updateProject(it) }
+            existProject?.let {
+                viewState.updateProject(it)
+            }
+
         }
 
         processVideo()
@@ -110,12 +126,13 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     }
 
     private fun runVideoLoader(frameTime: Long) {
-        val videoLoaderInstance = videoLoader.init(appContext, sourceUri!!, frameTime)
+        val videoLoaderInstance = videoLoader.init(recognitionLanguage, appContext, sourceUri!!, frameTime)
 
         // Load frame-line
         videoLoaderInstance.loadFrames({ frameResult ->
             viewState.loadFrames(frameResult)
-            if (videoLoadMode != VideoLoadMode.AUTO_DETECT) successProcessedVideo()
+            if (videoLoadMode != VideoLoadMode.AUTO_DETECT
+                && frameResult.status == FrameStatus.COMPLETED) successProcessedVideo()
         }, { frameError ->
             Timber.e("Error while loading video $frameError")
             errorProcessVideo(frameError)
@@ -176,7 +193,7 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     private fun successProcessedVideo() {
         Timber.d("Success video load")
         viewState.onVideoProcessed()
-        viewState.updatePlayback(overlayHandler!!.getOverlays(), null, false)
+        viewState.updatePlayback(overlayHandler!!.getOverlays(), overlayHandler!!.getSelectedOverlay(), false)
     }
 
     private fun errorProcessVideo(e: Throwable) {
@@ -201,6 +218,9 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
             overlayHandler?.overlayObjectEventListener = this
         } else {
             overlayHandler?.setLayout(WeakReference(parentView))
+        }
+        if (videoLoadMode == VideoLoadMode.LOAD_RECENT) {
+            currentProject?.let { loadOverlaysFromDisk(it) }
         }
         videoControlsView.seekBarListener = this
     }
@@ -280,6 +300,7 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         // make visible all overlays
         overlayHandler!!.showRootView()
         val outputPath = FileUtils.getOutputVideoFilePath(appContext)
+        Timber.d("Output file = $outputPath")
         viewState.onVideoSavingStarted()
         videoProcessor.apply {
             setup(
@@ -365,6 +386,7 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
     }
 
     override fun onAddedAll(overlays: List<OverlayObject>) {
+        Timber.d("onAddedAll $overlays")
         viewState.updatePlayback(overlays, null, isPlaying = false)
         viewState.onOverlaysChangedList(overlays)
     }
@@ -550,16 +572,67 @@ class VideoEditActivityPresenter : MvpPresenter<VideoEditActivityView>(),
         togglePlaybackState()
     }
 
+    fun setIdForNewProject(id: Long) {
+        currentProject?.id = id
+    }
+
     fun createProjectThumbnail(id: Long): String {
         val projectFolder = "${App.PROJECTS_FOLDER}/${id}"
         FileUtils.createDirIfNotExists(projectFolder)
-        return "${projectFolder}/thumb".also { thumbPath ->
-            AndroidNativeMetadataProvider(appContext, sourceUri!!)
-                .getFrameAt(0L)?.let { BitmapUtils.cropCenter(it, 512, 384) }
-                ?.let {
-                    FileUtils.writeBitmap(thumbPath, it, Bitmap.CompressFormat.WEBP, 75)
-                }
+        return "${projectFolder}/${App.PROJECT_THUMB_FILENAME}".also { thumbPath ->
+            BitmapUtils.getVideoThumbnail(appContext, sourceUri!!)?.let {
+                FileUtils.writeBitmap(thumbPath, it, Bitmap.CompressFormat.WEBP, 75)
+            }
         }
+    }
+
+    /**
+     * TODO:
+     */
+    @ExperimentalSerializationApi
+    fun saveOverlays() {
+        GlobalScope.launch {
+            val serializableList = mutableListOf<OverlayTextSaveLightModel>()
+            val overlayViews = overlayHandler!!.getOverlays()
+            Timber.d("saveOverlays ${overlayViews.size}")
+            for (overlay in overlayViews) {
+                serializableList.add(
+                    OverlayTextSaveLightModel(
+                        overlay.scaleX,
+                        overlay.rotation,
+                        overlay.translationX,
+                        overlay.translationY,
+                        overlay.pivotX,
+                        overlay.pivotY,
+                        overlay.startTime,
+                        overlay.endTime,
+                        overlay.x,
+                        overlay.y,
+                        (overlay as OverlayText).text!!,
+                        overlay.textView!!.currentTextColor,
+                        ""
+                    )
+                )
+            }
+            val bytearray = ProtoBuf.encodeToByteArray(serializableList)
+            val overlayFile =
+                "${App.PROJECTS_FOLDER}/${currentProject!!.id}/${App.PROJECT_OVERLAYS_FILENAME}"
+            File(overlayFile).writeBytes(bytearray)
+        }
+    }
+
+    /**
+     * TODO:
+     * @param project Project
+     */
+    @ExperimentalSerializationApi
+    private fun loadOverlaysFromDisk(project: Project) {
+        val overlayFile = "${App.PROJECTS_FOLDER}/${project.id}/${App.PROJECT_OVERLAYS_FILENAME}"
+        val file = File(overlayFile)
+        if (!file.exists()) return
+        val decoded =
+            ProtoBuf.decodeFromByteArray<List<OverlayTextSaveLightModel>>(file.readBytes())
+        overlayHandler!!.addAllFromDisk(decoded)
     }
 
     fun releaseResources() {

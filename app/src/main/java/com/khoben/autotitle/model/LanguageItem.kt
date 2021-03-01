@@ -8,5 +8,7 @@ data class LanguageItem(
     val key: String,
     @SerializedName("title")
     val value: String,
+    @SerializedName("hms_code")
+    val hms_code: String,
     @DrawableRes val icon: Int? = null
 )

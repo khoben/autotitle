@@ -1,4 +1,4 @@
-package com.khoben.autotitle.common
+package com.khoben.autotitle.ui.recyclerview.overlays
 
 import android.R
 import android.content.Context
@@ -8,6 +8,7 @@ import android.text.TextPaint
 import android.text.style.CharacterStyle
 import android.text.style.URLSpan
 import android.text.style.UpdateAppearance
+import com.khoben.autotitle.util.StyledAttrUtils
 import kotlin.math.max
 import kotlin.math.min
 

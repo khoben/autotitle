@@ -13,7 +13,7 @@ import androidx.preference.PreferenceFragmentCompat
 import com.khoben.autotitle.App
 import com.khoben.autotitle.BuildConfig
 import com.khoben.autotitle.R
-import com.khoben.autotitle.common.DisplayUtils
+import com.khoben.autotitle.util.DisplayUtils
 import com.khoben.autotitle.ui.etc.HTMLViewerDialog
 
 class SettingsFragment : PreferenceFragmentCompat() {

@@ -148,7 +148,8 @@
         app:iconGravity="textStart"
         app:layout_constraintBaseline_toBaselineOf="@+id/recent_title"
         app:layout_constraintBottom_toTopOf="@+id/guideline1"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2" />
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        android:visibility="gone"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recent_recycler"

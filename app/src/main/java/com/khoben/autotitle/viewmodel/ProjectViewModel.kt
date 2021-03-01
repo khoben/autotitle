@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.khoben.autotitle.App
-import com.khoben.autotitle.common.FileUtils
+import com.khoben.autotitle.util.FileUtils
 import com.khoben.autotitle.database.AppDatabase
 import com.khoben.autotitle.database.entity.Project
 

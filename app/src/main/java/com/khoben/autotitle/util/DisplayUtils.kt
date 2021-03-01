@@ -1,4 +1,4 @@
-package com.khoben.autotitle.common
+package com.khoben.autotitle.util
 
 import android.app.Activity
 import android.content.res.Resources
@@ -22,13 +22,15 @@ object DisplayUtils {
      * Converts dp to pixels
      */
     fun dipToPx(dip: Int): Int {
-        return TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            dip.toFloat(),
-            Resources.getSystem().displayMetrics
-        ).toInt()
+        return dipToPx(dip.toFloat()).toInt()
     }
 
+    /**
+     * Set UI mode (dark/light) for whole application
+     *
+     * @param activity Current activity
+     * @param mode Mode: "dark", "light" or "system"
+     */
     fun setAppUi(activity: Activity? = null, mode: String) {
         when (mode) {
             "dark" -> {
@@ -39,17 +41,16 @@ object DisplayUtils {
             }
             else -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                    updateTheme(activity, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
                 } else {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
+                    updateTheme(activity, AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
                 }
             }
         }
     }
 
-    private fun updateTheme(activity: Activity? = null, nightMode: Int): Boolean {
+    private fun updateTheme(activity: Activity? = null, nightMode: Int) {
         AppCompatDelegate.setDefaultNightMode(nightMode)
         activity?.recreate()
-        return true
     }
 }

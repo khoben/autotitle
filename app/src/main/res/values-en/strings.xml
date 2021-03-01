@@ -96,4 +96,7 @@
     <string name="sound_on">Sound on</string>
     <string name="confirm_exit">Confirm exit</string>
     <string name="attention">Attention</string>
+    <string name="return_to_video_edit_question">Are you sure to want to return to video editing?</string>
+    <string name="return_to_home_screen_question">Are you sure to go to home screen?</string>
+    <string name="select_color_title">Select color</string>
 </resources>
