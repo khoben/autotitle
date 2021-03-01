@@ -1,4 +1,4 @@
-package com.khoben.autotitle.common.openglfilter
+package com.khoben.autotitle.service.videosaver.openglfilter
 
 import android.graphics.*
 import android.view.View

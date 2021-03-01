@@ -32,14 +32,16 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView,
     private lateinit var permissionManager: PermissionManager
     private val writeStoragePermissionToken = "storage"
     private val rationaleStorageDialogToken = "alert_rationale_storage"
+    private val backPressedDialogToken = "backpressed_dialog"
+    private val homebtnDialogToken = "homebtn_dialog"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityPostVideoBinding.inflate(layoutInflater)
         setContentView(binding.root)
         videoPath = intent.getStringExtra(VIDEO_OUTPUT_URI_INTENT)
-        binding.backBtn.setOnClickListener { finish() }
-        binding.homeBtn.setOnClickListener { toMainActivity() }
+        binding.backBtn.setOnClickListener { onBackPressed() }
+        binding.homeBtn.setOnClickListener { homeBtnClicked() }
         binding.shareBtn.setOnClickListener { shareVideo() }
         saveBtn = binding.saveGalleryBtn.apply { setButtonOnClickListener { saveVideo() } }
         binding.epVideoView.player = presenter.initNewPlayer()
@@ -48,7 +50,7 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView,
         permissionManager = PermissionManager(this)
         permissionManager.register(
             writeStoragePermissionToken,
-            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE),
             {
                 AlertDialogInfoMessage.new(
                     getString(R.string.app_needs_permission),
@@ -77,6 +79,18 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView,
         presenter.share(this)
     }
 
+    private fun homeBtnClicked() {
+        CustomAlertDialog.Builder()
+            .setPositive(getString(R.string.yes_caption))
+            .setNegative(getString(R.string.cancel_caption))
+            .build(
+                getString(R.string.confirm_exit),
+                getString(R.string.return_to_home_screen_question),
+                homebtnDialogToken
+            )
+            .show(supportFragmentManager, CustomAlertDialog.TAG)
+    }
+
     private fun toMainActivity() {
         startActivity(Intent(this, MainActivity::class.java))
         finishAffinity()
@@ -92,6 +106,20 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView,
         presenter.pause()
         super.onPause()
     }
+
+    override fun onBackPressed() {
+        CustomAlertDialog.Builder()
+            .setPositive(getString(R.string.yes_caption))
+            .setNegative(getString(R.string.cancel_caption))
+            .build(
+                getString(R.string.confirm_exit),
+                getString(R.string.return_to_video_edit_question),
+                backPressedDialogToken
+            )
+            .show(supportFragmentManager, CustomAlertDialog.TAG)
+    }
+
+
 
     override fun showVideoSavedToast(path: String?) {
         runOnUiThread {
@@ -120,10 +148,18 @@ class ResultActivity : MvpAppCompatActivity(), ResultActivityView,
     override fun dialogOnNegative(token: String) {}
 
     override fun dialogOnPositive(token: String) {
-        if (token == rationaleStorageDialogToken) {
-            startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                data = Uri.fromParts("package", packageName, null)
-            })
+        when (token) {
+            rationaleStorageDialogToken -> {
+                startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.fromParts("package", packageName, null)
+                })
+            }
+            backPressedDialogToken -> {
+                finish()
+            }
+            homebtnDialogToken -> {
+                toMainActivity()
+            }
         }
     }
 

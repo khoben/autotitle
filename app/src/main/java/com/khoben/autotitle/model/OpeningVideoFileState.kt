@@ -1,4 +1,4 @@
-package com.khoben.autotitle.common
+package com.khoben.autotitle.model
 
 enum class OpeningVideoFileState {
     /**

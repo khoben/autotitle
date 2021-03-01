@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.Uri
 import com.daasuu.mp4compose.FillMode
 import com.daasuu.mp4compose.composer.Mp4Composer
-import com.khoben.autotitle.common.openglfilter.GLViewOverlayFilter
+import com.khoben.autotitle.service.videosaver.openglfilter.GLViewOverlayFilter
 import com.khoben.autotitle.model.VideoInfo
 import com.khoben.autotitle.ui.overlay.OverlayObject
 

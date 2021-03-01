@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 
-object PreferencesUtils {
+object SharedPrefsHelper {
 
     private var instance: SharedPreferences? = null
     private var preferenceChangeListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
@@ -21,6 +21,11 @@ object PreferencesUtils {
     var copySourceVideo: Boolean? = null
     var appTheme: String? = null
 
+    /**
+     * Fills initial values and registers shared preferences change value listener
+     *
+     * @param context Application context
+     */
     fun register(context: Context) {
         instance = PreferenceManager.getDefaultSharedPreferences(context)
 
@@ -53,7 +58,10 @@ object PreferencesUtils {
         instance?.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
     }
 
-    fun unRegister() {
+    /**
+     * Unregister shared preferences change listener
+     */
+    fun unregister() {
         instance?.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
     }
 

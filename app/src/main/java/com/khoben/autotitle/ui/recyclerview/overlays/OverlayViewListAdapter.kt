@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.khoben.autotitle.R
-import com.khoben.autotitle.common.StyledAttrUtils
+import com.khoben.autotitle.util.StyledAttrUtils
 import com.khoben.autotitle.databinding.RecyclerViewOverlayItemBinding
 import com.khoben.autotitle.ui.overlay.OverlayDataMapper
 import java.util.*

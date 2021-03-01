@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.khoben.autotitle.R
-import com.khoben.autotitle.common.FileUtils
+import com.khoben.autotitle.util.FileUtils
 import com.khoben.autotitle.database.entity.Project
 import com.khoben.autotitle.extension.formattedTime
 import com.khoben.autotitle.ui.overlay.OverlayDataMapper

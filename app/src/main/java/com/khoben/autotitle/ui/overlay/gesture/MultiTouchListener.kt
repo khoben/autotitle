@@ -64,14 +64,6 @@ class MultiTouchListener(
     private var parentX = 0F
     private var parentY = 0F
 
-    /**
-     * Describes direction of overlapping with [parentRect]
-     */
-    enum class DIRECTION {
-        X, Y, BOTH, NONE
-    }
-
-
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouch(view: View, event: MotionEvent): Boolean {
         mControlClickDetector.onTouchEvent(event)
@@ -98,7 +90,7 @@ class MultiTouchListener(
                     val currX = event.getX(pointerIndexMove)
                     val currY = event.getY(pointerIndexMove)
                     if (!mScaleGestureDetector.isInProgress) {
-                        adjustTranslation(view, currX - mPrevX, currY - mPrevY)
+                        adjustTranslation(view, currX - mPrevX, currY - mPrevY, parentWidth, parentHeight)
                     }
                 }
                 mOnGestureControl?.onMove()
@@ -106,35 +98,6 @@ class MultiTouchListener(
             MotionEvent.ACTION_CANCEL -> mActivePointerId = INVALID_POINTER_ID
             MotionEvent.ACTION_UP -> {
                 mActivePointerId = INVALID_POINTER_ID
-                // translate if overlay not visible
-                val isVisible = isViewVisible(view)
-                if (!isVisible.first) {
-                    when (isVisible.second) {
-                        DIRECTION.X -> {
-                            var translation = (parentWidth - view.width) / 2f
-                            if (view.x < 0) translation *= -1
-                            view.animate().translationX(translation)
-                        }
-                        DIRECTION.Y -> {
-                            var translation = (parentHeight - view.height) / 2f
-                            if (view.y < 0) translation *= -1
-                            view.animate().translationY(translation)
-                        }
-                        DIRECTION.BOTH -> {
-                            var translationX = (parentWidth - view.width) / 2f
-                            if (view.x < 0) translationX *= -1
-
-                            var translationY = (parentHeight - view.height) / 2f
-                            if (view.y < 0) translationY *= -1
-
-                            view.animate()
-                                .translationX(translationX)
-                                .translationY(translationY)
-                        }
-                        DIRECTION.NONE -> {
-                        }
-                    }
-                }
             }
             MotionEvent.ACTION_POINTER_UP -> {
                 val pointerIndexPointerUp =
@@ -149,23 +112,6 @@ class MultiTouchListener(
             }
         }
         return true
-    }
-
-    private var boundingRect = Rect()
-    private fun isViewVisible(view: View): Pair<Boolean, DIRECTION> {
-        view.getHitRect(boundingRect)
-        val centerX = boundingRect.exactCenterX()
-        val centerY = boundingRect.exactCenterY()
-
-        val limitX = centerX < 0 || centerX > parentWidth
-        val limitY = centerY < 0 || centerY > parentHeight
-
-        return when {
-            limitX && limitY -> Pair(false, DIRECTION.BOTH)
-            limitX -> Pair(false, DIRECTION.X)
-            limitY -> Pair(false, DIRECTION.Y)
-            else -> Pair(true, DIRECTION.NONE)
-        }
     }
 
     private inner class ScaleGestureListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
@@ -192,12 +138,16 @@ class MultiTouchListener(
             info.pivotY = mPivotY
             info.minimumScale = minimumScale
             info.maximumScale = maximumScale
+            info.parentWidth = parentWidth
+            info.parentHeight = parentHeight
             move(view!!, info)
             return !isPinchToZoomEnabled
         }
     }
 
     inner class TransformInfo {
+        var parentHeight = 0f
+        var parentWidth = 0f
         var deltaX = 0f
         var deltaY = 0f
         var deltaScale = 0f
@@ -272,7 +222,7 @@ class MultiTouchListener(
 
         internal fun move(view: View, info: TransformInfo) {
             computeRenderOffset(view, info.pivotX, info.pivotY)
-            adjustTranslation(view, info.deltaX, info.deltaY)
+            adjustTranslation(view, info.deltaX, info.deltaY, info.parentWidth, info.parentHeight)
             var scale = view.scaleX * info.deltaScale
             scale = max(info.minimumScale, min(info.maximumScale, scale))
             view.scaleX = scale
@@ -281,11 +231,29 @@ class MultiTouchListener(
             view.rotation = rotation
         }
 
-        internal fun adjustTranslation(view: View, deltaX: Float, deltaY: Float) {
+        private var boundingRect = Rect()
+        internal fun adjustTranslation(
+            view: View,
+            deltaX: Float,
+            deltaY: Float,
+            parentWidth: Float,
+            parentHeight: Float
+        ) {
             val deltaVector = floatArrayOf(deltaX, deltaY)
             view.matrix.mapVectors(deltaVector)
-            view.translationX = view.translationX + deltaVector[0]
-            view.translationY = view.translationY + deltaVector[1]
+
+            view.getHitRect(boundingRect)
+            val centerX = boundingRect.exactCenterX() + deltaVector[0]
+            val centerY = boundingRect.exactCenterY() + deltaVector[1]
+
+            if (centerX in 0F..parentWidth) {
+                view.translationX += deltaVector[0]
+            }
+
+            if (centerY in 0F..parentHeight) {
+                view.translationY += deltaVector[1]
+            }
+
         }
 
         private fun computeRenderOffset(view: View, pivotX: Float, pivotY: Float) {

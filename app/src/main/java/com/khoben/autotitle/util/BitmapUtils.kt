@@ -1,11 +1,13 @@
-package com.khoben.autotitle.common
+package com.khoben.autotitle.util
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.media.ThumbnailUtils
+import android.net.Uri
+import com.khoben.autotitle.service.frameretriever.AndroidNativeMetadataProvider
 
 object BitmapUtils {
-
     /**
      * Take thumbnail from [bitmap] with [w] x [h] dimensions
      *
@@ -36,5 +38,19 @@ object BitmapUtils {
             left += b.width
         }
         return temp
+    }
+
+    /**
+     * Retrieve cropped thumbnail from video
+     *
+     * @param context Application context
+     * @param sourceUri Video uri
+     * @param width Width of thumbnail, px
+     * @param height Height of thumbnail, px
+     * @return Thumbnail
+     */
+    fun getVideoThumbnail(context: Context, sourceUri: Uri, width: Int = 512, height: Int = 384): Bitmap? {
+        return AndroidNativeMetadataProvider(context, sourceUri)
+            .getFrameAt(0L)?.let { cropCenter(it, width, height) }
     }
 }

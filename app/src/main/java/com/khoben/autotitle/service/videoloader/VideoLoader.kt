@@ -3,7 +3,7 @@ package com.khoben.autotitle.service.videoloader
 import android.content.Context
 import android.net.Uri
 import com.khoben.autotitle.App
-import com.khoben.autotitle.common.FileUtils
+import com.khoben.autotitle.util.FileUtils
 import com.khoben.autotitle.model.MLCaptionEnvelop
 import com.khoben.autotitle.service.audioextractor.AudioExtractor
 import com.khoben.autotitle.service.audiotranscriber.AudioTranscriber
@@ -38,6 +38,7 @@ class VideoLoader : VideoLoaderContract() {
     }
 
     override fun init(
+        language: String?,
         context: Context,
         uri: Uri,
         frameTime: Long,
@@ -50,17 +51,17 @@ class VideoLoader : VideoLoaderContract() {
         this.frames = videoFrameRetriever.init(uri, providerType)
             .retrieveFrames(frameTime, App.THUMB_SIZE.first, App.THUMB_SIZE.second)
         this.tempAudioPath = FileUtils.getInternalRandomFilepath()
-        this.audio = extractAudio(context, tempAudioPath!!)
+        this.audio = extractAudio(context, tempAudioPath!!, language?: "en-US")
 
         return this
     }
 
-    private fun extractAudio(context: Context, outputPath: String): Observable<MLCaptionEnvelop> {
+    private fun extractAudio(context: Context, outputPath: String, language: String): Observable<MLCaptionEnvelop> {
         return audioExtractor.extractAudio(context, uri!!, outputPath)
             .flatMap { path ->
                 Timber.d("Audio has been extracted with path = $path")
-                // TODO("LANG CODE")
-                audioTranscriber.setLangCode("en-US")
+                audioTranscriber.setLangCode(language)
+                Timber.d("Set language to $language")
                 audioTranscriber.start(path)
             }
     }

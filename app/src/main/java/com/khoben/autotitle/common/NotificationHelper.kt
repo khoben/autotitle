@@ -13,11 +13,27 @@ import com.khoben.autotitle.BuildConfig
 import com.khoben.autotitle.R
 import java.util.*
 
-object NotificationUtils {
+object NotificationHelper {
+
+    /**
+     * Fixed NotificationChannel ID
+     */
+    private const val CHANNEL_ID = BuildConfig.APPLICATION_ID + "_NOTIFICATION"
+
+    /**
+     * Creates single notification channel with predefined [CHANNEL_ID]
+     *
+     * @param context Application context
+     * @param name Notification channel name
+     * @param descriptionText Notification channel description
+     */
     fun createNotificationChannel(context: Context, name: String, descriptionText: String = "") {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+            val channel = NotificationChannel(
+                CHANNEL_ID,
+                name,
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
                 description = descriptionText
             }
             (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
@@ -25,6 +41,15 @@ object NotificationUtils {
         }
     }
 
+    /**
+     * Create and show notification in channel with ID equals to [CHANNEL_ID]
+     *
+     * @param context Application context
+     * @param text Notification message
+     * @param title Notification title
+     * @param largeIcon Notification large icon
+     * @param notificationIntent Notification intent (click action)
+     */
     fun show(
         context: Context,
         text: String,
@@ -46,10 +71,7 @@ object NotificationUtils {
                 }
             }
         with(NotificationManagerCompat.from(context)) {
-            // notificationId is a unique int for each notification that you must define
             notify(UUID.randomUUID().hashCode(), builder.build())
         }
     }
-
-    private const val CHANNEL_ID = BuildConfig.APPLICATION_ID + "_NOTIFICATION"
 }

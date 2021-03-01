@@ -1,15 +1,24 @@
-package com.khoben.autotitle.common
+package com.khoben.autotitle.util
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
+import androidx.core.view.WindowInsetsCompat
 
 object ViewUtils {
+
+    fun View.hideKeyboard() {
+        val inputMethodManager = ContextCompat.getSystemService(context, InputMethodManager::class.java)!!
+        inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
+    }
 
     /**
      * https://developer.squareup.com/blog/showing-the-android-keyboard-reliably/

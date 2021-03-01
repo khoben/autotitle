@@ -1,14 +1,12 @@
 [
   {
-    "code": "RU",
-    "title": "Russian (Русский)"
-  },
-  {
     "code": "ENG",
-    "title": "English"
+    "title": "English",
+    "hms_code": "en-US"
   },
   {
     "code": "CH",
-    "title": "Chinese (中文)"
+    "title": "Chinese (中文)",
+    "hms_code": "zh"
   }
 ]

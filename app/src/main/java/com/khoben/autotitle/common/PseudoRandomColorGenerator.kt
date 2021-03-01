@@ -2,11 +2,24 @@ package com.khoben.autotitle.common
 
 import java.util.*
 
-object RandomColor {
+/**
+ * Gives random color from predefined colors list
+ */
+object PseudoRandomColorGenerator {
 
+    /**
+     * Used colors
+     */
     private val recycle: Stack<Int> = Stack()
+
+    /**
+     * Unused colors
+     */
     private val colors: Stack<Int> = Stack()
 
+    /**
+     * Take random color from predefined colors list
+     */
     val color: Int
         get() {
             if (colors.empty()) {

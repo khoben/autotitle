@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.edit
+import com.khoben.autotitle.App.Companion.VIDEO_LANGUAGE_RECOGNITION
 import com.khoben.autotitle.App.Companion.VIDEO_LOAD_MODE
 import com.khoben.autotitle.App.Companion.VIDEO_SOURCE_URI_INTENT
 import com.khoben.autotitle.R
@@ -25,6 +26,7 @@ import moxy.presenter.InjectPresenter
 
 
 class PreloadActivity : MvpAppCompatActivity(), PreloadActivityView {
+
     @InjectPresenter
     lateinit var presenter: PreloadActivityPresenter
 
@@ -102,7 +104,7 @@ class PreloadActivity : MvpAppCompatActivity(), PreloadActivityView {
             }
             .searchEnabled(true)
             .searchNotFoundText(getString(R.string.language_selection_search_nothing))
-            .onItemClickListener { _, position ->
+            .onItemClickListener { item, position ->
                 languageSelectionModel.setSelected(position)
             }.show()
     }
@@ -137,6 +139,7 @@ class PreloadActivity : MvpAppCompatActivity(), PreloadActivityView {
         startActivity(Intent(this, VideoEditActivity::class.java).apply {
             putExtra(VIDEO_SOURCE_URI_INTENT, uri)
             putExtra(VIDEO_LOAD_MODE, mode)
+            putExtra(VIDEO_LANGUAGE_RECOGNITION, languageItems!![selectedIndex!!].hms_code)
         })
     }
 

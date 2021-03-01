@@ -16,7 +16,7 @@
         android:layout_marginEnd="10dp"
         android:minWidth="0dp"
         android:minHeight="0dp"
-        android:text="OK"
+        android:text="@android:string/ok"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -29,10 +29,39 @@
         android:gravity="center"
         android:inputType="textMultiLine"
         android:textAppearance="?textAppearanceHeadline5"
-        app:layout_constraintBottom_toTopOf="@+id/add_text_color_picker_recycler_view"
+        app:layout_constraintBottom_toTopOf="@+id/tab_layout"
         app:layout_constraintTop_toBottomOf="@+id/add_text_done_tv"
         tools:ignore="LabelFor"
         tools:text="test" />
+
+    <Button
+        android:id="@+id/color_picker_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"/>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+        app:layout_constraintTop_toBottomOf="@id/add_text_edit_text"
+        app:layout_constraintBottom_toTopOf="@+id/view_pager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:tabMode="fixed"
+        android:visibility="gone"/>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/add_text_color_picker_recycler_view"

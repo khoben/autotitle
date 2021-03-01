@@ -27,11 +27,10 @@ abstract class OverlayObject(context: Context, attrs: AttributeSet) :
     var endTime: Long = 0
 
     private val helpFramePaint = Paint().apply {
-        color = Color.CYAN
+        color = Color.LTGRAY
         style = Paint.Style.STROKE
         isAntiAlias = true
         strokeWidth = 4f
-        pathEffect = DashPathEffect(floatArrayOf(12F, 12F), 1F)
     }
 
     private val BITMAP_BTN_SCALE = 0.5F
@@ -55,7 +54,7 @@ abstract class OverlayObject(context: Context, attrs: AttributeSet) :
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         if (isInEdit) {
-            // draw frameborder
+            // draw frame border
             canvas.drawRect(
                 0F + deleteBtnWidth / 2F,
                 0F + deleteBtnHeight / 2F,
@@ -63,8 +62,7 @@ abstract class OverlayObject(context: Context, attrs: AttributeSet) :
                 height.toFloat() - deleteBtnHeight / 2F,
                 helpFramePaint
             )
-
-            // draw delete icon
+            // delete icon rect: top-right
             deleteRect.set(
                 (width - deleteBtnWidth).toFloat(),
                 0F,
@@ -85,8 +83,7 @@ abstract class OverlayObject(context: Context, attrs: AttributeSet) :
             MultiTouchListener(
                 rect,
                 listOf(Pair(ControlType.DELETE_BTN, deleteRect))
-            )
-                .apply { setOnGestureControl(listener) }
+            ).apply { setOnGestureControl(listener) }
         )
     }
 

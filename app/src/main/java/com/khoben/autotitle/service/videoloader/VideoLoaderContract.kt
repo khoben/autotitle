@@ -17,6 +17,7 @@ abstract class VideoLoaderContract {
     protected var tempAudioPath: String? = null
 
     abstract fun init(
+        language: String? = null,
         context: Context,
         uri: Uri,
         frameTime: Long,

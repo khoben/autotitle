@@ -21,7 +21,7 @@ import com.iammert.rangeview.library.RangeView
 import com.khoben.autotitle.App
 import com.khoben.autotitle.App.Companion.FRAMES_PER_SCREEN
 import com.khoben.autotitle.R
-import com.khoben.autotitle.common.PreferencesUtils
+import com.khoben.autotitle.common.SharedPrefsHelper
 import com.khoben.autotitle.extension.dp
 import com.khoben.autotitle.ui.overlay.OverlayObject
 import com.khoben.autotitle.ui.overlay.OverlayText
@@ -227,10 +227,7 @@ class VideoSeekBarFramesView(
                     }
                 }
 
-                seekBarListener?.changeTimeRangeSelectedOverlay(
-                    leftTime,
-                    rightTime
-                )
+                seekBarListener?.changeTimeRangeSelectedOverlay(leftTime, rightTime)
             }
         }
         rangeView!!.visibility = GONE
@@ -332,12 +329,7 @@ class VideoSeekBarFramesView(
             val timeRangeEndX = overlay.endTime * videoSeekBarViewWidth / videoDuration
             val timeRangeWidth = (timeRangeEndX - timeRangeStartX).toInt()
 
-            val backgroundOverlay: View?
-            if (overlay is OverlayText) {
-                backgroundOverlay = overlay.timeline
-            } else {
-                backgroundOverlay = null
-            }
+            val backgroundOverlay = if (overlay is OverlayText) { overlay.timeline } else { null }
 
             if (backgroundOverlay != null && backgroundOverlay.parent != movableFrameLineContainer) { // attach view
                 if (backgroundOverlay.parent != null) { // if has been detached from
@@ -349,7 +341,7 @@ class VideoSeekBarFramesView(
                     backgroundOverlay,
                     LayoutParams(timeRangeWidth, 10.dp()).apply {
                         gravity = Gravity.CENTER_VERTICAL
-                        setMargins(0, 0, 0, 35.dp())
+                        setMargins(0, 0, 0, (movableFrameLineContainer.height / 2F).toInt())
                     }
                 )
                 overlayTimeRangeBackgrounds[overlay.uuid] = backgroundOverlay
@@ -381,6 +373,8 @@ class VideoSeekBarFramesView(
         isPlaying: Boolean
     ) {
         playbackState = isPlaying
+
+        Timber.d("updatePlayback $selectedOverlay")
 
         // disable touches on rangeView when playing
         rangeView?.toggleTouchAccessibility(!playbackState)
@@ -495,7 +489,7 @@ class VideoSeekBarFramesView(
 
         velocityTracker?.recycle()
         velocityTracker = null
-        if (abs(xVelocity) > VELOCITY_MIN && PreferencesUtils.seekBarSmoothAnimation == true) {
+        if (abs(xVelocity) > VELOCITY_MIN && SharedPrefsHelper.seekBarSmoothAnimation == true) {
             startXAnimation()
         } else {
             seekTo(xCoordinateToTimestamp(movableFrameLineContainer.x))
