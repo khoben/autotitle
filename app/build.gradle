@@ -13,7 +13,7 @@ android {
         applicationId "com.khoben.autotitle"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 108102
+        versionCode 108103
         versionName "1.0.8-beta03"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
