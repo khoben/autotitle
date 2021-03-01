@@ -139,7 +139,9 @@ class PreloadActivity : MvpAppCompatActivity(), PreloadActivityView {
         startActivity(Intent(this, VideoEditActivity::class.java).apply {
             putExtra(VIDEO_SOURCE_URI_INTENT, uri)
             putExtra(VIDEO_LOAD_MODE, mode)
-            putExtra(VIDEO_LANGUAGE_RECOGNITION, languageItems!![selectedIndex!!].hms_code)
+            selectedIndex?.let {
+                putExtra(VIDEO_LANGUAGE_RECOGNITION, languageItems!![selectedIndex!!].hms_code)
+            }
         })
     }
 
