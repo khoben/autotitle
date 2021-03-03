@@ -38,3 +38,21 @@
 }
 -keep class com.huawei.hms.analytics.HiAnalyticsInstance{*;}
 -keep class com.huawei.hms.analytics.HiAnalytics{*;}
+
+-keepattributes *Annotation*, InnerClasses
+-dontnote kotlinx.serialization.AnnotationsKt # core serialization annotations
+
+-keepclassmembers class kotlinx.serialization.protobuf.** {
+    *** Companion;
+}
+-keepclasseswithmembers class kotlinx.serialization.protobuf.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+
+-keep,includedescriptorclasses class com.khoben.autotitle.**$$serializer { *; } # <-- change package name to your app's
+-keepclassmembers class com.khoben.autotitle.** { # <-- change package name to your app's
+    *** Companion;
+}
+-keepclasseswithmembers class com.khoben.autotitle.** { # <-- change package name to your app's
+    kotlinx.serialization.KSerializer serializer(...);
+}
