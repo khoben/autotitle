@@ -15,7 +15,7 @@ import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.android.synthetic.main.dialog_sheet_selection.*
+import com.minibugdev.sheetselection.databinding.DialogSheetSelectionBinding
 
 
 class SheetSelection: BottomSheetDialogFragment() {
@@ -45,35 +45,38 @@ class SheetSelection: BottomSheetDialogFragment() {
 
     override fun getTheme(): Int = arguments?.getInt(ARGS_THEME) ?: super.getTheme()
 
+    private lateinit var binding: DialogSheetSelectionBinding
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_sheet_selection, container, false)
+    ): View {
+        binding = DialogSheetSelectionBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         arguments?.let { args ->
             if (args.getBoolean(ARGS_SHOW_DRAGGED_INDICATOR)) {
-                draggedIndicator.visibility = View.VISIBLE
+                binding.draggedIndicator.visibility = View.VISIBLE
             }
 
             val title = args.getString(ARGS_TITLE)
             if (title.isNullOrEmpty()) {
-                textViewTitle.visibility = View.GONE
-                textViewTitle.text = null
+                binding.textViewTitle.visibility = View.GONE
+                binding.textViewTitle.text = null
             } else {
-                textViewTitle.visibility = View.VISIBLE
-                textViewTitle.text = title
+                binding.textViewTitle.visibility = View.VISIBLE
+                binding.textViewTitle.text = title
             }
 
             if (args.getBoolean(ARGS_SEARCH_ENABLED)) {
-                buttonSearch.visibility = View.VISIBLE
-                buttonSearch.setOnClickListener(onSearchClickListener)
-                searchView.setOnCloseListener(onSearchCloseListener)
-                searchView.setOnQueryTextListener(onSearchQueryTextListener)
+                binding.buttonSearch.visibility = View.VISIBLE
+                binding.buttonSearch.setOnClickListener(onSearchClickListener)
+                binding.searchView.setOnCloseListener(onSearchCloseListener)
+                binding.searchView.setOnQueryTextListener(onSearchQueryTextListener)
             }
 
             items = args.getParcelableArrayList(ARGS_ITEMS)
@@ -83,9 +86,9 @@ class SheetSelection: BottomSheetDialogFragment() {
             }
             searchNotFoundText = args.getString(ARGS_SEARCH_NOT_FOUND_TEXT)
 
-            recyclerViewSelectionItems.setHasFixedSize(true)
-            recyclerViewSelectionItems.adapter = adapter
-            recyclerViewSelectionItems.setEmptyView(recyclerViewSelectionEmpty.apply {
+            binding.recyclerViewSelectionItems.setHasFixedSize(true)
+            binding.recyclerViewSelectionItems.adapter = adapter
+            binding.recyclerViewSelectionItems.setEmptyView(binding.recyclerViewSelectionEmpty.apply {
                 findViewById<TextView>(R.id.recyclerViewSelectionEmpty).text =
                     args.getString(ARGS_SEARCH_NOT_FOUND_TEXT)
             })
@@ -93,7 +96,7 @@ class SheetSelection: BottomSheetDialogFragment() {
     }
 
     private fun updateSheetHeight(viewHeight: Int) {
-        rootLayout.layoutParams = rootLayout.layoutParams
+        binding.rootLayout.layoutParams = binding.rootLayout.layoutParams
             .apply { height = viewHeight }
     }
 
@@ -107,13 +110,13 @@ class SheetSelection: BottomSheetDialogFragment() {
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
         updateSheetHeight(screenHeight)
-        viewSwitcherHeader.displayedChild = 1
-        searchView.isIconified = false
+        binding.viewSwitcherHeader.displayedChild = 1
+        binding.searchView.isIconified = false
     }
 
     private val onSearchCloseListener = SearchView.OnCloseListener {
         updateSheetHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
-        viewSwitcherHeader.displayedChild = 0
+        binding.viewSwitcherHeader.displayedChild = 0
         true
     }
 

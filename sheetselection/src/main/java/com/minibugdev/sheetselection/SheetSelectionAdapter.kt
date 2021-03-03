@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.row_selection_item.*
+import com.minibugdev.sheetselection.databinding.RowEmptyItemBinding
+import com.minibugdev.sheetselection.databinding.RowSelectionItemBinding
 
 typealias OnItemSelectedListener = (item: SheetSelectionItem, position: Int) -> Unit
 
@@ -15,6 +15,7 @@ class SheetSelectionAdapter(
     private val searchNotFoundText: String,
     private val onItemSelectedListener: OnItemSelectedListener?
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
 
     private var items: List<SheetSelectionItem> = source
 
@@ -27,10 +28,19 @@ class SheetSelectionAdapter(
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
+        val layoutInflater = LayoutInflater.from(parent.context)
         return when (viewType) {
-            R.layout.row_selection_item -> ItemViewHolder(view)
-            R.layout.row_empty_item -> EmptyViewHolder(view, searchNotFoundText)
+            R.layout.row_selection_item -> {
+                val binding = RowSelectionItemBinding.inflate(layoutInflater, parent, false)
+                ItemViewHolder(binding)
+            }
+            R.layout.row_empty_item -> {
+                val binding = RowEmptyItemBinding.inflate(layoutInflater, parent, false)
+                EmptyViewHolder(
+                    binding,
+                    searchNotFoundText
+                )
+            }
             else -> throw IllegalAccessException("Item view type doesn't match.")
         }
     }
@@ -73,7 +83,9 @@ class SheetSelectionAdapter(
         notifyDataSetChanged()
     }
 
-    class ItemViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    class ItemViewHolder(
+        private val binding: RowSelectionItemBinding
+    ) : RecyclerView.ViewHolder(binding.root){
 
         fun onBindView(
             item: SheetSelectionItem,
@@ -82,22 +94,27 @@ class SheetSelectionAdapter(
             onItemSelectedListener: OnItemSelectedListener?
         ) {
             val selectedIcon = if (selected) R.drawable.ic_check else 0
-            textViewItem.setCompoundDrawablesWithIntrinsicBounds(item.icon ?: 0, 0, selectedIcon, 0)
-            textViewItem.text = item.value
+            binding.textViewItem.setCompoundDrawablesWithIntrinsicBounds(
+                item.icon ?: 0,
+                0,
+                selectedIcon,
+                0
+            )
+            binding.textViewItem.text = item.value
 
 
-            textViewItem.setOnClickListener {
+            binding.textViewItem.setOnClickListener {
                 onItemSelectedListener?.invoke(item, position)
             }
         }
     }
 
-    class EmptyViewHolder(override val containerView: View, emptyText: String)
-        : RecyclerView.ViewHolder(containerView),
-        LayoutContainer {
-            init {
-                textViewItem.text = emptyText
-            }
+    class EmptyViewHolder(
+        binding: RowEmptyItemBinding, emptyText: String
+    ) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.textViewItem.text = emptyText
+        }
     }
 
     companion object {
