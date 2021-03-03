@@ -56,3 +56,12 @@
 -keepclasseswithmembers class com.khoben.autotitle.** { # <-- change package name to your app's
     kotlinx.serialization.KSerializer serializer(...);
 }
+
+-keepclassmembers class * implements android.os.Parcelable { *; }
+
+# Gson specific classes
+-keep class sun.misc.Unsafe { *; }
+-keep class com.google.gson.stream.** { *; }
+
+# Application classes that will be serialized/deserialized over Gson
+-keep class com.khoben.autotitle.model.** { *; }
