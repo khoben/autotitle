@@ -87,7 +87,7 @@ dependencies {
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
 
     // DI
-    def dagger_version = "2.31.2"
+    def dagger_version = "2.33"
     implementation "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
