@@ -135,7 +135,7 @@ dependencies {
     implementation 'com.huawei.hms:base:5.1.0.301'
     implementation 'com.huawei.agconnect:agconnect-core:1.4.2.301'
     implementation 'com.huawei.hms:ml-computer-voice-aft:2.1.0.300'
-    implementation 'com.huawei.hms:hianalytics:5.1.0.301'
+    implementation 'com.huawei.hms:hianalytics:5.3.0.300'
     implementation 'com.huawei.agconnect:agconnect-crash:1.4.2.301'
 
     // Logging
